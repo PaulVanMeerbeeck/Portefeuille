@@ -1,0 +1,188 @@
+package portefeuille.main;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Map;
+import java.util.Set;
+
+import javax.sql.DataSource;
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+
+import portefeuille.screens.EffectenFrame;
+import portefeuille.tables.DataSourceFactory;
+import portefeuille.tables.DividentList;
+import portefeuille.tables.Effect;
+import portefeuille.tables.EffectList;
+import portefeuille.tables.ToestandList;
+import portefeuille.tables.Transactie;
+import portefeuille.tables.TransactieList;
+
+public class Portefeuille
+{
+
+	public Portefeuille()
+	{
+		DataSource ds = DataSourceFactory.getInputDataSource();
+		if(ds==null)
+		{
+			System.out.println("Niet gelukt!");
+		}
+		else
+		{
+			System.out.println("Het is OK!");
+		}
+		EffectList theEffectList = new EffectList(ds);
+		TransactieList theTransactionList = new TransactieList(ds);
+		ToestandList theToestandList = new ToestandList(ds);
+		DividentList theDividentList = new DividentList(ds);
+		BigDecimal sharesPurchaseValue = theTransactionList.getSharesPurchaseValue();
+		BigDecimal makelaarsCost = theTransactionList.getMakerlaarsCost();
+		BigDecimal beursTaks = theTransactionList.getBeursTaks();
+		BigDecimal thePresentValue = theToestandList.getTotalPresentValueShares();
+		BigDecimal winst = thePresentValue.subtract(sharesPurchaseValue).subtract(makelaarsCost).subtract(beursTaks);
+		System.out.println("Aantal effecten = "+theEffectList.size());
+		theEffectList.print();
+		System.out.println("Aantal transacties = "+theTransactionList.size());
+		theTransactionList.print();
+		System.out.println("Aantal toestanden = "+theToestandList.size());
+		theToestandList.print();
+		System.out.printf("Winst (verlies) volgens toestand is: %(,.2f€\n", theToestandList.getTotalProfits());
+		System.out.printf("Total share value at purchase price %,.2f€\n",sharesPurchaseValue);
+		System.out.printf("Total Makerlaars cost %,.2f€\n",makelaarsCost);
+		System.out.printf("Total Beurs taks %,.2f€\n",beursTaks);
+		System.out.printf("Total investment is: %,.2f€\n", sharesPurchaseValue.add(makelaarsCost).add(beursTaks));
+		System.out.printf("Huidige waarde is: %,.2f€\n", thePresentValue);
+		System.out.printf("Winst (verlies) is: %(,.2f€\n", winst);
+		System.out.println();
+		Date compDate = new GregorianCalendar(2018,9,1).getTime();
+
+
+		TransactieList selectedTransactions = new TransactieList(theTransactionList.size());
+
+		for(Transactie t : theTransactionList)
+		{
+			if(t.getDate().compareTo(compDate) > 0 )
+			{
+				selectedTransactions.add(t);
+			}
+		}
+
+		System.out.printf("Total share value purchased since 01/10/2018  %,.2f€\n",selectedTransactions.getSharesPurchaseValue());
+		System.out.printf("Total Oct Makerlaars cost %,.2f€\n",selectedTransactions.getMakerlaarsCost());
+		System.out.printf("Total Oct Beurs taks %,.2f€\n",selectedTransactions.getBeursTaks());
+		BigDecimal octInvest = selectedTransactions.getSharesPurchaseValue().add(selectedTransactions.getMakerlaarsCost()).add(selectedTransactions.getBeursTaks());
+		System.out.printf("Total Oct investment is: %,.2f€\n", octInvest);
+
+		BigDecimal octValue = BigDecimal.ZERO;
+
+		for(Transactie t : selectedTransactions)
+		{
+			Effect e = theEffectList.getEffectBijTicker(t.getTickerId());
+			if(e==null) continue;
+			BigDecimal shareValue = e.getKoers();
+			BigDecimal count = new BigDecimal(t.getNumber());
+			octValue=octValue.add(shareValue.multiply(count));
+		}
+
+		BigDecimal octWinst = octValue.subtract(octInvest);
+		System.out.printf("Huidige Oct waarde is: %,.2f€\n", octValue);
+		System.out.printf("Winst Oct (verlies) is: %(,.2f€\n", octWinst);
+		System.out.println();
+
+		selectedTransactions.clear();
+
+		for(Transactie t : theTransactionList)
+		{
+			if(t.getDate().compareTo(compDate) < 0 )
+			{
+				selectedTransactions.add(t);
+			}
+		}
+
+		System.out.printf("Total share value purchased before 01/10/2018  %,.2f€\n",selectedTransactions.getSharesPurchaseValue());
+		System.out.printf("Total preOct2018 Makerlaars cost %,.2f€\n",selectedTransactions.getMakerlaarsCost());
+		System.out.printf("Total preOct2018 Beurs taks %,.2f€\n",selectedTransactions.getBeursTaks());
+		BigDecimal preOctInvest = selectedTransactions.getSharesPurchaseValue().add(selectedTransactions.getMakerlaarsCost()).add(selectedTransactions.getBeursTaks());
+		System.out.printf("Total Oct investment is: %,.2f€\n", preOctInvest);
+
+		BigDecimal preOctValue = BigDecimal.ZERO;
+
+		for(Transactie t : selectedTransactions)
+		{
+			Effect e = theEffectList.getEffectBijTicker(t.getTickerId());
+			if(e==null) continue;
+			BigDecimal shareValue = e.getKoers();
+			BigDecimal count = new BigDecimal(t.getNumber());
+			preOctValue=preOctValue.add(shareValue.multiply(count));
+		}
+
+		BigDecimal preOctWinst = preOctValue.subtract(preOctInvest);
+		System.out.printf("Huidige preOct2018 waarde is: %,.2f€\n", preOctValue);
+		System.out.printf("Winst preOct2018 (verlies) is: %(,.2f€\n", preOctWinst);
+
+		System.out.println();
+		System.out.println("Aantal dividenten = "+theDividentList.size());
+		theDividentList.print();
+
+		System.out.println();
+		Map<String, DividentList> divMap = theDividentList.getDividentMap();
+
+		Set<String> keys= divMap.keySet();
+
+
+		for(String k: keys)
+		{
+			DividentList aList = divMap.get(k);
+			System.out.println("Divident lijst voor: "+k);
+			aList.printTickerYearTotals();
+			System.out.println();
+		}
+
+
+		System.out.println("Gedaan!");
+	}
+
+	public static void main(String[] args)
+	{
+
+		try
+		{
+	//		new Portefeuille();
+			SwingUtilities.invokeLater
+			(
+				new Runnable()
+				{
+					public void run()
+					{
+						try
+						{
+							System.setProperty("apple.laf.useScreenMenuBar", "true");
+							//				  		UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+							UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+//							String lcOSName = System.getProperty("os.name").toLowerCase();
+//								System.out.println("OS Name= "+lcOSName);
+//							boolean IS_MAC = lcOSName.startsWith("mac os x");
+							System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Portefeuille");
+						}
+						catch(Exception evt)
+						{
+							System.out.println("Exceprion "+evt.getStackTrace());
+						}
+//						for(String s: args) { System.out.println("Argument = "+s);}
+						if(args.length>0)
+							new EffectenFrame(args[0]);
+						else
+							new EffectenFrame("secure");
+					}
+				}
+			);
+		}
+		catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+	}
+
+}
