@@ -75,11 +75,11 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	JScrollPane forecastDividenten;
 	JLabel divInkomsten;
 	JLabel divForecast;
-	DataSource ds = DataSourceFactory.getInputDataSource();
+	DataSource ds;
 	Connection con;
 	int selectedOverzichtRow = -1;
 
-	public EffectenFrame(String argument) throws HeadlessException 
+	public EffectenFrame(String argument, String configId) throws HeadlessException 
 	{
 		super("Effecten overzicht");
 //		ImageIcon img = new ImageIcon("etc//DSC00675.icns");
@@ -120,6 +120,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		
 		try
 		{
+			ds = DataSourceFactory.getInputDataSource(configId);
 			con = ds.getConnection();
 		}
 		catch (SQLException e)

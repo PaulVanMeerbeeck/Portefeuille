@@ -24,7 +24,7 @@ public class Portefeuille
 
 	public Portefeuille()
 	{
-		DataSource ds = DataSourceFactory.getInputDataSource();
+		DataSource ds = DataSourceFactory.getInputDataSource("pvm");
 		if(ds==null)
 		{
 			System.out.println("Niet gelukt!");
@@ -171,10 +171,15 @@ public class Portefeuille
 							System.out.println("Exceprion "+evt.getStackTrace());
 						}
 //						for(String s: args) { System.out.println("Argument = "+s);}
+						String arg1="pvm";
+						if(args.length>1)
+						{
+							arg1 = args[1];
+						}
 						if(args.length>0)
-							new EffectenFrame(args[0]);
+							new EffectenFrame(args[0],arg1);
 						else
-							new EffectenFrame("secure");
+							new EffectenFrame("secure",arg1);
 					}
 				}
 			);

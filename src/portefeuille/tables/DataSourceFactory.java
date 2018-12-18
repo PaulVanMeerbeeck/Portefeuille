@@ -1,16 +1,14 @@
 package portefeuille.tables;
 
-import java.io.IOException;
 import java.util.Properties;
 
 import javax.sql.DataSource;
-
 import portefeuille.util.Config;
 import com.mysql.jdbc.jdbc2.optional.MysqlDataSource;
 
 public class DataSourceFactory
 {
-	public static DataSource getInputDataSource()
+	public static DataSource getInputDataSource(String configId)
 	{
 		Config theConfig = null;
 		Properties props = null;
@@ -19,7 +17,8 @@ public class DataSourceFactory
 		try
 		{
 			theConfig = new Config();
-			props = theConfig.getProperties("pvm_schema.properties");
+			String fileName = String.format("%s_schema.properties", configId);
+			props = theConfig.getProperties(fileName);
 			DS = new MysqlDataSource();
 			DS.setURL(props.getProperty("MYSQL_DB_URL"));
 			DS.setUser(props.getProperty("MYSQL_DB_USERNAME"));
@@ -27,10 +26,6 @@ public class DataSourceFactory
 //			System.out.println("MYSQL_DB_URL = " + DS.getURL());
 //			System.out.println("MYSQL_DB_USERNAME = " + DS.getUser());
 //			System.out.println("MYSQL_DB_PASSWORD = "+ DS.getPasswordCharacterEncoding());
-		}
-		catch (IOException e)
-		{
-			e.printStackTrace();
 		}
 		catch (Exception e)
 		{

@@ -63,6 +63,28 @@ CREATE TABLE `test`.`transactie` (
   CONSTRAINT `TickerId` FOREIGN KEY (`Ticker`) REFERENCES `Effect` (`TickerId`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
+CREATE TABLE `TriggerCode` (
+  `Code` varchar(10) NOT NULL,
+  `Omschrijving` varchar(60) DEFAULT NULL,
+  PRIMARY KEY (`Code`),
+  UNIQUE KEY `Code_UNIQUE` (`Code`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+CREATE TABLE `AankoopTrigger` (
+  `Id` int(11) NOT NULL AUTO_INCREMENT,
+  `TickerId` varchar(60) NOT NULL,
+  `Code` varchar(10) NOT NULL,
+  `Waarde` decimal(10,4) NOT NULL,
+  `Aantal` int(11) NOT NULL,
+  PRIMARY KEY (`Id`),
+  UNIQUE KEY `Id_UNIQUE` (`Id`),
+  KEY `Ticker_Id_idx` (`TickerId`),
+  KEY `Code_Id_idx` (`Code`),
+  CONSTRAINT `Code_Id_Fk` FOREIGN KEY (`Code`) REFERENCES `TriggerCode` (`Code`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `Ticker_Id_Fk` FOREIGN KEY (`TickerId`) REFERENCES `Effect` (`TickerId`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+
+
 CREATE ALGORITHM=UNDEFINED DEFINER=`PVM_SCHEMA`@`localhost` SQL SECURITY DEFINER VIEW `test`.`divident_uitkeringen` AS select `e`.`Naam` AS `Naam`,`k`.`Maand` AS `Maand`,`k`.`Dag` AS `Dag`,round(`k`.`Divident`,2) AS `Divident`,sum(`t`.`Aantal`) AS `Aantal`,round((`k`.`Divident` * sum(`t`.`Aantal`)),2) AS `Bruto`,round(((sum(`t`.`Aantal`) * `k`.`Divident`) * (1 - `k`.`Voorheffing`)),2) AS `Netto` from ((`pvm`.`effect` `e` join `pvm`.`transactie` `t`) join `pvm`.`kalender` `k`) where ((`e`.`TickerId` = `k`.`TickerId`) and (`e`.`TickerId` = `t`.`Ticker`)) group by `t`.`Ticker`,`k`.`Maand` order by `k`.`Maand`,`k`.`Dag`;
 CREATE ALGORITHM=UNDEFINED DEFINER=`PVM_SCHEMA`@`localhost` SQL SECURITY DEFINER VIEW `test`.`toestand` AS select `e`.`Naam` AS `Naam`,sum(`t`.`Aantal`) AS `Aantal`,round(sum((`t`.`Prijs` * `t`.`Aantal`)),2) AS `Aankoop`,round(sum((`t`.`Makelaarsloon` + `t`.`Beurstaks`)),2) AS `Kosten`,round(sum((((`t`.`Prijs` * `t`.`Aantal`) + `t`.`Makelaarsloon`) + `t`.`Beurstaks`)),2) AS `Prijs`,round((sum(`t`.`Aantal`) * `e`.`Koers`),2) AS `Waarde`,round(((sum(`t`.`Aantal`) * `e`.`Koers`) - sum((((`t`.`Prijs` * `t`.`Aantal`) + `t`.`Makelaarsloon`) + `t`.`Beurstaks`))),2) AS `Winst`,`e`.`Categorie` AS `Cat` from (`pvm`.`transactie` `t` join `pvm`.`effect` `e`) where (`t`.`Ticker` = `e`.`TickerId`) group by `t`.`Ticker` order by `e`.`Naam`;
 

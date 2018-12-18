@@ -202,8 +202,8 @@ public class EffectenUpdateDialog extends JDialog implements TableModelListener,
 		}
 		if(!theText.getText().isEmpty())
 		{
-			Object[] options = {"Ja","Neen"};
-			int antwoord = JOptionPane.showOptionDialog(this, theText, "Bevestig DB Update", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]); 
+			Object[] options = {"Yes","No"};
+			int antwoord = JOptionPane.showOptionDialog(this, theText, "Confirm DB Update", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]); 
 			if(antwoord==0) theResult=true;
 		}
 		else
@@ -219,7 +219,7 @@ public class EffectenUpdateDialog extends JDialog implements TableModelListener,
 		int newRowCount = tableModel.getRowCount();
 		int oldRowCount = theEList.size();
 //		System.out.println("NewRowCount = "+newRowCount+", OldRowCount = "+oldRowCount);
-		while(tableModel.getValueAt(newRowCount-1,0)==null) newRowCount--;
+		while(newRowCount>0 && tableModel.getValueAt(newRowCount-1,0)==null) newRowCount--;
 //		System.out.println("Updated newRowCount = "+newRowCount);
 		String[] theResult = new String[newRowCount];
 		// UPDATE `Effect` SET `Koers` = '66.8201', `Div` = '1.8001' WHERE (`TickerId` = 'ABI');

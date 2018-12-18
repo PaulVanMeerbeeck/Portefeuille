@@ -131,6 +131,7 @@ public class TransactieList extends ArrayList<Transactie>
 	public BigDecimal getGemiddleAankoopKoers(String tickerId)
 	{
 		BigDecimal result = BigDecimal.ZERO, aankoopWaarde = BigDecimal.ZERO;
+		if(tickerId==null) return result;
 		int aantal=0;
 		for(Transactie t : this)
 		{

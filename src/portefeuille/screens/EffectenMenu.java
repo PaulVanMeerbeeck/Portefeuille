@@ -21,6 +21,7 @@ public class EffectenMenu extends JMenuBar implements ActionListener
 	JDialog dTransactie;
 	JDialog dKalender;
 	JDialog dDivident;
+	JDialog dAKT;
 	JDialog dPreOct;
 	JDialog dDivVU;
 	EffectenFrame theEffectenFrame;
@@ -46,6 +47,10 @@ public class EffectenMenu extends JMenuBar implements ActionListener
 		miDivident.setActionCommand("Divident");
 		miDivident.addActionListener(this);
 		menuTables.add(miDivident);
+		JMenuItem miAankoopTrigger = new JMenuItem("Aankoop trigger");
+		miAankoopTrigger.setActionCommand("AKT");
+		miAankoopTrigger.addActionListener(this);
+		menuTables.add(miAankoopTrigger);
 		
 		JMenu menuReports = new JMenu("Reports");
 		menuBar.add(menuReports);
@@ -94,6 +99,11 @@ public class EffectenMenu extends JMenuBar implements ActionListener
 		{
 			if(dDivident!=null && dDivident.isDisplayable()) return;
 			dDivident = new DividentenUpdateDialog(theEffectenFrame);
+		}
+		else if(action.compareTo("AKT")==0)
+		{
+			if(dAKT!=null && dAKT.isDisplayable()) return;
+			dAKT = new AankoopTriggerDialog(theEffectenFrame);
 		}
 		else if(action.compareTo("miPreOct")==0)
 		{

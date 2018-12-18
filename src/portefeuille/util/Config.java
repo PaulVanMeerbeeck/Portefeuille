@@ -5,13 +5,15 @@ import java.io.InputStream;
 import java.nio.file.NoSuchFileException;
 import java.util.Properties;
 
+import javax.swing.JOptionPane;
+
 public class Config
 {
 	public Config()
 	{ // Empty constructor
 	}
 
-	public Properties getProperties(String fileName) throws IOException
+	public Properties getProperties(String fileName)
 	{
 		Properties props = new Properties();
 		try
@@ -20,9 +22,13 @@ public class Config
 			props.load(is);
 			is.close();
 		}
-		catch(NoSuchFileException e)
+		catch(IOException e)
 		{
-			e.printStackTrace();
+			JOptionPane.showMessageDialog(null,
+          "Configuration file "+fileName+" not found!",
+          "Error Message",
+          JOptionPane.ERROR_MESSAGE);
+			System.exit(0);
 		}
 		return props;
 	}

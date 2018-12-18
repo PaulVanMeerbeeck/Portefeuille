@@ -16,7 +16,7 @@ public class WinstRenderer extends DefaultTableCellRenderer
 	
 	public void setValue(Object value)
 	{
-		if(value ==null) return;
+		if(value==null) return;
 		if(value.toString().isEmpty()) 
 		{
 			setText(" ");

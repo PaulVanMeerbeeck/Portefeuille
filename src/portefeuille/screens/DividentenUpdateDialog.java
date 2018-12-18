@@ -165,7 +165,7 @@ public class DividentenUpdateDialog extends JDialog implements TableModelListene
 		int countSQLStatements = 0;
 		int newRowCount = tableModel.getRowCount();
 		int oldRowCount = theDList.size();
-		while(tableModel.getValueAt(newRowCount-1,0)==null) newRowCount--;
+		while(newRowCount>0 && tableModel.getValueAt(newRowCount-1,0)==null) newRowCount--;
 //		System.out.println("Updated newRowCount = "+newRowCount);
 		String[] theResult = new String[newRowCount];
 		// UPDATE `Divident` SET `Koers` = '66.8201', `Div` = '1.8001' WHERE (`TickerId` = 'ABI');
@@ -246,8 +246,8 @@ public class DividentenUpdateDialog extends JDialog implements TableModelListene
 		{
       final ImageIcon icon = new ImageIcon("etc//Nieuwe_Auto.icns");
       Image image2 = icon.getImage().getScaledInstance(200,200,0);
-			Object[] options = {"Ja","Neen"};
-			int antwoord = JOptionPane.showOptionDialog(this, theText, "Bevestig DB Update", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, new ImageIcon(image2), options, options[1]); 
+			Object[] options = {"Yes","No"};
+			int antwoord = JOptionPane.showOptionDialog(this, theText, "Confirm DB Update", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, new ImageIcon(image2), options, options[1]); 
 			if(antwoord==0) theResult=true;
 		}
 		return theResult;
