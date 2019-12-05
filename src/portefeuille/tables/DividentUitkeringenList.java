@@ -22,7 +22,7 @@ public class DividentUitkeringenList
 		Connection con = null;
 		Statement stmtRM = null;
 		ResultSet rsRM = null;
-		String sql = "select * from divident_uitkeringen";
+		String sql = "select * from divident_uitkeringen where aantal > 0";
 		try 
 		{
 			con = ds.getConnection();

@@ -43,10 +43,10 @@ import javax.swing.table.TableRowSorter;
 import portefeuille.tables.EffectList;
 import portefeuille.tables.TransactieList;
 import portefeuille.tables.TriggerCodeList;
-import portefeuille.tables.AankoopTriggerList;
+import portefeuille.tables.VerkoopTriggerList;
 import portefeuille.util.ColumnsAutoSizer;
 
-public class AankoopTriggerDialog extends JDialog implements TableModelListener, ListSelectionListener
+public class VerkoopTriggerDialog extends JDialog implements TableModelListener, ListSelectionListener
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -54,7 +54,7 @@ public class AankoopTriggerDialog extends JDialog implements TableModelListener,
 	Object[] columnNames;
 	EffectList theEList;
 	TransactieList theTList;
-	AankoopTriggerList theAKTList;
+	VerkoopTriggerList theVKTList;
 	TriggerCodeList theTCList;
 	DefaultTableModel tableModel;
 	TableRowSorter<DefaultTableModel> sorter;
@@ -71,23 +71,23 @@ public class AankoopTriggerDialog extends JDialog implements TableModelListener,
 	DataSource ds;
 	Connection con;
 
-	public AankoopTriggerDialog(EffectenFrame theParent)
+	public VerkoopTriggerDialog(EffectenFrame theParent)
 	{
-		super(theParent,"Aankoop triggers",false);
+		super(theParent,"Verkoop triggers",false);
 		theEFrame = theParent;
 		theEList = theParent.getEList();
 		theTList = theParent.getTList();
 		ds = theParent.getDs();
 		con = theParent.getCon();
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		theTable = createAankoopTriggerTable();
+		theTable = createVerkoopTriggerTable();
 		
 //		table.setAutoCreateRowSorter(true);
 		JScrollPane scrollPane = new JScrollPane(theTable,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		theTable.setFillsViewportHeight(true);
 		scrollPane.setAutoscrolls(true);
-		scrollPane.setMinimumSize(new Dimension(4000, 250));
-		scrollPane.setPreferredSize(new Dimension(400, 250));
+		scrollPane.setMinimumSize(new Dimension(400, 250));
+		scrollPane.setPreferredSize(new Dimension(500, 250));
 //		scrollPane.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 		scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 0,0));
 		this.add(scrollPane,BorderLayout.CENTER);
@@ -180,8 +180,8 @@ public class AankoopTriggerDialog extends JDialog implements TableModelListener,
 		
 		this.add(buttonPane, BorderLayout.SOUTH);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setMinimumSize(new Dimension(650,380));
-		setPreferredSize(new Dimension(650,380));
+		setMinimumSize(new Dimension(680,380));
+		setPreferredSize(new Dimension(680,380));
 		setLocationRelativeTo(null);
 		
 		setVisible(true);
@@ -194,48 +194,49 @@ public class AankoopTriggerDialog extends JDialog implements TableModelListener,
 		RowFilter<DefaultTableModel,Object> rf1 = null;
 		if(selectTickerButton.getSelectedItem().toString().compareTo("All")!=0)
 		{
-			rf1=RowFilter.regexFilter(selectTickerButton.getSelectedItem().toString(), theAKTList.colTickerId);
+			rf1=RowFilter.regexFilter(selectTickerButton.getSelectedItem().toString(), theVKTList.colTickerId);
 		}
 		else
-			rf1=RowFilter.notFilter(RowFilter.regexFilter(selectTickerButton.getSelectedItem().toString(), theAKTList.colTickerId));
+			rf1=RowFilter.notFilter(RowFilter.regexFilter(selectTickerButton.getSelectedItem().toString(), theVKTList.colTickerId));
 		rfs.add(rf1);
 		
 		RowFilter<DefaultTableModel,Object> rf2 = null;
 		if(selectStatusButton.getSelectedItem().toString().compareTo("All")!=0)
 		{
-			rf2=RowFilter.regexFilter(selectStatusButton.getSelectedItem().toString(), theAKTList.colStatus);
+			rf2=RowFilter.regexFilter(selectStatusButton.getSelectedItem().toString(), theVKTList.colStatus);
 		}
 		else
-			rf2=RowFilter.notFilter(RowFilter.regexFilter(selectStatusButton.getSelectedItem().toString(), theAKTList.colStatus));
+			rf2=RowFilter.notFilter(RowFilter.regexFilter(selectStatusButton.getSelectedItem().toString(), theVKTList.colStatus));
 		rfs.add(rf2);
 		sorter.setRowFilter(RowFilter.andFilter(rfs));
 	}
 	void getTableData()
 	{
-		theAKTList = new AankoopTriggerList(ds);
+		theVKTList = new VerkoopTriggerList(ds);
 		theTCList = new TriggerCodeList(ds);
-		tableData = theAKTList.getTableData();
-		columnNames = theAKTList.getColumnNames();
+		tableData = theVKTList.getTableData();
+		columnNames = theVKTList.getColumnNames();
 		
 		for(int i=0;i<tableData.length;i++)
 		{
-    	tableData[i][theAKTList.colWaarde]=((BigDecimal)tableData[i][theAKTList.colWaarde]).setScale(2, BigDecimal.ROUND_HALF_DOWN);
-  		tableData[i][theAKTList.colGemAankWaarde] = ((BigDecimal)tableData[i][theAKTList.colGemAankWaarde]).setScale(2, BigDecimal.ROUND_HALF_DOWN);
-  		tableData[i][theAKTList.colDoelKoers] = ((BigDecimal)tableData[i][theAKTList.colDoelKoers]).setScale(2, BigDecimal.ROUND_HALF_DOWN); 
-   		tableData[i][theAKTList.colInvestering] = ((BigDecimal)tableData[i][theAKTList.colInvestering]).setScale(2, BigDecimal.ROUND_HALF_DOWN); 
-   		String date = tableData[i][theAKTList.colDatum].toString();
+    	tableData[i][theVKTList.colWaarde]=((BigDecimal)tableData[i][theVKTList.colWaarde]).setScale(2, BigDecimal.ROUND_HALF_DOWN);
+  		tableData[i][theVKTList.colGemAankWaarde] = ((BigDecimal)tableData[i][theVKTList.colGemAankWaarde]).setScale(2, BigDecimal.ROUND_HALF_DOWN);
+  		tableData[i][theVKTList.colDoelKoers] = ((BigDecimal)tableData[i][theVKTList.colDoelKoers]).setScale(2, BigDecimal.ROUND_HALF_DOWN); 
+   		tableData[i][theVKTList.colOmzet] = ((BigDecimal)tableData[i][theVKTList.colOmzet]).setScale(2, BigDecimal.ROUND_HALF_DOWN); 
+  		tableData[i][theVKTList.colWinst] = ((BigDecimal)tableData[i][theVKTList.colWinst]).setScale(2, BigDecimal.ROUND_HALF_DOWN); 
+   		String date = tableData[i][theVKTList.colDatum].toString();
    		if(date.length()>10)
    		{
-   			tableData[i][theAKTList.colDatum]=date.substring(0,10);
+   			tableData[i][theVKTList.colDatum]=date.substring(0,10);
    		}
 		}
 	}
 	
-	JTable createAankoopTriggerTable()
+	JTable createVerkoopTriggerTable()
 	{
 		getTableData();
 		
-	  final Class<?>[] columnClass = new Class<?>[] {Integer.class, String.class, String.class, BigDecimal.class, Integer.class, BigDecimal.class, BigDecimal.class, BigDecimal.class, String.class, String.class};
+	  final Class<?>[] columnClass = new Class<?>[] {Integer.class, String.class, String.class, BigDecimal.class, Integer.class, BigDecimal.class, BigDecimal.class, BigDecimal.class, BigDecimal.class, String.class, String.class};
 
 		tableModel = new DefaultTableModel()
 		{
@@ -247,17 +248,17 @@ public class AankoopTriggerDialog extends JDialog implements TableModelListener,
 				boolean canDo = false;
 				if(row<tableData.length)
 				{
-					if(tableData[row][theAKTList.colStatus].toString().compareTo("Uitgevoerd")==0)
+					if(tableData[row][theVKTList.colStatus].toString().compareTo("Uitgevoerd")==0)
 						return canDo;
 				}
-				if(	getValueAt(row,theAKTList.colStatus)==null || 
-						getValueAt(row,theAKTList.colStatus).toString().compareTo("Nieuw")==0 ||
-						getValueAt(row,theAKTList.colStatus).toString().compareTo("Wijzigen")==0
+				if(	getValueAt(row,theVKTList.colStatus)==null || 
+						getValueAt(row,theVKTList.colStatus).toString().compareTo("Nieuw")==0 ||
+						getValueAt(row,theVKTList.colStatus).toString().compareTo("Wijzigen")==0
 					)
 				{
 					canDo = true;
 				}
-	      if((column>0 && column<theAKTList.colGemAankWaarde && canDo) || column > theAKTList.colInvestering)
+	      if((column>0 && column<theVKTList.colGemAankWaarde && canDo) || column > theVKTList.colWinst)
 	      {
 	      	return true;
 	      }
@@ -275,13 +276,13 @@ public class AankoopTriggerDialog extends JDialog implements TableModelListener,
 		
 		for(int i=0;i<tableData.length;i++)
 		{
-    	if(tableData[i][theAKTList.colStatus] == null) 
+    	if(tableData[i][theVKTList.colStatus] == null) 
     	{ 
-    		tableData[i][theAKTList.colStatus] = " "; 
+    		tableData[i][theVKTList.colStatus] = " "; 
     	}
 		}
 		tableModel.setDataVector(tableData, columnNames);
-		tableModel.addRow(new Object[] {0, "", "", BigDecimal.ZERO, 0, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, "Nieuw", ""});
+		tableModel.addRow(new Object[] {0, "", "", BigDecimal.ZERO, 0, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, "Nieuw", ""});
 		
 		tableModel.addTableModelListener(this);
 		sorter = new TableRowSorter<DefaultTableModel>(tableModel);
@@ -327,7 +328,7 @@ public class AankoopTriggerDialog extends JDialog implements TableModelListener,
 	{
 		int countSQLStatements = 0;
 		int newRowCount = tableModel.getRowCount();
-		int oldRowCount = theAKTList.getRowCount();
+		int oldRowCount = theVKTList.getRowCount();
 //		System.out.println("newRowCount = "+newRowCount);
 //		System.out.println("oldRowCount = "+oldRowCount);
 		while(newRowCount>0 && tableModel.getValueAt(newRowCount-1,1)==null) newRowCount--;
@@ -336,7 +337,7 @@ public class AankoopTriggerDialog extends JDialog implements TableModelListener,
 
 		for(int i=0; i <oldRowCount; i++)
 		{
-			StringBuilder sb = new StringBuilder("UPDATE `AankoopTrigger` SET ");
+			StringBuilder sb = new StringBuilder("UPDATE `VerkoopTrigger` SET ");
 			boolean bFound = false;
 			for(int j=1; j<columnNames.length; j++)
 			{
@@ -359,25 +360,26 @@ public class AankoopTriggerDialog extends JDialog implements TableModelListener,
 		{
 			try
 			{
-				if(tableModel.getValueAt(i, theAKTList.colTickerId).toString().isEmpty()) continue;
-				if(tableModel.getValueAt(i, theAKTList.colCode).toString().isEmpty()) continue;
-				// INSERT INTO `AankoopTrigger` (`Id`,`TickerId`,`Code`,`Waarde`,	`Aantal` )
+				if(tableModel.getValueAt(i, theVKTList.colTickerId).toString().isEmpty()) continue;
+				if(tableModel.getValueAt(i, theVKTList.colCode).toString().isEmpty()) continue;
+				// INSERT INTO `VerkoopTrigger` (`Id`,`TickerId`,`Code`,`Waarde`,	`Aantal` )
 				// VALUES (
-				StringBuilder sb = new StringBuilder("INSERT INTO `AankoopTrigger`");
+				StringBuilder sb = new StringBuilder("INSERT INTO `VerkoopTrigger`");
 				sb.append('(');
-				sb.append("`TickerId`,`Code`,`Waarde`,`Aantal`,`Gem.Aank.Waarde`,`Aankoop koers`,`Investering`,`Status`,`Datum` ");
+				sb.append("`TickerId`,`Code`,`Waarde`,`Aantal`,`Gem.Aank.Waarde`,`Verkoop koers`,`Omzet`,`Winst`,`Status`,`Datum` ");
 				sb.append(')');
 				sb.append(" VALUES ");
 				sb.append('(');
-				sb.append("\""+tableModel.getValueAt(i, theAKTList.colTickerId).toString()+"\", ");
-				sb.append("\""+tableModel.getValueAt(i, theAKTList.colCode).toString()+"\", ");
-				sb.append("\""+tableModel.getValueAt(i, theAKTList.colWaarde).toString()+"\", ");
-				sb.append("\""+tableModel.getValueAt(i, theAKTList.colAantal).toString()+"\", ");
-				sb.append("\""+tableModel.getValueAt(i, theAKTList.colGemAankWaarde).toString()+"\", ");
-				sb.append("\""+tableModel.getValueAt(i, theAKTList.colDoelKoers).toString()+"\", ");
-				sb.append("\""+tableModel.getValueAt(i, theAKTList.colInvestering).toString()+"\", ");
-				sb.append("\""+tableModel.getValueAt(i, theAKTList.colStatus).toString()+"\", ");
-				sb.append("\""+tableModel.getValueAt(i, theAKTList.colDatum).toString()+"\" ");
+				sb.append("\""+tableModel.getValueAt(i, theVKTList.colTickerId).toString()+"\", ");
+				sb.append("\""+tableModel.getValueAt(i, theVKTList.colCode).toString()+"\", ");
+				sb.append("\""+tableModel.getValueAt(i, theVKTList.colWaarde).toString()+"\", ");
+				sb.append("\""+tableModel.getValueAt(i, theVKTList.colAantal).toString()+"\", ");
+				sb.append("\""+tableModel.getValueAt(i, theVKTList.colGemAankWaarde).toString()+"\", ");
+				sb.append("\""+tableModel.getValueAt(i, theVKTList.colDoelKoers).toString()+"\", ");
+				sb.append("\""+tableModel.getValueAt(i, theVKTList.colOmzet).toString()+"\", ");
+				sb.append("\""+tableModel.getValueAt(i, theVKTList.colWinst).toString()+"\", ");
+				sb.append("\""+tableModel.getValueAt(i, theVKTList.colStatus).toString()+"\", ");
+				sb.append("\""+tableModel.getValueAt(i, theVKTList.colDatum).toString()+"\" ");
 				sb.append(");");
 				theResult[i]=sb.toString();
 				countSQLStatements++;
@@ -457,7 +459,7 @@ public class AankoopTriggerDialog extends JDialog implements TableModelListener,
 		}
 		else if(code.compareTo("P")==0)
 		{
-			result = refValue.multiply(new BigDecimal(100).subtract(delta));
+			result = refValue.multiply(new BigDecimal(100).add(delta));
 			result = result.divide(new BigDecimal(100),2, RoundingMode.HALF_DOWN);
 		}
 		return result;
@@ -466,8 +468,6 @@ public class AankoopTriggerDialog extends JDialog implements TableModelListener,
 	@Override
 	public void valueChanged(ListSelectionEvent e)
 	{
-		// TODO Auto-generated method stub
-//		System.out.println("valueChanged called "+e.toString());
 		if(e.getValueIsAdjusting()) return;
 		DefaultListSelectionModel sm = (DefaultListSelectionModel)e.getSource();
 		if(sm.isSelectionEmpty())
@@ -477,7 +477,7 @@ public class AankoopTriggerDialog extends JDialog implements TableModelListener,
 		}
 		selectedRow = sm.getMinSelectionIndex();
 		int newRowCount = tableModel.getRowCount();
-		int oldRowCount = theAKTList.getRowCount();
+		int oldRowCount = theVKTList.getRowCount();
 		if(selectedRow<oldRowCount || oldRowCount+1==newRowCount)
 		{
 	    if(removeButton.isEnabled()) removeButton.setEnabled(false);			
@@ -495,57 +495,59 @@ public class AankoopTriggerDialog extends JDialog implements TableModelListener,
 		int row = e.getFirstRow();
     int column = e.getColumn();
     DefaultTableModel model = (DefaultTableModel)e.getSource();
-    if(column==theAKTList.colDatum)
+    if(column==theVKTList.colDatum)
     {
  //   	System.out.println("colDatum! in tableChanged");
     }
-    if(column==theAKTList.colCode)
+    if(column==theVKTList.colCode)
     {
 //       	System.out.println("colCode in tableChanged");
     }
-    if(column==theAKTList.colWaarde || column==theAKTList.colAantal)
+    if(column==theVKTList.colWaarde || column==theVKTList.colAantal || column==theVKTList.colCode)
     {
-    	BigDecimal gemiddeldeAankoopKoers = theTList.getGemiddeldeAankoopKoers((String)model.getValueAt(row, theAKTList.colTickerId));
-    	if(column==theAKTList.colWaarde)
+    	BigDecimal gemiddeldeAankoopKoers = theTList.getGemiddeldeAankoopKoers((String)model.getValueAt(row, theVKTList.colTickerId));
+    	if(column==theVKTList.colWaarde || column==theVKTList.colCode)
     	{ 
-    		model.setValueAt(gemiddeldeAankoopKoers,row,theAKTList.colGemAankWaarde);
+    		model.setValueAt(gemiddeldeAankoopKoers,row,theVKTList.colGemAankWaarde);
     	}
 //     	System.out.println("model.getValueAt(row, colCode) = "+model.getValueAt(row, colCode)+", model.getValueAt(row, colWaarde) = "+model.getValueAt(row, colWaarde));
 //    	System.out.println("model.getValueAt(row, colWaarde) class = "+model.getValueAt(row, colWaarde).getClass().getName());
 //    	System.out.println("String.class = "+String.class);
     	BigDecimal delta = BigDecimal.ZERO;
-    	if(model.getValueAt(row, theAKTList.colWaarde).getClass()==String.class)
+    	if(model.getValueAt(row, theVKTList.colWaarde).getClass()==String.class)
     	{
-    		delta = new BigDecimal((String)model.getValueAt(row, theAKTList.colWaarde));
+    		delta = new BigDecimal((String)model.getValueAt(row, theVKTList.colWaarde));
     	}
     	else
     	{
-    		delta = (BigDecimal)model.getValueAt(row, theAKTList.colWaarde);
+    		delta = (BigDecimal)model.getValueAt(row, theVKTList.colWaarde);
     	}
-    	BigDecimal doelKoers = berekenKoers((String)model.getValueAt(row, theAKTList.colCode),gemiddeldeAankoopKoers, delta);
-    	if(column==theAKTList.colWaarde)
+    	BigDecimal doelKoers = berekenKoers((String)model.getValueAt(row, theVKTList.colCode),gemiddeldeAankoopKoers, delta);
+    	if(column==theVKTList.colWaarde || column==theVKTList.colCode)
     	{
-    		model.setValueAt(doelKoers,row,theAKTList.colDoelKoers);
+    		model.setValueAt(doelKoers,row,theVKTList.colDoelKoers);
     	}
     	BigDecimal count = BigDecimal.ZERO;
-    	if(model.getValueAt(row, theAKTList.colAantal)!=null)
+    	if(model.getValueAt(row, theVKTList.colAantal)!=null)
     	{
-	    	if(model.getValueAt(row,theAKTList. colAantal).getClass()==Integer.class)
+	    	if(model.getValueAt(row,theVKTList. colAantal).getClass()==Integer.class)
 	    	{
-	       	Integer iCount = (Integer)model.getValueAt(row, theAKTList.colAantal);
+	       	Integer iCount = (Integer)model.getValueAt(row, theVKTList.colAantal);
 	        count = new BigDecimal(iCount);   		
 	    	}
 	    	else
 	    	{
-	    		String sCount = (String)model.getValueAt(row, theAKTList.colAantal);
+	    		String sCount = (String)model.getValueAt(row, theVKTList.colAantal);
 	    		count = new BigDecimal(sCount);
 	    	}
     	}
-    	model.setValueAt(doelKoers.multiply(count), row, theAKTList.colInvestering);
+    	model.setValueAt(doelKoers.multiply(count), row, theVKTList.colOmzet);
+    	BigDecimal winst=doelKoers.subtract(gemiddeldeAankoopKoers).multiply(count);
+    	model.setValueAt(winst,row, theVKTList.colWinst);
     }
     if(row+1==model.getRowCount())
     {
-    	model.addRow(new Object[] {0, "", "", BigDecimal.ZERO, 0, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, "Nieuw", ""});
+    	model.addRow(new Object[] {0, "", "", BigDecimal.ZERO, 0, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, BigDecimal.ZERO, "Nieuw", ""});
 //    	model.fireTableRowsInserted(row+1, row+1);
     	if(!removeButton.isEnabled()) removeButton.setEnabled(true);
     }

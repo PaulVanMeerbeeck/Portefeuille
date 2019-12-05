@@ -10,23 +10,25 @@ import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.ScrollPaneConstants;
 
 import portefeuille.tables.DividentUitkeringenList;
 import portefeuille.util.ColumnsAutoSizer;
 import portefeuille.util.DataTableModel;
 
-public class DividentUitkeringDiallog extends JDialog
+public class DividentUitkeringDialog extends JDialog
 {
 	private static final long serialVersionUID = 1L;
 	
 	EffectenFrame theEFrame;
 	
-	final Dimension dim = new Dimension(460,500);
+	final Dimension dim = new Dimension(460,520);
 	
 	DataSource ds;
 
-	public DividentUitkeringDiallog(EffectenFrame theParent)
+	public DividentUitkeringDialog(EffectenFrame theParent)
 	{
 		super(theParent,"Divident Uitekeringen Vooruitzicht");
 		theEFrame = theParent;
@@ -39,12 +41,15 @@ public class DividentUitkeringDiallog extends JDialog
 		table.setSelectionBackground(Color.LIGHT_GRAY);
 		ColumnsAutoSizer as = new ColumnsAutoSizer();
 		as.sizeColumnsToFit(table);
+		
+		JScrollPane scrollPane = new JScrollPane(table,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		table.setFillsViewportHeight(true);
+		scrollPane.setAutoscrolls(true);
+		scrollPane.setMinimumSize(dim);
+		scrollPane.setPreferredSize(dim);
+		scrollPane.setBorder(BorderFactory.createEmptyBorder(5, 5, 0,5));
+		this.add(scrollPane, BorderLayout.CENTER);
 
-		JPanel tablePane = new JPanel(new BorderLayout());
-		tablePane.setBorder(BorderFactory.createEmptyBorder(5, 5, 0,5));
-		tablePane.add(table.getTableHeader(), BorderLayout.NORTH);
-		tablePane.add(table,BorderLayout.CENTER);
-    this.add(tablePane, BorderLayout.CENTER);
   	JPanel buttonPane  = new JPanel();
   	buttonPane.setBorder(BorderFactory.createEmptyBorder(5, 0, 0,0));
   	
@@ -59,8 +64,8 @@ public class DividentUitkeringDiallog extends JDialog
     buttonPane.add(button,BorderLayout.EAST);
     this.add(buttonPane,BorderLayout.PAGE_END);    
 		setSize(dim);
-		setMinimumSize(dim);
-		setMaximumSize(dim);
+//		setMinimumSize(dim);
+//		setMaximumSize(dim);
 		setLocationRelativeTo(null);
 
 		setVisible(true);

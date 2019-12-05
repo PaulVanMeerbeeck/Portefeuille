@@ -34,7 +34,7 @@ public class ResultSetTableModel extends AbstractTableModel
 	{
 		try
 		{
-			return rsmd.getColumnName(c+1);
+			return rsmd.getColumnLabel(c+1);
 		}
 		catch(SQLException e)
 		{
@@ -95,6 +95,7 @@ public class ResultSetTableModel extends AbstractTableModel
 			{
 				String className = rsmd.getColumnClassName(columnIndex+1);
 				if(className.contains("Integer")) return Number.class;
+				if(className.contains("Long")) return Number.class;
 				if(className.contains("BigDecimal")) return Number.class;
 				if(className.contains("String")) return String.class;
 //				if(className.contains("Date")) return Date.class;

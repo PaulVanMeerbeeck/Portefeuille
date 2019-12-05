@@ -22,6 +22,7 @@ public class EffectenMenu extends JMenuBar implements ActionListener
 	JDialog dKalender;
 	JDialog dDivident;
 	JDialog dAKT;
+	JDialog dVKT;
 	JDialog dPreOct;
 	JDialog dDivVU;
 	EffectenFrame theEffectenFrame;
@@ -51,6 +52,10 @@ public class EffectenMenu extends JMenuBar implements ActionListener
 		miAankoopTrigger.setActionCommand("AKT");
 		miAankoopTrigger.addActionListener(this);
 		menuTables.add(miAankoopTrigger);
+		JMenuItem miVerkoopTrigger = new JMenuItem("Verkoop trigger");
+		miVerkoopTrigger.setActionCommand("VKT");
+		miVerkoopTrigger.addActionListener(this);
+		menuTables.add(miVerkoopTrigger);
 		
 		JMenu menuReports = new JMenu("Reports");
 		menuBar.add(menuReports);
@@ -105,6 +110,11 @@ public class EffectenMenu extends JMenuBar implements ActionListener
 			if(dAKT!=null && dAKT.isDisplayable()) return;
 			dAKT = new AankoopTriggerDialog(theEffectenFrame);
 		}
+		else if(action.compareTo("VKT")==0)
+		{
+			if(dVKT!=null && dVKT.isDisplayable()) return;
+			dVKT = new VerkoopTriggerDialog(theEffectenFrame);
+		}
 		else if(action.compareTo("miPreOct")==0)
 		{
 			if(dPreOct!=null && dPreOct.isDisplayable()) return;
@@ -113,7 +123,7 @@ public class EffectenMenu extends JMenuBar implements ActionListener
 		else if(action.compareTo("divVU")==0)
 		{
 			if(dDivVU!=null && dDivVU.isDisplayable()) return;
-			dDivVU = new DividentUitkeringDiallog(theEffectenFrame);
+			dDivVU = new DividentUitkeringDialog(theEffectenFrame);
 		}
 	}
 }

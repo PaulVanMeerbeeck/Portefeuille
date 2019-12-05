@@ -7,7 +7,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.sql.DataSource;
 
-public class AankoopTriggerList
+public class VerkoopTriggerList
 {
 	public final int colTickerId = 1;
 	public final int colCode = 2;
@@ -15,16 +15,17 @@ public class AankoopTriggerList
 	public final int colAantal = 4;
 	public final int colGemAankWaarde = 5;
 	public final int colDoelKoers = 6;
-	public final int colInvestering = 7;
-	public final int colStatus = 8;
-	public final int colDatum = 9;
+	public final int colOmzet = 7;
+	public final int colWinst = 8;
+	public final int colStatus =9;
+	public final int colDatum = 10;
 
 	Object[][] tableData;
 	Object[] columnNames;
 	int rowCount = 0;
 	int colCount = 0;
 
-	public AankoopTriggerList(DataSource ds)
+	public VerkoopTriggerList(DataSource ds)
 	{
 		super();
 		if(ds==null) return;
@@ -32,7 +33,7 @@ public class AankoopTriggerList
 		Connection con = null;
 		Statement stmtRM = null;
 		ResultSet rsRM = null;
-		String sql = "select * from AankoopTrigger order by Status, Datum";
+		String sql = "select * from VerkoopTrigger order by Status, Datum";
 		try 
 		{
 			con = ds.getConnection();

@@ -14,7 +14,6 @@ import javax.sql.DataSource;
 
 public class TransactieList extends ArrayList<Transactie>
 {
-
 	/**
 	 * 
 	 */
@@ -29,10 +28,21 @@ public class TransactieList extends ArrayList<Transactie>
 	public TransactieList(DataSource ds)
 	{
 		super();
+		String sql = "select * from transactie order by Datum";
+		makeList(ds,sql);
+	}
+
+	public TransactieList(DataSource ds, String sql)
+	{
+		super();
+		makeList(ds,sql);
+	}
+
+	private void makeList(DataSource ds,String sql)
+	{
 		Connection con = null;
 		Statement stmtRM = null;
 		ResultSet rsRM = null;
-		String sql = "select * from transactie order by Datum";
 		try 
 		{
 			con = ds.getConnection();
@@ -64,13 +74,11 @@ public class TransactieList extends ArrayList<Transactie>
 	public TransactieList(int initialCapacity)
 	{
 		super(initialCapacity);
-		// TODO Auto-generated constructor stub
 	}
 
 	public TransactieList(Collection<? extends Transactie> c)
 	{
 		super(c);
-		// TODO Auto-generated constructor stub
 	}
 	
 	public Object[][] getTransactieTableData()
@@ -96,46 +104,63 @@ public class TransactieList extends ArrayList<Transactie>
 		}
 	}
 
-	public BigDecimal getSharesPurchaseValue()
+	public BigDecimal getSharesPurchasedValue()
 	{
 		BigDecimal result = BigDecimal.ZERO;
 		for(Transactie t : this)
 		{
+			if(t.getNumber() < 0) continue;
 			BigDecimal count = new BigDecimal(t.getNumber());
 			BigDecimal shareValue = t.getPrice().multiply(count);
 			result=result.add(shareValue);
 		}
 		return result;		
 	}
-	
-	public BigDecimal getMakerlaarsCost()
+
+	public BigDecimal getSharesSoldValue()
 	{
 		BigDecimal result = BigDecimal.ZERO;
 		for(Transactie t : this)
 		{
+			if(t.getNumber() > 0) continue;
+			BigDecimal count = new BigDecimal(t.getNumber());
+			BigDecimal shareValue = t.getPrice().multiply(count);
+			result=result.subtract(shareValue);
+		}
+		return result;		
+	}
+	
+
+	public BigDecimal getMakerlaarsAankoopCost()
+	{
+		BigDecimal result = BigDecimal.ZERO;
+		for(Transactie t : this)
+		{
+			if(t.getNumber()<0) continue;
 			result=result.add(t.getMakelaarsloon());
 		}
 		return result;		
 	}
 
-	public BigDecimal getBeursTaks()
+	public BigDecimal getBeursAankoopTaks()
 	{
 		BigDecimal result = BigDecimal.ZERO;
 		for(Transactie t : this)
 		{
+			if(t.getNumber()<0) continue;
 			result=result.add(t.getBeurstaks());
 		}
 		return result;		
 	}
 
-	public BigDecimal getGemiddleAankoopKoers(String tickerId)
+	public BigDecimal getGemiddeldeAankoopKoers(String tickerId)
 	{
 		BigDecimal result = BigDecimal.ZERO, aankoopWaarde = BigDecimal.ZERO;
 		if(tickerId==null) return result;
 		int aantal=0;
 		for(Transactie t : this)
 		{
-			if(t.theTickerId.compareToIgnoreCase(tickerId)!=0) continue;
+			if(t.theTickerId.compareToIgnoreCase(tickerId)!=0 || t.getNumber() < 0) continue;
 			aankoopWaarde=aankoopWaarde.add(t.getPrice().multiply(new BigDecimal(t.getNumber())));
 			aankoopWaarde=aankoopWaarde.add(t.getMakelaarsloon());
 			aankoopWaarde=aankoopWaarde.add(t.getBeurstaks());
@@ -144,6 +169,48 @@ public class TransactieList extends ArrayList<Transactie>
 		if(aantal!=0)
 		{
 			result = aankoopWaarde.divide(new BigDecimal(aantal),2, RoundingMode.HALF_UP);
+		}
+		return result;
+	}
+	
+	public BigDecimal getMakerlaarsVerkoopCost()
+	{
+		BigDecimal result = BigDecimal.ZERO;
+		for(Transactie t : this)
+		{
+			if(t.getNumber()>0) continue;
+			result=result.add(t.getMakelaarsloon());
+		}
+		return result;		
+	}
+
+	public BigDecimal getBeursVerkoopTaks()
+	{
+		BigDecimal result = BigDecimal.ZERO;
+		for(Transactie t : this)
+		{
+			if(t.getNumber()>0) continue;
+			result=result.add(t.getBeurstaks());
+		}
+		return result;		
+	}
+
+	public BigDecimal getGemiddeldeVerkoopKoers(String tickerId)
+	{
+		BigDecimal result = BigDecimal.ZERO, verkoopWaarde = BigDecimal.ZERO;
+		if(tickerId==null) return result;
+		int aantal=0;
+		for(Transactie t : this)
+		{
+			if(t.theTickerId.compareToIgnoreCase(tickerId)!=0 || t.getNumber() > 0) continue;
+			verkoopWaarde=verkoopWaarde.add(t.getPrice().multiply(new BigDecimal(t.getNumber())));
+			verkoopWaarde=verkoopWaarde.subtract(t.getMakelaarsloon());
+			verkoopWaarde=verkoopWaarde.subtract(t.getBeurstaks());
+			aantal=aantal+t.getNumber();
+		}
+		if(aantal!=0)
+		{
+			result = verkoopWaarde.divide(new BigDecimal(aantal),2, RoundingMode.HALF_UP);
 		}
 		return result;
 	}

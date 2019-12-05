@@ -12,6 +12,13 @@ public class Effect
 	String theRisc;
 	BigDecimal theKoers;
 	BigDecimal theDivident;
+	int theAantalGekocht;
+	BigDecimal theAankoopWaarde;
+	BigDecimal theAankoopKost;
+	int theAantalVerkocht;
+	BigDecimal theVerkoopWaarde;
+	BigDecimal theVerkoopKost;
+
 
 	public Effect(String aName, String aTickerId, String aIsinCode, String aCategory, String aRisc, BigDecimal aKoers, BigDecimal aDivident)
 	{
@@ -22,12 +29,18 @@ public class Effect
 		theRisc=aRisc;
 		theKoers=aKoers;
 		theDivident=aDivident;
+		theAantalGekocht=0;
+		theAantalVerkocht=0;
+		theAankoopWaarde=BigDecimal.ZERO;
+		theAankoopKost=BigDecimal.ZERO;
+		theVerkoopWaarde=BigDecimal.ZERO;
+		theVerkoopKost=BigDecimal.ZERO;
 		return;		
 	}
 	
 	public String getName()
 	{
-		return theName;
+		return this.theName;
 	}
 
 	public void setName(String aName)
@@ -37,7 +50,7 @@ public class Effect
 
 	public String getTickerId()
 	{
-		return theTickerId;
+		return this.theTickerId;
 	}
 
 	public void setTickerId(String aTickerId)
@@ -47,7 +60,7 @@ public class Effect
 
 	public String getIsinCode()
 	{
-		return theIsinCode;
+		return this.theIsinCode;
 	}
 
 	public void setIsinCode(String aIsinCode)
@@ -57,7 +70,7 @@ public class Effect
 
 	public String getCategory()
 	{
-		return theCategory;
+		return this.theCategory;
 	}
 
 	public void setCategory(String aCategory)
@@ -67,7 +80,7 @@ public class Effect
 
 	public String getRisc()
 	{
-		return theRisc;
+		return this.theRisc;
 	}
 
 	public void setRisc(String aRisc)
@@ -77,7 +90,7 @@ public class Effect
 
 	public BigDecimal getKoers()
 	{
-		return theKoers;
+		return this.theKoers;
 	}
 
 	public void setKoers(BigDecimal aKoers)
@@ -87,12 +100,72 @@ public class Effect
 
 	public BigDecimal getDivident()
 	{
-		return theDivident;
+		return this.theDivident;
 	}
 
 	public void setDivident(BigDecimal aDivident)
 	{
 		this.theDivident = aDivident;
+	}
+
+	public int getAantalGekocht()
+	{
+		return this.theAantalGekocht;
+	}
+
+	public void setAantalGekocht(int aAantalGekocht)
+	{
+		this.theAantalGekocht = aAantalGekocht;
+	}
+
+	public BigDecimal getAankoopWaarde()
+	{
+		return this.theAankoopWaarde;
+	}
+
+	public void setAankoopWaarde(BigDecimal aAankoopWaarde)
+	{
+		this.theAankoopWaarde = aAankoopWaarde;
+	}
+
+	public BigDecimal getAankoopKost()
+	{
+		return this.theAankoopKost;
+	}
+
+	public void setAankoopKost(BigDecimal aAankoopKost)
+	{
+		this.theAankoopKost = aAankoopKost;
+	}
+	
+	public int getAantalVerkocht()
+	{
+		return this.theAantalVerkocht;
+	}
+	
+	public void setAantalVerkocht(int aAantalVerkocht)
+	{
+		this.theAantalVerkocht = aAantalVerkocht;
+	}
+	
+	public BigDecimal getVerkoopWaarde()
+	{
+		return this.theVerkoopWaarde;
+	}
+	
+	public void setVerkoopWaarde(BigDecimal aVerkoopWaarde)
+	{
+		this.theVerkoopWaarde = aVerkoopWaarde;
+	}
+
+	public BigDecimal getVerkoopKost()
+	{
+		return this.theVerkoopKost;
+	}
+	
+	public void setVerkoopKost(BigDecimal aVerkoopKost)
+	{
+		this.theVerkoopKost = aVerkoopKost;
 	}
 
 	public ArrayList<String> getFieldNames()
@@ -101,10 +174,16 @@ public class Effect
 		l.add("Naam");
 		l.add("TickerId");
 		l.add("IsinCode");
-		l.add("Category");
-		l.add("Risc");
+		l.add("Categorie");
+		l.add("Risico");
 		l.add("Koers");
-		l.add("Divident");
+		l.add("Div");
+		l.add("AantalGekocht");
+		l.add("AankoopWaarde");
+		l.add("AankoopKost");
+		l.add("AantalVerkocht");
+		l.add("VerkoopWaarde");
+		l.add("VerkoopKost");
 		return l;
 	}
 	
@@ -118,6 +197,12 @@ public class Effect
 		l.add(theRisc);
 		l.add(theKoers);
 		l.add(theDivident);
+		l.add(theAantalGekocht);
+		l.add(theAankoopWaarde);
+		l.add(theAankoopKost);
+		l.add(theAantalVerkocht);
+		l.add(theVerkoopWaarde);
+		l.add(theVerkoopKost);
 		return l;
 	}
 	

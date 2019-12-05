@@ -16,6 +16,7 @@ public class DataSourceFactory
 	
 		try
 		{
+//			System.out.println("ConfigId = "+configId);
 			theConfig = new Config();
 			String fileName = String.format("%s_schema.properties", configId);
 			props = theConfig.getProperties(fileName);

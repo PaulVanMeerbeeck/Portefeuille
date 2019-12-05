@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
+import portefeuille.http.Client;
 import portefeuille.screens.EffectenFrame;
 import portefeuille.tables.DataSourceFactory;
 import portefeuille.tables.DividentList;
@@ -37,11 +38,11 @@ public class Portefeuille
 		TransactieList theTransactionList = new TransactieList(ds);
 		ToestandList theToestandList = new ToestandList(ds);
 		DividentList theDividentList = new DividentList(ds);
-		BigDecimal sharesPurchaseValue = theTransactionList.getSharesPurchaseValue();
-		BigDecimal makelaarsCost = theTransactionList.getMakerlaarsCost();
-		BigDecimal beursTaks = theTransactionList.getBeursTaks();
+		BigDecimal sharesPurchasedValue = theTransactionList.getSharesPurchasedValue();
+		BigDecimal makelaarsCost = theTransactionList.getMakerlaarsAankoopCost();
+		BigDecimal beursTaks = theTransactionList.getBeursAankoopTaks();
 		BigDecimal thePresentValue = theToestandList.getTotalPresentValueShares();
-		BigDecimal winst = thePresentValue.subtract(sharesPurchaseValue).subtract(makelaarsCost).subtract(beursTaks);
+		BigDecimal winst = thePresentValue.subtract(sharesPurchasedValue).subtract(makelaarsCost).subtract(beursTaks);
 		System.out.println("Aantal effecten = "+theEffectList.size());
 		theEffectList.print();
 		System.out.println("Aantal transacties = "+theTransactionList.size());
@@ -49,10 +50,10 @@ public class Portefeuille
 		System.out.println("Aantal toestanden = "+theToestandList.size());
 		theToestandList.print();
 		System.out.printf("Winst (verlies) volgens toestand is: %(,.2f€\n", theToestandList.getTotalProfits());
-		System.out.printf("Total share value at purchase price %,.2f€\n",sharesPurchaseValue);
+		System.out.printf("Total share value at purchase price %,.2f€\n",sharesPurchasedValue);
 		System.out.printf("Total Makerlaars cost %,.2f€\n",makelaarsCost);
 		System.out.printf("Total Beurs taks %,.2f€\n",beursTaks);
-		System.out.printf("Total investment is: %,.2f€\n", sharesPurchaseValue.add(makelaarsCost).add(beursTaks));
+		System.out.printf("Total investment is: %,.2f€\n", sharesPurchasedValue.add(makelaarsCost).add(beursTaks));
 		System.out.printf("Huidige waarde is: %,.2f€\n", thePresentValue);
 		System.out.printf("Winst (verlies) is: %(,.2f€\n", winst);
 		System.out.println();
@@ -69,10 +70,10 @@ public class Portefeuille
 			}
 		}
 
-		System.out.printf("Total share value purchased since 01/10/2018  %,.2f€\n",selectedTransactions.getSharesPurchaseValue());
-		System.out.printf("Total Oct Makerlaars cost %,.2f€\n",selectedTransactions.getMakerlaarsCost());
-		System.out.printf("Total Oct Beurs taks %,.2f€\n",selectedTransactions.getBeursTaks());
-		BigDecimal octInvest = selectedTransactions.getSharesPurchaseValue().add(selectedTransactions.getMakerlaarsCost()).add(selectedTransactions.getBeursTaks());
+		System.out.printf("Total share value purchased since 01/10/2018  %,.2f€\n",selectedTransactions.getSharesPurchasedValue());
+		System.out.printf("Total Oct Makerlaars cost %,.2f€\n",selectedTransactions.getMakerlaarsAankoopCost());
+		System.out.printf("Total Oct Beurs taks %,.2f€\n",selectedTransactions.getBeursAankoopTaks());
+		BigDecimal octInvest = selectedTransactions.getSharesPurchasedValue().add(selectedTransactions.getMakerlaarsAankoopCost()).add(selectedTransactions.getBeursAankoopTaks());
 		System.out.printf("Total Oct investment is: %,.2f€\n", octInvest);
 
 		BigDecimal octValue = BigDecimal.ZERO;
@@ -101,10 +102,10 @@ public class Portefeuille
 			}
 		}
 
-		System.out.printf("Total share value purchased before 01/10/2018  %,.2f€\n",selectedTransactions.getSharesPurchaseValue());
-		System.out.printf("Total preOct2018 Makerlaars cost %,.2f€\n",selectedTransactions.getMakerlaarsCost());
-		System.out.printf("Total preOct2018 Beurs taks %,.2f€\n",selectedTransactions.getBeursTaks());
-		BigDecimal preOctInvest = selectedTransactions.getSharesPurchaseValue().add(selectedTransactions.getMakerlaarsCost()).add(selectedTransactions.getBeursTaks());
+		System.out.printf("Total share value purchased before 01/10/2018  %,.2f€\n",selectedTransactions.getSharesPurchasedValue());
+		System.out.printf("Total preOct2018 Makerlaars cost %,.2f€\n",selectedTransactions.getMakerlaarsAankoopCost());
+		System.out.printf("Total preOct2018 Beurs taks %,.2f€\n",selectedTransactions.getBeursAankoopTaks());
+		BigDecimal preOctInvest = selectedTransactions.getSharesPurchasedValue().add(selectedTransactions.getMakerlaarsAankoopCost()).add(selectedTransactions.getBeursAankoopTaks());
 		System.out.printf("Total Oct investment is: %,.2f€\n", preOctInvest);
 
 		BigDecimal preOctValue = BigDecimal.ZERO;
@@ -146,7 +147,9 @@ public class Portefeuille
 
 	public static void main(String[] args)
 	{
-
+/*		Client c = new Client();
+		String tata= c.get();
+		System.out.println(tata); */
 		try
 		{
 	//		new Portefeuille();

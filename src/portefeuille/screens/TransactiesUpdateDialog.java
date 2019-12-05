@@ -215,6 +215,7 @@ public class TransactiesUpdateDialog extends JDialog implements TableModelListen
 				JOptionPane.showMessageDialog(this,"Iets niet ingevuld?","Gegevens fout", JOptionPane.ERROR_MESSAGE);
 			}
 		}
+		if(countSQLStatements>0) countSQLStatements++;
 		String[] finalResult = new String[countSQLStatements];
 		int index = 0;
 		for(String s : theResult)
@@ -222,6 +223,40 @@ public class TransactiesUpdateDialog extends JDialog implements TableModelListen
 			if(s==null) continue;
 			finalResult[index]=s;
 			index++;
+		}
+		if(index>0)
+		{
+			finalResult[index]=	"UPDATE Effect \n"+ 
+													"SET AantalGekocht = (SELECT sum(transactie.Aantal) \n"+
+                          "                     FROM   transactie \n"+
+                          "                     WHERE  Effect.TickerId = transactie.Ticker  and transactie.Aantal > 0 \n"+
+                          "                     GROUP BY transactie.Ticker), \n"+
+													"    AankoopWaarde = (SELECT sum(transactie.Aantal*transactie.Prijs) \n"+
+													"                     FROM   transactie  \n"+
+													"                     WHERE  Effect.TickerId = transactie.Ticker and transactie.Aantal > 0 \n"+
+													"                     GROUP BY transactie.Ticker), \n"+
+													"    AankoopKost = (SELECT sum(transactie.Makelaarsloon+Beurstaks) \n"+
+													"                   FROM   transactie  \n"+
+													"                   WHERE  Effect.TickerId = transactie.Ticker and transactie.Aantal > 0 \n"+
+													"                   GROUP BY transactie.Ticker), \n"+
+													"    AantalVerkocht = (SELECT \n"+
+								          "                      IFNULL( (SELECT sum(transactie.Aantal)*-1 \n"+
+													"                               FROM   transactie  \n"+
+													"                               WHERE  Effect.TickerId = transactie.Ticker  and transactie.Aantal < 0 \n"+
+													"                               GROUP BY transactie.Ticker),0)), \n"+
+								          "    VerkoopWaarde = (SELECT \n"+
+								          "                    IFNULL( (SELECT sum(transactie.Aantal*transactie.Prijs)*-1 \n"+
+								          "                              FROM   transactie \n"+
+								          "                              WHERE  Effect.TickerId = transactie.Ticker and transactie.Aantal < 0  \n"+
+								          "                              GROUP BY transactie.Ticker), 0.0)),  \n"+
+								          "    VerkoopKost = (SELECT \n"+
+								          "                  IFNULL( (SELECT sum(transactie.Makelaarsloon+Beurstaks) \n"+
+								          "                           FROM   transactie  \n"+
+								          "                           WHERE  Effect.TickerId = transactie.Ticker and transactie.Aantal < 0 \n"+
+								          "                           GROUP BY transactie.Ticker), 0.0)) \n"+
+													"WHERE Effect.TickerId = (SELECT  distinct(transactie.Ticker)  \n"+
+													"                         FROM   transactie \n"+
+													"                         WHERE  Effect.TickerId = transactie.Ticker)";
 		}
 		return finalResult;
 	}

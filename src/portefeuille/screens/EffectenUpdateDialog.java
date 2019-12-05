@@ -8,10 +8,13 @@ import java.awt.Font;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Enumeration;
+import java.util.prefs.Preferences;
 
 import javax.sql.DataSource;
 import javax.swing.BorderFactory;
@@ -20,6 +23,7 @@ import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JDialog;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -31,6 +35,7 @@ import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
+import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
@@ -46,6 +51,7 @@ public class EffectenUpdateDialog extends JDialog implements TableModelListener,
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	final Preferences node=Preferences.userRoot().node("Portefeuille");
 	
 	Object[][] tableData;
 	Object[] columnNames;
@@ -70,13 +76,84 @@ public class EffectenUpdateDialog extends JDialog implements TableModelListener,
 		table.setFillsViewportHeight(true);
 		scrollPane.setAutoscrolls(true);
 		scrollPane.setMinimumSize(new Dimension(460, 250));
-		scrollPane.setPreferredSize(new Dimension(460, 250));
+		scrollPane.setPreferredSize(new Dimension(1060, 250));
 //		scrollPane.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 		scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 0,0));
 //		System.out.println("scrollPane is Focusable : "+scrollPane.isFocusable());
 		this.add(scrollPane,BorderLayout.CENTER);
 		
 		JPanel buttonPane  = new JPanel();
+		JButton fileButton = new JButton("File");
+		fileButton.setEnabled(true);
+		fileButton.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e)
+			{
+				File lastDirBoleroFile = new File(node.get("lastDirBoleroFile", "."));
+				JFileChooser chooseFile = new JFileChooser();
+				chooseFile.setCurrentDirectory(lastDirBoleroFile);
+				chooseFile.setDialogTitle("Open Bolero file");
+				chooseFile.setFileFilter(new FileFilter() {
+					@Override
+					public boolean accept(File f) {
+            // TODO Auto-generated method stub
+            return f.getName().endsWith(".csv");
+					}
+
+					@Override
+					public String getDescription() {
+            return "CSV files";
+					}
+        });
+				int result = chooseFile.showOpenDialog(getParent());
+				if(result==JFileChooser.APPROVE_OPTION)
+				{
+					String newFileLocation = chooseFile.getSelectedFile().getAbsolutePath();
+					lastDirBoleroFile=new File(chooseFile.getSelectedFile().getParent());
+					node.put("lastDirBoleroFile", lastDirBoleroFile.getPath());
+					Object[][] koersen = theEList.readBoleroFile(newFileLocation);
+					int aantal = koersen.length;
+					String[] sqllistTemp = new String[aantal];
+					int aantalSqlStatements=0;
+					for(int i=0; i<aantal; i++)
+					{
+						if(koersen[i][0] == null) continue;
+						StringBuilder sb = new StringBuilder("UPDATE `pvm`.`Effect` SET `Koers` = '"+koersen[i][1].toString()+"' ");
+						sb.append("WHERE `ISIN` = '"+koersen[i][0].toString()+"';");
+						sqllistTemp[aantalSqlStatements]=sb.toString();
+						aantalSqlStatements++;
+					}
+					String[] sqllist = new String[aantalSqlStatements];
+					int k=0;
+					for(int j=0; j<aantal; j++)
+					{
+						if(sqllistTemp[j]==null) continue;
+						sqllist[k]=sqllistTemp[j];
+						k++;
+					}
+					
+					if(confirmUpdates(sqllist))
+					{
+						String dbUpdateResult = updateEffectenTable(sqllist);
+						if(dbUpdateResult.compareTo("OK")==0)
+						{
+							String msg = String.format("%d row(s) updated!", sqllist.length);
+							JOptionPane.showMessageDialog((Component)e.getSource(),msg,"DB Update", JOptionPane.INFORMATION_MESSAGE);
+							theEFrame.CreateJFrameContents();
+							theEList = theEFrame.getEList();
+							theEFrame.validate();
+							setVisible(false);
+							dispose(); 
+						}
+						else
+						{
+							JOptionPane.showMessageDialog((Component)e.getSource(),dbUpdateResult,"DB Update - fout", JOptionPane.ERROR_MESSAGE);
+						}
+						
+					}
+				}
+			}});
+		buttonPane.add(fileButton,BorderLayout.WEST);
+
 		applyButton = new JButton("Apply");
 		applyButton.setEnabled(false);
 		applyButton.addActionListener(new ActionListener(){
@@ -104,7 +181,7 @@ public class EffectenUpdateDialog extends JDialog implements TableModelListener,
 					
 				}
 			}});
-		buttonPane.add(applyButton,BorderLayout.WEST);
+		buttonPane.add(applyButton,BorderLayout.CENTER);
 
 		JButton quitButton = new JButton("Quit");
 		quitButton.addActionListener(new ActionListener(){
@@ -117,7 +194,7 @@ public class EffectenUpdateDialog extends JDialog implements TableModelListener,
 		
 		this.add(buttonPane, BorderLayout.SOUTH);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
-		setSize(550, 320);
+		setSize(1050, 320);
 		setMinimumSize(new Dimension(550,320));
 		setLocationRelativeTo(null);
 		
@@ -149,9 +226,23 @@ public class EffectenUpdateDialog extends JDialog implements TableModelListener,
 	
 	JTable createEffectenTable()
 	{
+	  final Class<?>[] columnClass = new Class<?>[] 
+	  		{ String.class, String.class,String.class, String.class,
+	  			Integer.class, BigDecimal.class, BigDecimal.class, 
+	  			Integer.class, BigDecimal.class, BigDecimal.class, 
+	  			Integer.class, BigDecimal.class, BigDecimal.class };
 		tableData = theEList.getEffectTableData();
 		columnNames = theEList.get(0).getFieldNames().toArray();
-		tableModel = new DefaultTableModel();
+		tableModel = new DefaultTableModel()
+		{
+			private static final long serialVersionUID = 1L;
+
+			@Override
+      public Class<?> getColumnClass(int columnIndex)
+      {
+          return columnClass[columnIndex];
+      }
+		};
 		tableModel.setDataVector(tableData, columnNames);
 		tableModel.addRow(new Object[] {});
 		tableModel.addTableModelListener(this);
@@ -166,7 +257,7 @@ public class EffectenUpdateDialog extends JDialog implements TableModelListener,
 		while(cNames.hasMoreElements())
 		{
 			TableColumn c= cNames.nextElement();
-			if(c.getHeaderValue().toString().compareToIgnoreCase("Category")==0)
+			if(c.getHeaderValue().toString().compareToIgnoreCase("Categorie")==0)
 			{
 //		    System.out.println("Column name = "+c.getHeaderValue());
 				c.setCellEditor(new DefaultCellEditor(catCodesCombo));

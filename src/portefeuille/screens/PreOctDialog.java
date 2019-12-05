@@ -32,7 +32,7 @@ public class PreOctDialog extends JDialog
 	TransactieList theTList;
 	EffectenFrame theEFrame;
 	
-	final Dimension dim = new Dimension(450,225);
+	final Dimension dim = new Dimension(1162,225);
 	
 	DataSource ds;
 	Connection con;
@@ -80,16 +80,16 @@ public class PreOctDialog extends JDialog
 	
 	JTable CreateTable()
 	{
-		String[] columnNames = {"Omschrijving","Pre Oct 18", "Oct 18", "Nov 18", "Dec 18"};
+		String[] columnNames = {"Omschrijving","Pre Oct 18", "Oct 18", "Nov 18", "Dec 18", "Jan 19", "Feb 19", "Mar 19", "Apr 19", "May 19", "Jun 19", "Jul 19", "Aug 19", "Sep 19", "Oct 19", "Nov 19"};
 		Object[][] data = {
-				{ "Total share value purchased",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
-				{ "Total makerlaars cost",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
-				{ "Total beurs taks",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
-				{ "Total investment",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
-				{ " "," "," "," "," "},
-				{ "Present value of investement",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
-				{ "Present profit/loss €",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
-				{ "Present profit/loss %",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO}
+				{ "Total share value purchased",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
+				{ "Total makerlaars cost",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
+				{ "Total beurs taks",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
+				{ "Total investment",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
+				{ " "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "},
+				{ "Present value of investement",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
+				{ "Present profit/loss €",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
+				{ "Present profit/loss %",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO}
 		};
 		
 		int columnIndex = 1;
@@ -109,7 +109,62 @@ public class PreOctDialog extends JDialog
 		
 		columnIndex = 4;
 		fromDate = new GregorianCalendar(2018,11,1).getTime();
+		toDate = new GregorianCalendar(2019,0,1).getTime();
+		setTotals(fromDate,toDate,data,columnIndex);
+		
+		columnIndex = 5;
+		fromDate = new GregorianCalendar(2019,0,1).getTime();
+		toDate = new GregorianCalendar(2019,1,1).getTime();
+		setTotals(fromDate,toDate,data,columnIndex);
+		
+		columnIndex = 6;
+		fromDate = new GregorianCalendar(2019,1,1).getTime();
+		toDate = new GregorianCalendar(2019,2,1).getTime();
+		setTotals(fromDate,toDate,data,columnIndex);
+		
+		columnIndex = 7;
+		fromDate = new GregorianCalendar(2019,2,1).getTime();
+		toDate = new GregorianCalendar(2019,3,1).getTime();
+		setTotals(fromDate,toDate,data,columnIndex);
+		
+		columnIndex = 8;
+		fromDate = new GregorianCalendar(2019,3,1).getTime();
+		toDate = new GregorianCalendar(2019,4,1).getTime();
+		setTotals(fromDate,toDate,data,columnIndex);
+		
+		columnIndex = 9;
+		fromDate = new GregorianCalendar(2019,4,1).getTime();
+		toDate = new GregorianCalendar(2019,5,1).getTime();
+		setTotals(fromDate,toDate,data,columnIndex);
+		
+		columnIndex = 10;
+		fromDate = new GregorianCalendar(2019,5,1).getTime();
+		toDate = new GregorianCalendar(2019,6,1).getTime();
+		setTotals(fromDate,toDate,data,columnIndex);
+		
+		columnIndex = 11;
+		fromDate = new GregorianCalendar(2019,6,1).getTime();
+		toDate = new GregorianCalendar(2019,7,1).getTime();
+		setTotals(fromDate,toDate,data,columnIndex);
+		
+		columnIndex = 12;
+		fromDate = new GregorianCalendar(2019,7,1).getTime();
+		toDate = new GregorianCalendar(2019,8,1).getTime();
+		setTotals(fromDate,toDate,data,columnIndex);
+		
+		columnIndex = 13;
+		fromDate = new GregorianCalendar(2019,8,1).getTime();
+		toDate = new GregorianCalendar(2019,9,1).getTime();
+		setTotals(fromDate,toDate,data,columnIndex);
+		
+		columnIndex = 14;
+		fromDate = new GregorianCalendar(2019,9,1).getTime();
 		toDate = new GregorianCalendar(2019,10,1).getTime();
+		setTotals(fromDate,toDate,data,columnIndex);
+		
+		columnIndex = 15;
+		fromDate = new GregorianCalendar(2019,10,1).getTime();
+		toDate = new GregorianCalendar(2019,12,1).getTime();
 		setTotals(fromDate,toDate,data,columnIndex);
 		
 		DataTableModel model = new DataTableModel(data,columnNames);
@@ -129,12 +184,12 @@ public class PreOctDialog extends JDialog
 
 		for(Transactie t : theTList)
 		{
-			if(t.getDate().compareTo(toDate) < 0 && t.getDate().compareTo(fromDate) >= 0) 
+			if(t.getDate().compareTo(toDate) < 0 && t.getDate().compareTo(fromDate) >= 0 && t.getNumber() > 0) 
 			{
 				selectedTransactions.add(t);
 			}
 		}
-		BigDecimal invest = selectedTransactions.getSharesPurchaseValue().add(selectedTransactions.getMakerlaarsCost()).add(selectedTransactions.getBeursTaks());
+		BigDecimal invest = selectedTransactions.getSharesPurchasedValue().add(selectedTransactions.getMakerlaarsAankoopCost()).add(selectedTransactions.getBeursAankoopTaks());
 		BigDecimal presentValue = BigDecimal.ZERO;
 
 		for(Transactie t : selectedTransactions)
@@ -148,12 +203,19 @@ public class PreOctDialog extends JDialog
 		}
 
 		BigDecimal profit = presentValue.subtract(invest);
-		BigDecimal profitPercentage = presentValue.divide(invest,4,RoundingMode.CEILING);
-		profitPercentage=profitPercentage.subtract(BigDecimal.ONE);
-		profitPercentage=profitPercentage.multiply(new BigDecimal(100));
-		data[0][colIdx] = selectedTransactions.getSharesPurchaseValue().setScale(2, BigDecimal.ROUND_HALF_DOWN).setScale(2, BigDecimal.ROUND_HALF_DOWN);
-		data[1][colIdx] = selectedTransactions.getMakerlaarsCost().setScale(2, BigDecimal.ROUND_HALF_DOWN);
-		data[2][colIdx] = selectedTransactions.getBeursTaks().setScale(2, BigDecimal.ROUND_HALF_DOWN);
+		BigDecimal profitPercentage = BigDecimal.ZERO;
+		if(invest!=BigDecimal.ZERO)
+		{
+			profitPercentage = presentValue.divide(invest,4,RoundingMode.CEILING);
+		}
+		if(profitPercentage != BigDecimal.ZERO)
+		{
+			profitPercentage=profitPercentage.subtract(BigDecimal.ONE);
+			profitPercentage=profitPercentage.multiply(new BigDecimal(100));
+		}
+		data[0][colIdx] = selectedTransactions.getSharesPurchasedValue().setScale(2, BigDecimal.ROUND_HALF_DOWN); //  .setScale(2, BigDecimal.ROUND_HALF_DOWN);
+		data[1][colIdx] = selectedTransactions.getMakerlaarsAankoopCost().setScale(2, BigDecimal.ROUND_HALF_DOWN);
+		data[2][colIdx] = selectedTransactions.getBeursAankoopTaks().setScale(2, BigDecimal.ROUND_HALF_DOWN);
 		data[3][colIdx] = invest.setScale(2, BigDecimal.ROUND_HALF_DOWN);
 		data[5][colIdx] = presentValue.setScale(2, BigDecimal.ROUND_HALF_DOWN);
 		data[6][colIdx] = profit.setScale(2, BigDecimal.ROUND_HALF_DOWN);
