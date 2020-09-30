@@ -10,10 +10,10 @@ import javax.sql.DataSource;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-//import portefeuille.http.Client;
+import portefeuille.http.Client;
 import portefeuille.screens.EffectenFrame;
 import portefeuille.tables.DataSourceFactory;
-import portefeuille.tables.DividentList;
+import portefeuille.tables.DividendList;
 import portefeuille.tables.Effect;
 import portefeuille.tables.EffectList;
 import portefeuille.tables.ToestandList;
@@ -37,7 +37,7 @@ public class Portefeuille
 		EffectList theEffectList = new EffectList(ds);
 		TransactieList theTransactionList = new TransactieList(ds);
 		ToestandList theToestandList = new ToestandList(ds);
-		DividentList theDividentList = new DividentList(ds);
+		DividendList theDividendList = new DividendList(ds);
 		BigDecimal sharesPurchasedValue = theTransactionList.getSharesPurchasedValue();
 		BigDecimal makelaarsCost = theTransactionList.getMakerlaarsAankoopCost();
 		BigDecimal beursTaks = theTransactionList.getBeursAankoopTaks();
@@ -124,19 +124,19 @@ public class Portefeuille
 		System.out.printf("Winst preOct2018 (verlies) is: %(,.2f€\n", preOctWinst);
 
 		System.out.println();
-		System.out.println("Aantal dividenten = "+theDividentList.size());
-		theDividentList.print();
+		System.out.println("Aantal dividenden = "+theDividendList.size());
+		theDividendList.print();
 
 		System.out.println();
-		Map<String, DividentList> divMap = theDividentList.getDividentMap();
+		Map<String, DividendList> divMap = theDividendList.getDividendMap();
 
 		Set<String> keys= divMap.keySet();
 
 
 		for(String k: keys)
 		{
-			DividentList aList = divMap.get(k);
-			System.out.println("Divident lijst voor: "+k);
+			DividendList aList = divMap.get(k);
+			System.out.println("Dividend lijst voor: "+k);
 			aList.printTickerYearTotals();
 			System.out.println();
 		}

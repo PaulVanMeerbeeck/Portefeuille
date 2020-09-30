@@ -2,7 +2,6 @@ package portefeuille.screens;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -18,6 +17,8 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.Month;
 import java.util.List;
 import java.util.prefs.Preferences;
 
@@ -47,7 +48,9 @@ import portefeuille.tables.Effect;
 import portefeuille.tables.EffectList;
 import portefeuille.tables.TransactieList;
 import portefeuille.tables.MeerwaardenList;
+import portefeuille.util.BigDecimalRenderer;
 import portefeuille.util.ColumnsAutoSizer;
+import portefeuille.util.DataTableModel;
 import portefeuille.util.MacOSXController;
 import portefeuille.util.ResultSetTableModel;
 import portefeuille.util.WinstRenderer;
@@ -59,13 +62,13 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	 */
 	private static final long serialVersionUID = 1L;
 	final Preferences node=Preferences.userRoot().node("portefeuille");
-	final int DEFAULT_WIDTH = 1375;
+	final int DEFAULT_WIDTH = 1385;
 	final int DEFAULT_HEIGHT = 852; //652; //622
 	
 	final int bannerOneWidth = 600;
 	final int bannerTwoWidth = 350;
 	final int bannerThreeWidth = 250;
-	final int bannerFourWidth = 175;
+	final int bannerFourWidth = 185; //175
 	
 	boolean passwordValid = false;
 
@@ -74,7 +77,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	EffectenMenu menu;
 	JTable overzichtTableGlobal;
 	JTable transactiesTable;
-	JTable effectDividentenTable;
+	JTable effectDividendenTable;
 	JScrollPane overzicht;
 	JPanel totalsPane;
 	JPanel ePane;
@@ -83,9 +86,9 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	JPanel verkooporderPanel;
 	JPanel meerwaardenPanel;
 	JScrollPane transacties;
-	JScrollPane effectDividenten;
-	JScrollPane alleDividenten;
-	JScrollPane forecastDividenten;
+	JScrollPane effectDividenden;
+	JScrollPane alleDividenden;
+	JScrollPane forecastDividenden;
 	JLabel divInkomsten;
 	JLabel divForecast;
 	DataSource ds;
@@ -232,7 +235,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		add(cPane,gbc);
 		
 		if(divInkomsten!=null) remove(divInkomsten);
-		divInkomsten = new JLabel("Divident inkomsten");
+		divInkomsten = new JLabel("Dividend inkomsten");
 		divInkomsten.setPreferredSize(new Dimension(bannerThreeWidth, 20));
 		gbc.gridx=38;
 		gbc.gridy=0;
@@ -240,17 +243,17 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		gbc.gridheight=2;
 		add(divInkomsten,gbc);
 		
-		if(alleDividenten!=null) remove(alleDividenten);
+		if(alleDividenden!=null) remove(alleDividenden);
 		String sqlAlleDiv = "SELECT YEAR(Datum) AS Jaar,MONTH(Datum) as Maand, sum(Bruto) as Bruto, sum(Netto) as Netto FROM Divident group by YEAR(Datum),MONTH(Datum) order by YEAR(Datum),MONTH(Datum)";
-		alleDividenten = CreateSQLPane(sqlAlleDiv,new Dimension(bannerThreeWidth, 610));
+		alleDividenden = CreateSQLPane(sqlAlleDiv,new Dimension(bannerThreeWidth, 610));
 		gbc.gridx=38;
 		gbc.gridy=2;
 		gbc.gridwidth=10;
 		gbc.gridheight=63;
-		add(alleDividenten,gbc);
+		add(alleDividenden,gbc);
 		
 		if(divForecast!=null) remove(divForecast);
-		divForecast = new JLabel("Divident vooruitzicht");
+		divForecast = new JLabel("Dividend vooruitzicht");
 		divForecast.setPreferredSize(new Dimension(bannerFourWidth, 20));
 		gbc.gridx=48;
 		gbc.gridy=0;
@@ -258,15 +261,15 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		gbc.gridheight=2;
 		add(divForecast,gbc);
 		
-		if(forecastDividenten!=null) remove(forecastDividenten);
+		if(forecastDividenden!=null) remove(forecastDividenden);
 //		String sqlDivForecast = "select k.Maand, round(sum(t.Aantal)*k.Divident,2) as Bruto, round(sum(t.Aantal)*k.Divident*(1-k.Voorheffing),2) as Netto from Effect e, pvm.Kalender k, pvm.transactie t where e.TickerId = k.TickerId and e.TickerId = t.Ticker group by k.Maand order by k.Maand";
 		String sqlDivForecast = "select Maand, Sum(Bruto) as Bruto, Sum(Netto) as Netto from `divident_uitkeringen` group by Maand order by Maand";
-		forecastDividenten = CreateSQLPane(sqlDivForecast,new Dimension(bannerFourWidth, 380));
+		forecastDividenden = CreateSQLPane(sqlDivForecast,new Dimension(bannerFourWidth, 380));
 		gbc.gridx=48;
 		gbc.gridy=2;
 		gbc.gridwidth=7;
 		gbc.gridheight=38;
-		add(forecastDividenten,gbc);
+		add(forecastDividenden,gbc);
 		
 		if(meerwaardenPanel != null)
 		{
@@ -297,7 +300,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		}
 		else
 		{
-			doEffectTransactieDivident(null,gbc);
+			doEffectTransactieDividend(null,gbc);
 		}
 		
 		if(aankooporderPanel != null)
@@ -334,7 +337,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			pane.setPreferredSize(new Dimension(bannerOneWidth,30));
 		
 	//		String sql = "select sum(Aantal) as 'Aantal aandelen', sum(Aankoop) as 'aankoop waarde', sum(Kosten) as kosten, sum(Waarde) as 'huidige waarde', sum(Winst) as meerwaarde from toestand ";
-			String sql = "select sum(Aantal) as 'Aantal aandelen', sum(Aankoop) as 'aankoop waarde', sum(AankoopKosten) as kosten, sum(Waarde) as 'huidige waarde', sum(Winst) as meerwaarde from toestand ";
+			String sql = "select sum(Aantal) as 'Aantal aandelen', sum(Aankoop) as 'aankoop waarde', sum(AankoopKosten) as kosten, sum(Waarde) as 'huidige waarde', sum(Winst) as meerwaarde from toestand where Aantal > 0";
 			try
 			{
 				Statement stmt = con.createStatement();
@@ -495,6 +498,12 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			ResultSetTableModel model = new ResultSetTableModel(rs);
 			
 			JTable table = new JTable(model);
+			TableColumnModel colModel=table.getColumnModel();
+			for(int i=0; i<colModel.getColumnCount();i++)
+			{
+				TableColumn aColumn = colModel.getColumn(i);
+				aColumn.setCellRenderer(new BigDecimalRenderer());
+			}
 			table.setPreferredScrollableViewportSize(new Dimension(bannerTwoWidth, 70));
 			table.setFillsViewportHeight(true);
 			
@@ -547,8 +556,8 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			
 			for( int i=0; i<overzichtTable.getColumnCount(); i++)
 			{
-				String colName = overzichtTable.getColumnName(i);
-				if(colName.compareToIgnoreCase("Winst")!=0) continue;
+//				String colName = overzichtTable.getColumnName(i);
+//				if(colName.compareToIgnoreCase("Aantal")==0) continue;
 				TableColumn theCol = overzichtTable.getColumnModel().getColumn(i);
 				theCol.setCellRenderer(new WinstRenderer());
 			}
@@ -603,27 +612,61 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 
 	}
 	
-	JScrollPane CreateEffectDividentenPane(String naam)
+	JScrollPane CreateEffectDividendenPane(String naam)
 	{
 		try
 		{
-			String sql = "select YEAR(d.Datum) as Jaar, sum(d.Divident) as Divident, Sum(d.Bruto) as Bruto, Sum(d.Voorheffing) as Voorheffing, Sum(d.Netto) as Netto from Divident d, Effect e where e.Naam = '"+naam+"' and e.TickerId = d.TickerId group by YEAR(Datum) order by Jaar";
+			String sql = "select YEAR(d.Datum) as Jaar, sum(d.Divident) as Dividend, Sum(d.Bruto) as Bruto, Sum(d.Voorheffing) as Voorheffing, Sum(d.Netto) as Netto, '' as Rendement from Divident d, Effect e where e.Naam = '"+naam+"' and e.TickerId = d.TickerId group by YEAR(Datum) order by Jaar";
 			Statement stmtRM = con.createStatement();
 			ResultSet rsRM = stmtRM.executeQuery(sql);
-	
+
 			ResultSetTableModel model = new ResultSetTableModel(rsRM);
 			
-			effectDividentenTable = new JTable(model);
-			effectDividentenTable.setPreferredScrollableViewportSize(new Dimension(bannerTwoWidth, 230));
-			effectDividentenTable.setFillsViewportHeight(true);
-			effectDividentenTable.setSelectionBackground(Color.LIGHT_GRAY);
-			effectDividentenTable.setEnabled(false);
+			Object[][] data =  new Object[model.getRowCount()][model.getColumnCount()];
+			String[] columnNames = new String[model.getColumnCount()];
+			String tickerId=null;
+			if(naam != null) tickerId = eList.getEffectBijNaam(naam).getTickerId();
+
+			for(int i=0; i<model.getColumnCount(); i++)
+			{
+				columnNames[i]=model.getColumnName(i);
+			}
+			for(int i=0; i< model.getRowCount(); i++)
+			{
+				for(int j=0; j<model.getColumnCount(); j++)
+				{
+					data[i][j]=model.getValueAt(i, j);
+				}
+				if(tickerId != null)
+				{
+					int year = (int) model.getValueAt(i, 0);
+					LocalDate theDate = LocalDate.of(year, Month.DECEMBER, 31);
+					BigDecimal investment = tList.getInvestmentByTickerAndDate(tickerId, java.sql.Date.valueOf(theDate));
+					try
+					{
+						BigDecimal rendement = (BigDecimal) data[i][model.getColumnCount()-2];
+						rendement = rendement.divide(investment, 4, BigDecimal.ROUND_HALF_UP);
+						rendement = rendement.multiply(new BigDecimal(100));
+						data[i][model.getColumnCount()-1] = rendement.setScale(2);
+					}
+					catch(ArithmeticException e)
+					{
+						data[i][model.getColumnCount()-1] = "-";
+					}
+				}
+			}
+			DataTableModel theModel = new DataTableModel(data,columnNames);
+			effectDividendenTable = new JTable(theModel);
+			effectDividendenTable.setPreferredScrollableViewportSize(new Dimension(bannerTwoWidth, 230));
+			effectDividendenTable.setFillsViewportHeight(true);
+			effectDividendenTable.setSelectionBackground(Color.LIGHT_GRAY);
+			effectDividendenTable.setEnabled(false);
 			
 			ColumnsAutoSizer as = new ColumnsAutoSizer();
-			as.sizeColumnsToFit(effectDividentenTable);
-			effectDividentenTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
+			as.sizeColumnsToFit(effectDividendenTable);
+			effectDividendenTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 			
-			JScrollPane scrollPane = new JScrollPane(effectDividentenTable);
+			JScrollPane scrollPane = new JScrollPane(effectDividendenTable);
 			scrollPane.setAutoscrolls(true);
 			scrollPane.setPreferredSize(new Dimension(bannerTwoWidth, 230));
 			return scrollPane;			
@@ -728,6 +771,15 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			ResultSetTableModel model = new ResultSetTableModel(rsRM);
 			
 			JTable akoTable = new JTable(model);
+			
+			TableColumnModel colModel = akoTable.getColumnModel();
+			for(int i=0; i<colModel.getColumnCount();i++)
+			{
+				TableColumn aColumn = colModel.getColumn(i);
+				aColumn.setCellRenderer(new BigDecimalRenderer());
+			}
+			
+			
 //			akoTable.setPreferredScrollableViewportSize(new Dimension(bannerThreeWidth+bannerFourWidth, 140));
 			akoTable.setPreferredScrollableViewportSize(new Dimension(bannerThreeWidth+bannerFourWidth, 190));
 			akoTable.setFillsViewportHeight(true);
@@ -771,6 +823,14 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			ResultSetTableModel model = new ResultSetTableModel(rsRM);
 			
 			JTable akoTable = new JTable(model);
+			
+			TableColumnModel colModel = akoTable.getColumnModel();
+			for(int i=0; i<colModel.getColumnCount();i++)
+			{
+				TableColumn aColumn = colModel.getColumn(i);
+				aColumn.setCellRenderer(new BigDecimalRenderer());
+			}
+			
 			akoTable.setPreferredScrollableViewportSize(new Dimension(bannerTwoWidth, 190));
 			akoTable.setFillsViewportHeight(true);
 			akoTable.setSelectionBackground(Color.LIGHT_GRAY);
@@ -902,7 +962,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		gbc.anchor = GridBagConstraints.NORTHWEST;
 		gbc.weightx = 0;
 	//	gbc.ipadx = 5;
-		doEffectTransactieDivident(effect,gbc);		
+		doEffectTransactieDividend(effect,gbc);		
 //		pack();
 //		this.repaint();
 		this.validate();
@@ -915,7 +975,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		
 	}
 
-	void doEffectTransactieDivident(String effect, GridBagConstraints gbc)
+	void doEffectTransactieDividend(String effect, GridBagConstraints gbc)
 	{
 		if(ePane != null) remove(ePane);
 		ePane = CreateEffectPane(effect);
@@ -941,15 +1001,15 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		gbc.gridheight = 20;
 		add(transacties,gbc);
 		
-		if(effectDividenten!=null) remove(effectDividenten);
-		effectDividenten = CreateEffectDividentenPane(effect);
+		if(effectDividenden!=null) remove(effectDividenden);
+		effectDividenden = CreateEffectDividendenPane(effect);
 		gbc.gridx = 24;
 //		gbc.gridy = 32;
 		gbc.gridy = 40;
 		gbc.gridwidth = 14;
 //		gbc.gridheight = 13;
 		gbc.gridheight = 25;
-		add(effectDividenten,gbc);
+		add(effectDividenden,gbc);
 		return;
 	}
 }

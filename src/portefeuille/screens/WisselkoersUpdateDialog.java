@@ -10,13 +10,11 @@ import java.awt.event.ActionListener;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Enumeration;
 
 import javax.sql.DataSource;
 import javax.swing.BorderFactory;
-import javax.swing.DefaultCellEditor;
+import javax.swing.DefaultListSelectionModel;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JDialog;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -30,45 +28,44 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.TableColumn;
 
-import portefeuille.tables.EffectList;
-import portefeuille.tables.KalenderList;
-import portefeuille.util.ColumnsAutoSizer;
+import portefeuille.tables.WisselkoersList;
 import portefeuille.util.PortefeuilleTableCellRenderer;
 
-public class KalenderUpdateDialog extends JDialog implements TableModelListener, ListSelectionListener
+public class WisselkoersUpdateDialog extends JDialog implements TableModelListener, ListSelectionListener
 {
-	private static final long serialVersionUID = 1L;
 
+	/**
+	 * Dialog for updating exchange rates
+	 */
+	private static final long serialVersionUID = 1L;
+	
 	Object[][] tableData;
 	Object[] columnNames;
-	EffectList theEList;
-	KalenderList theKList;
+	WisselkoersList theWList;
 	DefaultTableModel tableModel;
 	JButton applyButton;
-	EffectenFrame theEFrame;
 	
 	DataSource ds;
 	Connection con;
-
-	public KalenderUpdateDialog(EffectenFrame theParent)
+	
+	public WisselkoersUpdateDialog(EffectenFrame theParent)
 	{
-		super(theParent,"Dividenden kalender",false);
-		theEFrame = theParent;
-		theEList = theParent.getEList();
+		super(theParent,"Wisselkoers lijst",false);
 		ds = theParent.getDs();
 		con = theParent.getCon();
+		theWList = new WisselkoersList(ds);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		JTable table = createKalenderTable();
-		JScrollPane scrollPane = new JScrollPane(table,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+		JTable table = createWisselkoersTable();
 		table.setFillsViewportHeight(true);
+		table.setRowSelectionInterval(tableModel.getRowCount()-1,tableModel.getRowCount()-1);
+		JScrollPane scrollPane = new JScrollPane(table,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setAutoscrolls(true);
-		scrollPane.setMinimumSize(new Dimension(360, 250));
-		scrollPane.setPreferredSize(new Dimension(360, 250));
-//		scrollPane.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY));
 		scrollPane.setBorder(BorderFactory.createEmptyBorder(0, 10, 0,0));
+		table.scrollRectToVisible(table.getCellRect(tableModel.getRowCount()-1,0, true)); 
+
 		this.add(scrollPane,BorderLayout.CENTER);
+		
 		JPanel buttonPane  = new JPanel();
 		applyButton = new JButton("Apply");
 		applyButton.setEnabled(false);
@@ -77,22 +74,19 @@ public class KalenderUpdateDialog extends JDialog implements TableModelListener,
 			{
 //				System.out.println("Apply button action event command "+e.getActionCommand());
 				String[] sqllist = generateSQLStatements();
-					if(confirmUpdates(sqllist))
+				if(confirmUpdates(sqllist))
 				{
-					String dbUpdateResult = updateTransactieTable(sqllist);
+					String dbUpdateResult = updateWisselkoersTable(sqllist);
 					if(dbUpdateResult.compareTo("OK")==0)
 					{
 						String msg = String.format("%d row(s) updated!", sqllist.length);
 						JOptionPane.showMessageDialog((Component)e.getSource(),msg,"DB Update", JOptionPane.INFORMATION_MESSAGE);
-						theEFrame.CreateJFrameContents();
-						theEList = theEFrame.getEList();
-						theEFrame.validate();
 						setVisible(false);
 						dispose(); 
 					}
 					else
 					{
-						JOptionPane.showMessageDialog((Component)e.getSource(),dbUpdateResult,"DB Update - fout", JOptionPane.ERROR_MESSAGE);
+						JOptionPane.showMessageDialog((Component)e.getSource(),dbUpdateResult,"DB Update - Error", JOptionPane.ERROR_MESSAGE);
 					}
 					
 				}
@@ -111,96 +105,57 @@ public class KalenderUpdateDialog extends JDialog implements TableModelListener,
 		this.add(buttonPane, BorderLayout.SOUTH);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 //		setSize(550, 320);
-		setMinimumSize(new Dimension(285,380));
-		setPreferredSize(new Dimension(285,380));
+		setMinimumSize(new Dimension(250,200));
+		setPreferredSize(new Dimension(250,200));
 		setLocationRelativeTo(null);
 		
 		setVisible(true);
 	}
 
-	JTable createKalenderTable()
+	private JTable createWisselkoersTable()
 	{
-		theKList = new KalenderList(ds);
-		tableData = theKList.getTableData();
-		columnNames = theKList.getColumnNames();
+		tableData = theWList.getWisselkoersTableData();
+		columnNames = theWList.get(0).getFieldNames().toArray();
 		tableModel = new DefaultTableModel();
 		tableModel.setDataVector(tableData, columnNames);
 		tableModel.addRow(new Object[] {});
 		tableModel.addTableModelListener(this);
 		JTable table = new JTable(tableModel);
 		
-		JComboBox<String> tickerIdCombo = theEList.getTickerIdComboBox();
-		JComboBox<Integer> maandCombo = new JComboBox<Integer>( );
-		for(int i=1; i < 13; i++)
-		{
-			maandCombo.addItem(i);
-		}
-		JComboBox<Integer> dagCombo = new JComboBox<Integer>( );
-		for(int i=1; i < 31; i++)
-		{
-			dagCombo.addItem(i);
-		}
-		
-		Enumeration<TableColumn> cNames = table.getColumnModel().getColumns();
-		while(cNames.hasMoreElements())
-		{
-			TableColumn c= cNames.nextElement();
-			if(c.getHeaderValue().toString().compareToIgnoreCase("TickerId")==0)
-			{
-//		    System.out.println("Column name = "+c.getHeaderValue());
-				c.setCellEditor(new DefaultCellEditor(tickerIdCombo));
-			}
-			else if(c.getHeaderValue().toString().compareToIgnoreCase("Maand")==0)
-			{
-//		    System.out.println("Column name = "+c.getHeaderValue());
-				c.setCellEditor(new DefaultCellEditor(maandCombo));
-			}
-			else if(c.getHeaderValue().toString().compareToIgnoreCase("Dag")==0)
-			{
-//		    System.out.println("Column name = "+c.getHeaderValue());
-				c.setCellEditor(new DefaultCellEditor(dagCombo));
-			}
-		}
-		ColumnsAutoSizer as = new ColumnsAutoSizer();
-		as.sizeColumnsToFit(table);
+//		ColumnsAutoSizer as = new ColumnsAutoSizer();
+//		as.sizeColumnsToFit(table);
 		table.setSelectionBackground(Color.LIGHT_GRAY);
 		table.setDefaultRenderer(Object.class,new PortefeuilleTableCellRenderer());
 		ListSelectionModel listSelectionModel = table.getSelectionModel();
-    listSelectionModel.addListSelectionListener(this);
-    table.setSelectionModel(listSelectionModel);
-
-		return table;		
+	  listSelectionModel.addListSelectionListener(this);
+	  table.setSelectionModel(listSelectionModel);
+	
+		return table;	
 	}
 	
 	String[] generateSQLStatements()
 	{
 		int countSQLStatements = 0;
 		int newRowCount = tableModel.getRowCount();
-		int oldRowCount = theKList.getRowCount();
-//		System.out.println("newRowCount = "+newRowCount);
-//		System.out.println("oldRowCount = "+oldRowCount);
+		int oldRowCount = theWList.size();
 		while(newRowCount>0 && tableModel.getValueAt(newRowCount-1,0)==null) newRowCount--;
-//		System.out.println("Updated newRowCount = "+newRowCount);
 		String[] theResult = new String[newRowCount];
-		// UPDATE `Kalender` SET `Maand` = '9', `Dag` = '14' WHERE (`TickerId` = 'ABI' and `Maand` = '8' and `Dag` = '11');
+		// UPDATE `wisselkoers` SET `koers` = '66.8201' WHERE (`van` = 'USD' and `naar` = 'EURO');
 		for(int i=0; i <oldRowCount; i++)
 		{
-			StringBuilder sb = new StringBuilder("UPDATE `Kalender` SET ");
+			StringBuilder sb = new StringBuilder("UPDATE `wisselkoers` SET ");
 			boolean bFound = false;
 			for(int j=0; j<columnNames.length; j++)
 			{
 				String newValue = tableModel.getValueAt(i, j).toString();
 				String oldValue = tableData[i][j].toString();
 				if(newValue.compareTo(oldValue)==0) continue;
-//				System.out.println("Detected change at ["+i+"]["+j+"]. New value "+newValue+", old value "+oldValue);
-//				System.out.println("Column name = "+columnNames[j]);
 				if(bFound) sb.append(", ");
 				sb.append("`"+columnNames[j]+"` = '"+newValue+"'");
 				bFound = true;
 			}
 			if(!bFound) continue;
-			sb.append(" WHERE (`TickerId` = '"+tableData[i][0]+"' AND `Maand` = '"+tableData[i][1]+"' AND `Dag` = '"+tableData[i][2]+"');");
-//			System.out.println("Constructed SQL: "+sb.toString());
+			sb.append(" WHERE (`van` = '"+tableData[i][0]+"' and `naar` = '"+tableData[i][1]+"');");
 			theResult[i]=sb.toString();
 			countSQLStatements++;
 		}
@@ -208,19 +163,17 @@ public class KalenderUpdateDialog extends JDialog implements TableModelListener,
 		{
 			try
 			{
-				// INSERT INTO `Kalender` (`Ticker`,`Maand`,`Dag`,`Divident`,	`Voorheffing` )
+				// INSERT INTO `wisselkoers` (`van`,`naar`,`koers`)
 				// VALUES (
-				StringBuilder sb = new StringBuilder("INSERT INTO `Kalender`");
+				StringBuilder sb = new StringBuilder("INSERT INTO `wisselkoers`");
 				sb.append('(');
-				sb.append("`TickerId`,`Maand`,`Dag`,`Divident`,`Voorheffing` ");
+				sb.append("`van`,`naar`,`koers`");
 				sb.append(')');
 				sb.append(" VALUES ");
 				sb.append('(');
 				sb.append("\""+tableModel.getValueAt(i, 0).toString()+"\", ");
 				sb.append("\""+tableModel.getValueAt(i, 1).toString()+"\", ");
-				sb.append("\""+tableModel.getValueAt(i, 2).toString()+"\", ");
-				sb.append("\""+tableModel.getValueAt(i, 3).toString()+"\", ");
-				sb.append("\""+tableModel.getValueAt(i, 4).toString()+"\" ");
+				sb.append("\""+tableModel.getValueAt(i, 2).toString()+"\" ");
 				sb.append(");");
 				theResult[i]=sb.toString();
 				countSQLStatements++;
@@ -240,7 +193,7 @@ public class KalenderUpdateDialog extends JDialog implements TableModelListener,
 		}
 		return finalResult;
 	}
-
+	
 	Boolean confirmUpdates(String[] sqls)
 	{
 		boolean theResult = false;
@@ -262,7 +215,7 @@ public class KalenderUpdateDialog extends JDialog implements TableModelListener,
 		return theResult;
 	}
 	
-	String updateTransactieTable(String[] sqls)
+	String updateWisselkoersTable(String[] sqls)
 	{
 		String theResult="OK";
 		try
@@ -282,10 +235,14 @@ public class KalenderUpdateDialog extends JDialog implements TableModelListener,
 			try
 			{
 				if(!con.getAutoCommit()) con.rollback();
-				con.close();
+//				con.close();
 			}
-			catch (SQLException e1) {	}
-			con = null;
+			catch (SQLException e1)
+			{
+				// e1.printStackTrace();
+			}
+//			con = null;
+		//	e.printStackTrace();
 		}
 		return theResult;
 	}
@@ -294,8 +251,12 @@ public class KalenderUpdateDialog extends JDialog implements TableModelListener,
 	@Override
 	public void valueChanged(ListSelectionEvent e)
 	{
-		// TODO Auto-generated method stub
-
+		if(e.getValueIsAdjusting()) return;
+		DefaultListSelectionModel sm = (DefaultListSelectionModel)e.getSource();
+		if(sm.isSelectionEmpty())
+		{
+			return;
+		}
 	}
 
 	@Override
@@ -305,10 +266,11 @@ public class KalenderUpdateDialog extends JDialog implements TableModelListener,
 		int row = e.getFirstRow();
 //    int column = e.getColumn();
     DefaultTableModel model = (DefaultTableModel)e.getSource();
+//    String columnName = model.getColumnName(column);
 //    Object data = model.getValueAt(row, column);
 //    System.out.println("At row = "+row+", col "+column);
 /*    System.out.println("New value = "+data);
-		if(row<theKList.getRowCount())
+		if(row<theTList.size())
 		{
 			System.out.println("Old value = "+tableData[row][column]);
 		} */

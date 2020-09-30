@@ -14,11 +14,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 
-import portefeuille.tables.DividentUitkeringenList;
+import portefeuille.tables.DividendUitkeringenList;
 import portefeuille.util.ColumnsAutoSizer;
 import portefeuille.util.DataTableModel;
 
-public class DividentUitkeringDialog extends JDialog
+public class DividendUitkeringDialog extends JDialog
 {
 	private static final long serialVersionUID = 1L;
 	
@@ -28,14 +28,14 @@ public class DividentUitkeringDialog extends JDialog
 	
 	DataSource ds;
 
-	public DividentUitkeringDialog(EffectenFrame theParent)
+	public DividendUitkeringDialog(EffectenFrame theParent)
 	{
-		super(theParent,"Divident Uitekeringen Vooruitzicht");
+		super(theParent,"Dividend Uitekeringen Vooruitzicht");
 		theEFrame = theParent;
 		ds = theParent.getDs();
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		
-		DividentUitkeringenList divUitKeringList = new DividentUitkeringenList(ds);
+		DividendUitkeringenList divUitKeringList = new DividendUitkeringenList(ds);
 		DataTableModel model = new DataTableModel(divUitKeringList.getTableData(),divUitKeringList.getColumnNames());
 		JTable table = new JTable(model);
 		table.setSelectionBackground(Color.LIGHT_GRAY);

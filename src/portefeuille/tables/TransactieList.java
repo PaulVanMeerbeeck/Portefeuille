@@ -214,4 +214,32 @@ public class TransactieList extends ArrayList<Transactie>
 		}
 		return result;
 	}
+	
+	public BigDecimal getInvestmentByTickerAndDate(String tickerId, Date aDate)
+	{
+		BigDecimal moneyInvested = BigDecimal.ZERO;
+		int aantal=0;
+		for(Transactie t : this)
+		{
+			if(t.getTickerId().compareToIgnoreCase(tickerId)!=0) continue;
+			if(t.getDate().compareTo(aDate) > 0) continue;
+			if(t.getNumber() > 0)
+			{
+				moneyInvested=moneyInvested.add(t.getPrice().multiply(new BigDecimal(t.getNumber())));
+				moneyInvested=moneyInvested.add(t.getBeurstaks());
+				moneyInvested=moneyInvested.add(t.getMakelaarsloon());
+				aantal=aantal+t.getNumber();
+			}
+			else
+			{
+				if(t.getNumber()==0) continue; // should not happen
+				// handle sale
+				BigDecimal gemiddeldePrijs = moneyInvested.divide(new BigDecimal(aantal));
+				aantal= aantal+t.getNumber();
+				if(aantal != 0)
+					moneyInvested = gemiddeldePrijs.multiply(new BigDecimal(aantal)); 
+			}
+		}
+		return moneyInvested;		
+	}
 }

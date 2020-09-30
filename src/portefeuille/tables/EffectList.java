@@ -1,12 +1,12 @@
 package portefeuille.tables;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -22,11 +22,14 @@ public class EffectList extends ArrayList<Effect>
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
+	
+	DataSource theDataSource;
 
 	public EffectList(DataSource ds)
 	{
 		super();
 		if(ds==null) return;
+		theDataSource=ds;
 
 		Connection con = null;
 		Statement stmtRM = null;
@@ -45,7 +48,7 @@ public class EffectList extends ArrayList<Effect>
 				String categorie = rsRM.getString("Categorie");
 				String risico = rsRM.getString("Risico");
 				BigDecimal koers = rsRM.getBigDecimal("Koers");
-				BigDecimal divident = rsRM.getBigDecimal("Div");
+				BigDecimal dividend = rsRM.getBigDecimal("Div");
 				int aantalGekocht = rsRM.getInt("AantalGekocht");
 				BigDecimal aankoopWaarde = rsRM.getBigDecimal("AankoopWaarde");
 				BigDecimal aankoopKost = rsRM.getBigDecimal("AankoopKost");
@@ -53,7 +56,7 @@ public class EffectList extends ArrayList<Effect>
 				BigDecimal verkoopWaarde = rsRM.getBigDecimal("VerkoopWaarde");
 				BigDecimal verkoopKost = rsRM.getBigDecimal("VerkoopKost");
 				
-				Effect aEffect =  new Effect(naam,tickerId,isinCode,categorie,risico,koers,divident);
+				Effect aEffect =  new Effect(naam,tickerId,isinCode,categorie,risico,koers,dividend);
 				aEffect.setAantalGekocht(aantalGekocht);
 				aEffect.setAankoopWaarde(aankoopWaarde);
 				aEffect.setAankoopKost(aankoopKost);
@@ -138,6 +141,7 @@ public class EffectList extends ArrayList<Effect>
 	public Object[][] readBoleroFile(String f)
 	{
 		Object[][] result = new Object[this.size()][2];
+		WisselkoersList theWisselkoerList = new WisselkoersList(theDataSource);
 		int updateCount = 0;
 		try
 		{
@@ -151,12 +155,30 @@ public class EffectList extends ArrayList<Effect>
 			{  // Print the content on the console
 				String[] tokens=strLine.split(";;");
 				if(tokens.length<14) continue;
-				if(tokens[muntIndex].compareTo("EUR")!=0) continue;
+//				if(tokens[muntIndex].compareTo("EUR")!=0) continue;
 				if(tokens[typeIndex].compareTo(";Aandeel")==0 || tokens[typeIndex].compareTo(";ETF")==0)
 				{
 					result[updateCount][0]=tokens[isinIndex];
-					result[updateCount][1]=tokens[koersIndex].replaceFirst(",", ".");
-					updateCount++;
+					result[updateCount][1]=new BigDecimal(tokens[koersIndex].replaceFirst(",", "."));
+					if(tokens[muntIndex].compareTo("EUR")!=0)
+					{
+						BigDecimal koers=theWisselkoerList.getWisselkoers(tokens[muntIndex], "EURO");
+						if(koers!=null && koers.compareTo(BigDecimal.ZERO)!=0)
+						{
+							BigDecimal koersEffect=(BigDecimal)result[updateCount][1];
+							result[updateCount][1]=koersEffect.multiply(koers).setScale(4,RoundingMode.HALF_UP);
+							System.out.println("Wisselkoers van "+tokens[muntIndex]+" naar EURO = "+koers+". Koers effect = "+result[updateCount][1]);
+							updateCount++;
+						}
+						else
+						{
+							System.out.println("Wisselkoers van "+tokens[muntIndex]+" naar EURO niet gevonden!");
+						}
+					}
+					else
+					{
+						updateCount++;
+					}
 				}
 			}
 			//Close the input stream

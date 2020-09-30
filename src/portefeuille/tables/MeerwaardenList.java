@@ -2,12 +2,10 @@ package portefeuille.tables;
 
 import java.awt.Color;
 import java.math.BigDecimal;
-import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Calendar;
 //import portefeuille.tables.TransactieList;
-import java.util.Date;
 import java.util.GregorianCalendar;
 
 import javax.sql.DataSource;

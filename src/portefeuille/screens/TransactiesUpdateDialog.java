@@ -32,9 +32,11 @@ import javax.swing.event.TableModelEvent;
 import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 import portefeuille.tables.EffectList;
 import portefeuille.tables.TransactieList;
+import portefeuille.util.BigDecimalRenderer;
 import portefeuille.util.ColumnsAutoSizer;
 import portefeuille.util.PortefeuilleTableCellRenderer;
 
@@ -63,6 +65,14 @@ public class TransactiesUpdateDialog extends JDialog implements TableModelListen
 		con = theParent.getCon();
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		JTable table = createTransactiesTable();
+		
+/*		TableColumnModel colModel = table.getColumnModel();
+		for(int i=0; i<colModel.getColumnCount();i++)
+		{
+			TableColumn aColumn = colModel.getColumn(i);
+			aColumn.setCellRenderer(new BigDecimalRenderer());
+		}*/
+		
 		table.setFillsViewportHeight(true);
 		table.setRowSelectionInterval(tableModel.getRowCount()-1,tableModel.getRowCount()-1);
 //		table.setBorder(BorderFactory.createEmptyBorder(0, 10, 0,10));

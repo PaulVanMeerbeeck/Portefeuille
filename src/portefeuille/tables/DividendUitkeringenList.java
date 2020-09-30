@@ -7,14 +7,14 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import javax.sql.DataSource;
 
-public class DividentUitkeringenList
+public class DividendUitkeringenList
 {
 	Object[][] tableData;
 	String[] columnNames;
 	int rowCount = 0;
 	int colCount = 0;
 
-	public DividentUitkeringenList(DataSource ds)
+	public DividendUitkeringenList(DataSource ds)
 	{
 		super();
 		if(ds==null) return;

@@ -4,21 +4,21 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Divident
+public class Dividend
 {
 	private String theTickerId;
 	private Date theDay;
-	private BigDecimal theDivident;
+	private BigDecimal theDividend;
 	private int theAantal;
 	private BigDecimal theBruto;
 	private BigDecimal theVoorheffing;
 	private BigDecimal theNetto;
 
-	public Divident(String aTickerId, Date aDay, BigDecimal aDivident, int aAantal, BigDecimal aBruto, BigDecimal aVoorheffing, BigDecimal aNetto )
+	public Dividend(String aTickerId, Date aDay, BigDecimal aDividend, int aAantal, BigDecimal aBruto, BigDecimal aVoorheffing, BigDecimal aNetto )
 	{
 		setTickerId(aTickerId);
 		setDay(aDay);
-		setDivident(aDivident);
+		setDividend(aDividend);
 		setAantal(aAantal);
 		setBruto(aBruto);
 		setVoorheffing(aVoorheffing);
@@ -45,14 +45,14 @@ public class Divident
 		theDay = aDay;
 	}
 
-	BigDecimal getDivident()
+	BigDecimal getDividend()
 	{
-		return theDivident;
+		return theDividend;
 	}
 
-	void setDivident(BigDecimal aDivident)
+	void setDividend(BigDecimal aDividend)
 	{
-		theDivident = aDivident;
+		theDividend = aDividend;
 	}
 
 	int getAantal()
@@ -100,7 +100,7 @@ public class Divident
 		ArrayList<String> l = new ArrayList<String>();
 		l.add("TickerId");
 		l.add("Datum");
-		l.add("Divident");
+		l.add("Dividend");
 		l.add("Aantal");
 		l.add("Bruto");
 		l.add("Voorheffing");
@@ -113,7 +113,7 @@ public class Divident
 		ArrayList<Object> l = new ArrayList<Object>();
 		l.add(getTickerId());
 		l.add(getDay());
-		l.add(getDivident());
+		l.add(getDividend());
 		l.add(getAantal());
 		l.add(getBruto());
 		l.add(getVoorheffing());
@@ -123,7 +123,7 @@ public class Divident
 	
 	public void print()
 	{
-		System.out.printf("%-6.6s  %tF  %05d\t%05.3f\t%08.2f\t%08.2f\t%08.2f\n",theTickerId,theDay,theAantal, theDivident, theBruto, theVoorheffing, theNetto );
+		System.out.printf("%-6.6s  %tF  %05d\t%05.3f\t%08.2f\t%08.2f\t%08.2f\n",theTickerId,theDay,theAantal, theDividend, theBruto, theVoorheffing, theNetto );
 	}
 
 }

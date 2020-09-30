@@ -20,9 +20,10 @@ public class EffectenMenu extends JMenuBar implements ActionListener
 	JDialog dEffect;
 	JDialog dTransactie;
 	JDialog dKalender;
-	JDialog dDivident;
+	JDialog dDividend;
 	JDialog dAKT;
 	JDialog dVKT;
+	JDialog dWK;
 	JDialog dPreOct;
 	JDialog dDivVU;
 	EffectenFrame theEffectenFrame;
@@ -44,10 +45,10 @@ public class EffectenMenu extends JMenuBar implements ActionListener
 		miKalender.setActionCommand("Kalender");
 		miKalender.addActionListener(this);
 		menuTables.add(miKalender);
-		JMenuItem miDivident = new JMenuItem("Divident");
-		miDivident.setActionCommand("Divident");
-		miDivident.addActionListener(this);
-		menuTables.add(miDivident);
+		JMenuItem miDividend = new JMenuItem("Dividend");
+		miDividend.setActionCommand("Dividend");
+		miDividend.addActionListener(this);
+		menuTables.add(miDividend);
 		JMenuItem miAankoopTrigger = new JMenuItem("Aankoop trigger");
 		miAankoopTrigger.setActionCommand("AKT");
 		miAankoopTrigger.addActionListener(this);
@@ -56,6 +57,10 @@ public class EffectenMenu extends JMenuBar implements ActionListener
 		miVerkoopTrigger.setActionCommand("VKT");
 		miVerkoopTrigger.addActionListener(this);
 		menuTables.add(miVerkoopTrigger);
+		JMenuItem wisselkoersTrigger = new JMenuItem("Wisselkoersen");
+		wisselkoersTrigger.setActionCommand("WK");
+		wisselkoersTrigger.addActionListener(this);
+		menuTables.add(wisselkoersTrigger);
 		
 		JMenu menuReports = new JMenu("Reports");
 		menuBar.add(menuReports);
@@ -63,7 +68,7 @@ public class EffectenMenu extends JMenuBar implements ActionListener
 		miPreOct.setActionCommand("miPreOct");
 		miPreOct.addActionListener(this);
 		menuReports.add(miPreOct);
-		JMenuItem miDivVU = new JMenuItem("Divident vooruitzicht");
+		JMenuItem miDivVU = new JMenuItem("Dividend vooruitzicht");
 		miDivVU.setActionCommand("divVU");
 		miDivVU.addActionListener(this);
 		menuReports.add(miDivVU);
@@ -100,10 +105,10 @@ public class EffectenMenu extends JMenuBar implements ActionListener
 			if(dKalender!=null && dKalender.isDisplayable()) return;
 			dKalender = new KalenderUpdateDialog(theEffectenFrame);
 		}
-		else if(action.compareTo("Divident")==0)
+		else if(action.compareTo("Dividend")==0)
 		{
-			if(dDivident!=null && dDivident.isDisplayable()) return;
-			dDivident = new DividentenUpdateDialog(theEffectenFrame);
+			if(dDividend!=null && dDividend.isDisplayable()) return;
+			dDividend = new DividendenUpdateDialog(theEffectenFrame);
 		}
 		else if(action.compareTo("AKT")==0)
 		{
@@ -115,6 +120,11 @@ public class EffectenMenu extends JMenuBar implements ActionListener
 			if(dVKT!=null && dVKT.isDisplayable()) return;
 			dVKT = new VerkoopTriggerDialog(theEffectenFrame);
 		}
+		else if(action.compareTo("WK")==0)
+		{
+			if(dWK!=null && dWK.isDisplayable()) return;
+			dWK = new WisselkoersUpdateDialog(theEffectenFrame);
+		}
 		else if(action.compareTo("miPreOct")==0)
 		{
 			if(dPreOct!=null && dPreOct.isDisplayable()) return;
@@ -123,7 +133,7 @@ public class EffectenMenu extends JMenuBar implements ActionListener
 		else if(action.compareTo("divVU")==0)
 		{
 			if(dDivVU!=null && dDivVU.isDisplayable()) return;
-			dDivVU = new DividentUitkeringDialog(theEffectenFrame);
+			dDivVU = new DividendUitkeringDialog(theEffectenFrame);
 		}
 	}
 }

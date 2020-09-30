@@ -35,19 +35,19 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
-import portefeuille.tables.DividentList;
+import portefeuille.tables.DividendList;
 import portefeuille.tables.EffectList;
 import portefeuille.util.ColumnsAutoSizer;
 import portefeuille.util.PortefeuilleTableCellRenderer;
 
-public class DividentenUpdateDialog extends JDialog implements TableModelListener, ListSelectionListener
+public class DividendenUpdateDialog extends JDialog implements TableModelListener, ListSelectionListener
 {
 	private static final long serialVersionUID = 1L;
 	
 	Object[][] tableData;
 	Object[] columnNames;
 	EffectList theEList;
-	DividentList theDList;
+	DividendList theDList;
 	DefaultTableModel tableModel;
 	JButton applyButton;
 	EffectenFrame theEFrame;
@@ -55,16 +55,16 @@ public class DividentenUpdateDialog extends JDialog implements TableModelListene
 	DataSource ds;
 	Connection con;
 
-	public DividentenUpdateDialog(EffectenFrame theParent)
+	public DividendenUpdateDialog(EffectenFrame theParent)
 	{
-		super(theParent, "Divident inkomsten", false);
+		super(theParent, "Dividend inkomsten", false);
 		theEFrame = theParent;
 		theEList = theParent.getEList();
 		ds = theParent.getDs();
 		con = theParent.getCon();
-		theDList = new DividentList(ds);
+		theDList = new DividendList(ds);
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
-		JTable table = createDividentenTable();
+		JTable table = createDividendenTable();
 		table.setFillsViewportHeight(true);
 		table.setRowSelectionInterval(tableModel.getRowCount()-1,tableModel.getRowCount()-1);
 //		table.setBorder(BorderFactory.createEmptyBorder(0, 10, 0,10));
@@ -88,7 +88,7 @@ public class DividentenUpdateDialog extends JDialog implements TableModelListene
 				String[] sqllist = generateSQLStatements();
 				if(confirmUpdates(sqllist))
 				{
-					String dbUpdateResult = updateDividentTable(sqllist);
+					String dbUpdateResult = updateDividendTable(sqllist);
 					if(dbUpdateResult.compareTo("OK")==0)
 					{
 						String msg = String.format("%d row(s) updated!", sqllist.length);
@@ -127,9 +127,9 @@ public class DividentenUpdateDialog extends JDialog implements TableModelListene
 		setVisible(true);
 	}
 
-	JTable createDividentenTable()
+	JTable createDividendenTable()
 	{
-		tableData = theDList.getDividentTableData();
+		tableData = theDList.getDividendTableData();
 		columnNames = theDList.get(0).getFieldNames().toArray();
 		tableModel = new DefaultTableModel();
 		tableModel.setDataVector(tableData, columnNames);
@@ -253,7 +253,7 @@ public class DividentenUpdateDialog extends JDialog implements TableModelListene
 		return theResult;
 	}
 	
-	String updateDividentTable(String[] sqls)
+	String updateDividendTable(String[] sqls)
 	{
 		String theResult="OK";
 		try

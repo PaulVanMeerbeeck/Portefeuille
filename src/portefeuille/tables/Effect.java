@@ -11,7 +11,7 @@ public class Effect
 	String theCategory;
 	String theRisc;
 	BigDecimal theKoers;
-	BigDecimal theDivident;
+	BigDecimal theDividend;
 	int theAantalGekocht;
 	BigDecimal theAankoopWaarde;
 	BigDecimal theAankoopKost;
@@ -20,7 +20,7 @@ public class Effect
 	BigDecimal theVerkoopKost;
 
 
-	public Effect(String aName, String aTickerId, String aIsinCode, String aCategory, String aRisc, BigDecimal aKoers, BigDecimal aDivident)
+	public Effect(String aName, String aTickerId, String aIsinCode, String aCategory, String aRisc, BigDecimal aKoers, BigDecimal aDividend)
 	{
 		theName=aName;
 		theTickerId=aTickerId;
@@ -28,7 +28,7 @@ public class Effect
 		theCategory=aCategory;
 		theRisc=aRisc;
 		theKoers=aKoers;
-		theDivident=aDivident;
+		theDividend=aDividend;
 		theAantalGekocht=0;
 		theAantalVerkocht=0;
 		theAankoopWaarde=BigDecimal.ZERO;
@@ -98,14 +98,14 @@ public class Effect
 		this.theKoers = aKoers;
 	}
 
-	public BigDecimal getDivident()
+	public BigDecimal getDividend()
 	{
-		return this.theDivident;
+		return this.theDividend;
 	}
 
-	public void setDivident(BigDecimal aDivident)
+	public void setDividend(BigDecimal aDividend)
 	{
-		this.theDivident = aDivident;
+		this.theDividend = aDividend;
 	}
 
 	public int getAantalGekocht()
@@ -173,7 +173,7 @@ public class Effect
 		ArrayList<String> l = new ArrayList<String>();
 		l.add("Naam");
 		l.add("TickerId");
-		l.add("IsinCode");
+		l.add("ISIN");
 		l.add("Categorie");
 		l.add("Risico");
 		l.add("Koers");
@@ -196,7 +196,7 @@ public class Effect
 		l.add(theCategory);
 		l.add(theRisc);
 		l.add(theKoers);
-		l.add(theDivident);
+		l.add(theDividend);
 		l.add(theAantalGekocht);
 		l.add(theAankoopWaarde);
 		l.add(theAankoopKost);
@@ -208,6 +208,6 @@ public class Effect
 	
 	protected void print()
 	{
-		System.out.printf("%-20.20s  %-6.6s  %-12.12s  %s  %s  %07.3f\t%05.2f\n",theName,theTickerId,theIsinCode,theCategory, theRisc, theKoers, theDivident );
+		System.out.printf("%-20.20s  %-6.6s  %-12.12s  %s  %s  %07.3f\t%05.2f\n",theName,theTickerId,theIsinCode,theCategory, theRisc, theKoers, theDividend );
 	}
 }

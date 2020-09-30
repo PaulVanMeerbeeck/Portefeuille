@@ -17,10 +17,14 @@ import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JPanel;
 import javax.swing.JTable;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+
 import portefeuille.tables.Effect;
 import portefeuille.tables.EffectList;
 import portefeuille.tables.Transactie;
 import portefeuille.tables.TransactieList;
+import portefeuille.util.BigDecimalRenderer;
 import portefeuille.util.ColumnsAutoSizer;
 import portefeuille.util.DataTableModel;
 
@@ -32,7 +36,7 @@ public class PreOctDialog extends JDialog
 	TransactieList theTList;
 	EffectenFrame theEFrame;
 	
-	final Dimension dim = new Dimension(1162,225);
+	final Dimension dim = new Dimension(1350,250); //225);
 	
 	DataSource ds;
 	Connection con;
@@ -80,96 +84,114 @@ public class PreOctDialog extends JDialog
 	
 	JTable CreateTable()
 	{
-		String[] columnNames = {"Omschrijving","Pre Oct 18", "Oct 18", "Nov 18", "Dec 18", "Jan 19", "Feb 19", "Mar 19", "Apr 19", "May 19", "Jun 19", "Jul 19", "Aug 19", "Sep 19", "Oct 19", "Nov 19"};
+		String[] columnNames = {"Omschrijving","Pre Oct 18", "Oct 18", "Nov 18", "Dec 18", "2019 Q1", "2019 Q2", "2019 Q3", "2019 Q4", "2020 Q1", "2020 Q2", "2020 Q3", "2020 Q4", "2021 Q1", "2021 Q2", "2021 Q3", "Post Sep 18", "Totaal"};
 		Object[][] data = {
-				{ "Total share value purchased",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
-				{ "Total makerlaars cost",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
-				{ "Total beurs taks",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
-				{ "Total investment",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
-				{ " "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "},
-				{ "Present value of investement",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
-				{ "Present profit/loss €",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
-				{ "Present profit/loss %",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO}
+				{ "Total share value purchased",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
+				{ "Total makerlaars cost",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
+				{ "Total beurs taks",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
+				{ "Total investment",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
+				{ " "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "},
+				{ "Present value of investement",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
+				{ "Present profit/loss €",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
+				{ "Present profit/loss %",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO},
+				{ " "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "," "},
+				{ "Sold value",BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO,BigDecimal.ZERO}
 		};
 		
-		int columnIndex = 1;
+		int columnIndex = 1; //Pre Oct 18
 		Date fromDate = new GregorianCalendar(2008,1,1).getTime();
 		Date toDate = new GregorianCalendar(2018,9,1).getTime();
 		setTotals(fromDate,toDate,data,columnIndex);
 		
-		columnIndex = 2;
+		columnIndex = 2; //Oct 18
 		fromDate = new GregorianCalendar(2018,9,1).getTime();
 		toDate = new GregorianCalendar(2018,10,1).getTime();
 		setTotals(fromDate,toDate,data,columnIndex);
 		
-		columnIndex = 3;
+		columnIndex = 3; //Nov 18
 		fromDate = new GregorianCalendar(2018,10,1).getTime();
 		toDate = new GregorianCalendar(2018,11,1).getTime();
 		setTotals(fromDate,toDate,data,columnIndex);
 		
-		columnIndex = 4;
+		columnIndex = 4; //Dec 18
 		fromDate = new GregorianCalendar(2018,11,1).getTime();
 		toDate = new GregorianCalendar(2019,0,1).getTime();
 		setTotals(fromDate,toDate,data,columnIndex);
 		
-		columnIndex = 5;
+		columnIndex = 5; // 2019Q1
 		fromDate = new GregorianCalendar(2019,0,1).getTime();
-		toDate = new GregorianCalendar(2019,1,1).getTime();
-		setTotals(fromDate,toDate,data,columnIndex);
-		
-		columnIndex = 6;
-		fromDate = new GregorianCalendar(2019,1,1).getTime();
-		toDate = new GregorianCalendar(2019,2,1).getTime();
-		setTotals(fromDate,toDate,data,columnIndex);
-		
-		columnIndex = 7;
-		fromDate = new GregorianCalendar(2019,2,1).getTime();
 		toDate = new GregorianCalendar(2019,3,1).getTime();
 		setTotals(fromDate,toDate,data,columnIndex);
 		
-		columnIndex = 8;
+		columnIndex = 6; // 2019Q2
 		fromDate = new GregorianCalendar(2019,3,1).getTime();
-		toDate = new GregorianCalendar(2019,4,1).getTime();
-		setTotals(fromDate,toDate,data,columnIndex);
-		
-		columnIndex = 9;
-		fromDate = new GregorianCalendar(2019,4,1).getTime();
-		toDate = new GregorianCalendar(2019,5,1).getTime();
-		setTotals(fromDate,toDate,data,columnIndex);
-		
-		columnIndex = 10;
-		fromDate = new GregorianCalendar(2019,5,1).getTime();
 		toDate = new GregorianCalendar(2019,6,1).getTime();
 		setTotals(fromDate,toDate,data,columnIndex);
 		
-		columnIndex = 11;
+		columnIndex = 7; // 2019Q3
 		fromDate = new GregorianCalendar(2019,6,1).getTime();
-		toDate = new GregorianCalendar(2019,7,1).getTime();
-		setTotals(fromDate,toDate,data,columnIndex);
-		
-		columnIndex = 12;
-		fromDate = new GregorianCalendar(2019,7,1).getTime();
-		toDate = new GregorianCalendar(2019,8,1).getTime();
-		setTotals(fromDate,toDate,data,columnIndex);
-		
-		columnIndex = 13;
-		fromDate = new GregorianCalendar(2019,8,1).getTime();
 		toDate = new GregorianCalendar(2019,9,1).getTime();
 		setTotals(fromDate,toDate,data,columnIndex);
 		
-		columnIndex = 14;
+		columnIndex = 8; // 2019Q4
 		fromDate = new GregorianCalendar(2019,9,1).getTime();
-		toDate = new GregorianCalendar(2019,10,1).getTime();
+		toDate = new GregorianCalendar(2020,0,1).getTime();
 		setTotals(fromDate,toDate,data,columnIndex);
 		
-		columnIndex = 15;
-		fromDate = new GregorianCalendar(2019,10,1).getTime();
-		toDate = new GregorianCalendar(2019,12,1).getTime();
+		columnIndex = 9; // 2020Q1
+		fromDate = new GregorianCalendar(2020,0,1).getTime();
+		toDate = new GregorianCalendar(2020,3,1).getTime();
+		setTotals(fromDate,toDate,data,columnIndex);
+		
+		columnIndex = 10; // 2020Q2
+		fromDate = new GregorianCalendar(2020,3,1).getTime();
+		toDate = new GregorianCalendar(2020,6,1).getTime();
+		setTotals(fromDate,toDate,data,columnIndex);
+		
+		columnIndex = 11; // 2020Q3
+		fromDate = new GregorianCalendar(2020,6,1).getTime();
+		toDate = new GregorianCalendar(2020,9,1).getTime();
+		setTotals(fromDate,toDate,data,columnIndex);
+		
+		columnIndex = 12; // 2020Q4
+		fromDate = new GregorianCalendar(2020,9,1).getTime();
+		toDate = new GregorianCalendar(2021,0,1).getTime();
+		setTotals(fromDate,toDate,data,columnIndex);
+		
+		columnIndex = 13; // 2021Q1
+		fromDate = new GregorianCalendar(2021,0,1).getTime();
+		toDate = new GregorianCalendar(2021,3,1).getTime();
+		setTotals(fromDate,toDate,data,columnIndex);
+		
+		columnIndex = 14; // 2021Q2
+		fromDate = new GregorianCalendar(2021,3,1).getTime();
+		toDate = new GregorianCalendar(2021,6,1).getTime();
+		setTotals(fromDate,toDate,data,columnIndex);
+		
+		columnIndex = 15; // 2021Q3
+		fromDate = new GregorianCalendar(2021,6,1).getTime();
+		toDate = new GregorianCalendar(2021,9,1).getTime();
+		setTotals(fromDate,toDate,data,columnIndex);
+		
+		columnIndex = 16; // post Sep 2018
+		fromDate = new GregorianCalendar(2018,9,1).getTime();
+		toDate = new GregorianCalendar(2022,0,1).getTime();
+		setTotals(fromDate,toDate,data,columnIndex);
+		
+		columnIndex = 17; // Totaal
+		fromDate = new GregorianCalendar(2008,1,1).getTime();
+		toDate = new GregorianCalendar(2022,3,1).getTime();
 		setTotals(fromDate,toDate,data,columnIndex);
 		
 		DataTableModel model = new DataTableModel(data,columnNames);
 		JTable table = new JTable(model);
-//		table.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+		TableColumnModel colModel = table.getColumnModel();
+		for(int i=0; i<colModel.getColumnCount();i++)
+		{
+			TableColumn aColumn = colModel.getColumn(i);
+			aColumn.setCellRenderer(new BigDecimalRenderer());
+		}
+		//		table.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
 		ColumnsAutoSizer as = new ColumnsAutoSizer();
 		as.sizeColumnsToFit(table);
 		table.setSelectionBackground(Color.LIGHT_GRAY);
@@ -184,22 +206,31 @@ public class PreOctDialog extends JDialog
 
 		for(Transactie t : theTList)
 		{
-			if(t.getDate().compareTo(toDate) < 0 && t.getDate().compareTo(fromDate) >= 0 && t.getNumber() > 0) 
+			Effect e = theEList.getEffectBijTicker(t.getTickerId());
+			if(e.getAantalGekocht() == e.getAantalVerkocht()) continue;
+//			if(t.getDate().compareTo(toDate) < 0 && t.getDate().compareTo(fromDate) >= 0 && t.getNumber() > 0) 
+			if(t.getDate().compareTo(toDate) < 0 && t.getDate().compareTo(fromDate) >= 0) 
 			{
 				selectedTransactions.add(t);
 			}
 		}
 		BigDecimal invest = selectedTransactions.getSharesPurchasedValue().add(selectedTransactions.getMakerlaarsAankoopCost()).add(selectedTransactions.getBeursAankoopTaks());
 		BigDecimal presentValue = BigDecimal.ZERO;
+		BigDecimal soldValue = selectedTransactions.getSharesSoldValue().subtract(selectedTransactions.getMakerlaarsVerkoopCost().add(selectedTransactions.getBeursVerkoopTaks()));
 
 		for(Transactie t : selectedTransactions)
 		{
-			Effect e = theEList.getEffectBijTicker(t.getTickerId());
-			if(e==null) continue;
-			BigDecimal shareValue = e.getKoers();
 			BigDecimal count = new BigDecimal(t.getNumber());
 			if(count==BigDecimal.ZERO) continue;
-			presentValue=presentValue.add(shareValue.multiply(count));
+			Effect e = theEList.getEffectBijTicker(t.getTickerId());
+			if(e==null) continue;
+			if(t.getNumber() > 0)
+			{
+				BigDecimal shareValue = e.getKoers();
+				presentValue=presentValue.add(shareValue.multiply(count));
+			}
+			else
+				presentValue=presentValue.add(t.getPrice().multiply(count));
 		}
 
 		BigDecimal profit = presentValue.subtract(invest);
@@ -220,6 +251,7 @@ public class PreOctDialog extends JDialog
 		data[5][colIdx] = presentValue.setScale(2, BigDecimal.ROUND_HALF_DOWN);
 		data[6][colIdx] = profit.setScale(2, BigDecimal.ROUND_HALF_DOWN);
 		data[7][colIdx] = profitPercentage.setScale(2, BigDecimal.ROUND_HALF_DOWN);
+		data[9][colIdx] = soldValue.setScale(2, BigDecimal.ROUND_HALF_DOWN);
 		return;
 	}
 

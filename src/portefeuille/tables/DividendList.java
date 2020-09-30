@@ -14,7 +14,7 @@ import java.util.TreeMap;
 
 import javax.sql.DataSource;
 
-public class DividentList extends ArrayList<Divident>
+public class DividendList extends ArrayList<Dividend>
 {
 
 	/**
@@ -22,12 +22,12 @@ public class DividentList extends ArrayList<Divident>
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public DividentList()
+	public DividendList()
 	{
 		super();
 	} 
 
-	public DividentList(DataSource ds)
+	public DividendList(DataSource ds)
 	{
 		super();
 		Connection con = null;
@@ -44,12 +44,12 @@ public class DividentList extends ArrayList<Divident>
 				String tickerId = rsRM.getString("TickerId");
 				Date day = rsRM.getDate("Datum");
 				int count = rsRM.getInt("Aantal");
-				BigDecimal divident = rsRM.getBigDecimal("Divident");
+				BigDecimal dividend = rsRM.getBigDecimal("Divident");
 				BigDecimal bruto = rsRM.getBigDecimal("Bruto");
 				BigDecimal voorheffing = rsRM.getBigDecimal("Voorheffing");
 				BigDecimal netto = rsRM.getBigDecimal("Netto");
-				Divident aDivident =  new Divident(tickerId,day,divident,count,bruto,voorheffing,netto);
-				this.add(aDivident);
+				Dividend aDividend =  new Dividend(tickerId,day,dividend,count,bruto,voorheffing,netto);
+				this.add(aDividend);
 			}
 			rsRM.close();
 			if (rsRM != null)
@@ -61,20 +61,20 @@ public class DividentList extends ArrayList<Divident>
 		}
 	}
 
-	public DividentList(int initialCapacity)
+	public DividendList(int initialCapacity)
 	{
 		super(initialCapacity);
 	}
 
-	public DividentList(Collection<? extends Divident> c)
+	public DividendList(Collection<? extends Dividend> c)
 	{
 		super(c);
 	}
 	
 	public void print()
 	{
-		System.out.format("Divident lijst\n");
-		for(Divident t : this)
+		System.out.format("Dividend lijst\n");
+		for(Dividend t : this)
 		{
 			t.print();
 		}
@@ -88,11 +88,11 @@ public class DividentList extends ArrayList<Divident>
 		BigDecimal bruto = BigDecimal.ZERO;
 		BigDecimal voorheffing = BigDecimal.ZERO;
 		BigDecimal netto = BigDecimal.ZERO;
-		for(Divident t : this)
+		for(Dividend t : this)
 		{
 			ticker = t.getTickerId();
 			calendar.setTime(t.getDay());
-			div = div.add(t.getDivident());
+			div = div.add(t.getDividend());
 			bruto = bruto.add(t.getBruto());
 			voorheffing = voorheffing.add(t.getVoorheffing());
 			netto = netto.add(t.getNetto());
@@ -104,32 +104,32 @@ public class DividentList extends ArrayList<Divident>
 
 	}
 
-	public TreeMap<String, DividentList> getDividentMap()
+	public TreeMap<String, DividendList> getDividendMap()
 	{
-		TreeMap<String, DividentList> theMap = new TreeMap<String, DividentList>();
+		TreeMap<String, DividendList> theMap = new TreeMap<String, DividendList>();
 		GregorianCalendar calendar = new GregorianCalendar();
-		for(Divident t : this)
+		for(Dividend t : this)
 		{
 			calendar.setTime(t.getDay());
 			int divYear = calendar.get(Calendar.YEAR);
 			String key = String.format("%s_%4d", t.getTickerId(),divYear);
 //			System.out.println("key = "+key);
-			DividentList aDividentList = theMap.get(key);
-			if(aDividentList==null)
+			DividendList aDividendList = theMap.get(key);
+			if(aDividendList==null)
 			{
-				aDividentList=new DividentList();
-				aDividentList.add(t);
-				theMap.put(key, aDividentList);
+				aDividendList=new DividendList();
+				aDividendList.add(t);
+				theMap.put(key, aDividendList);
 			}
 			else
 			{
-				aDividentList.add(t);
+				aDividendList.add(t);
 			}
 		}
 		return theMap;		
 	}
 
-	public Object[][] getDividentTableData()
+	public Object[][] getDividendTableData()
 	{
 		Object[][] result = new Object[this.size()][7];
 		for(int i=0; i<this.size(); i++ )
