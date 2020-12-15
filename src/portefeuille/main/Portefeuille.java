@@ -25,7 +25,7 @@ public class Portefeuille
 
 	public Portefeuille()
 	{
-		DataSource ds = DataSourceFactory.getInputDataSource("pvm");
+		DataSource ds = DataSourceFactory.getInputDataSource("portefeuille");
 		if(ds==null)
 		{
 			System.out.println("Niet gelukt!");

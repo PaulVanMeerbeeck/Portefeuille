@@ -214,6 +214,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	{
 		eList = new EffectList(ds);
 		tList = new TransactieList(ds);
+		eList.ApplyTransactieList(tList);
 		
 		GridBagConstraints gbc = new GridBagConstraints();
 		gbc.anchor=GridBagConstraints.NORTHWEST;
@@ -244,7 +245,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		add(divInkomsten,gbc);
 		
 		if(alleDividenden!=null) remove(alleDividenden);
-		String sqlAlleDiv = "SELECT YEAR(Datum) AS Jaar,MONTH(Datum) as Maand, sum(Bruto) as Bruto, sum(Netto) as Netto FROM Divident group by YEAR(Datum),MONTH(Datum) order by YEAR(Datum),MONTH(Datum)";
+		String sqlAlleDiv = "SELECT YEAR(Datum) AS Jaar,MONTH(Datum) as Maand, sum(Bruto) as Bruto, sum(Netto) as Netto FROM Dividend group by YEAR(Datum),MONTH(Datum) order by YEAR(Datum),MONTH(Datum)";
 		alleDividenden = CreateSQLPane(sqlAlleDiv,new Dimension(bannerThreeWidth, 610));
 		gbc.gridx=38;
 		gbc.gridy=2;
@@ -262,8 +263,8 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		add(divForecast,gbc);
 		
 		if(forecastDividenden!=null) remove(forecastDividenden);
-//		String sqlDivForecast = "select k.Maand, round(sum(t.Aantal)*k.Divident,2) as Bruto, round(sum(t.Aantal)*k.Divident*(1-k.Voorheffing),2) as Netto from Effect e, pvm.Kalender k, pvm.transactie t where e.TickerId = k.TickerId and e.TickerId = t.Ticker group by k.Maand order by k.Maand";
-		String sqlDivForecast = "select Maand, Sum(Bruto) as Bruto, Sum(Netto) as Netto from `divident_uitkeringen` group by Maand order by Maand";
+//		String sqlDivForecast = "select k.Maand, round(sum(t.Aantal)*k.Dividend,2) as Bruto, round(sum(t.Aantal)*k.Dividend*(1-k.Voorheffing),2) as Netto from Effect e, pvm.Kalender k, pvm.transactie t where e.TickerId = k.TickerId and e.TickerId = t.Ticker group by k.Maand order by k.Maand";
+		String sqlDivForecast = "select Maand, Sum(Bruto) as Bruto, Sum(Netto) as Netto from `dividend_uitkeringen` group by Maand order by Maand";
 		forecastDividenden = CreateSQLPane(sqlDivForecast,new Dimension(bannerFourWidth, 380));
 		gbc.gridx=48;
 		gbc.gridy=2;
@@ -337,7 +338,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			pane.setPreferredSize(new Dimension(bannerOneWidth,30));
 		
 	//		String sql = "select sum(Aantal) as 'Aantal aandelen', sum(Aankoop) as 'aankoop waarde', sum(Kosten) as kosten, sum(Waarde) as 'huidige waarde', sum(Winst) as meerwaarde from toestand ";
-			String sql = "select sum(Aantal) as 'Aantal aandelen', sum(Aankoop) as 'aankoop waarde', sum(AankoopKosten) as kosten, sum(Waarde) as 'huidige waarde', sum(Winst) as meerwaarde from toestand where Aantal > 0";
+			String sql = "select sum(Aantal) as 'Aantal aandelen', sum(Investering) as 'Investering', sum(AankoopKosten) as kosten, sum(Waarde) as 'Huidige waarde', sum(Winst) as Winst from toestand"; // where Aantal > 0";
 			try
 			{
 				Statement stmt = con.createStatement();
@@ -535,7 +536,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 //			String sql = "select * from toestand";
 			String sql = "SELECT `toestand`.`Naam`, `toestand`.`Aantal`, `toestand`.`Waarde`, `toestand`.`Aantal gekocht` as `gekocht`, "+
 					"`toestand`.`AankoopPrijs` AS `Aank.Prijs`,  `toestand`.`Aantal verkocht` as `verkocht`, `toestand`.`VerkoopPrijs` AS `Verk.Prijs`, "+
-					"`toestand`.`Winst`, `toestand`.`Cat` FROM `toestand` where `Aantal` > 0 or `VerkoopPrijs` >0";
+					"`toestand`.`Winst`, `toestand`.`Cat` FROM `toestand` where `Aantal` > 0"; // or `VerkoopPrijs` >0";
 //			boolean scrolling = con.getMetaData().supportsResultSetType(ResultSet.TYPE_SCROLL_SENSITIVE);
 //			System.out.println("TYPE_SCROLL_INSENSITIVE = "+scrolling);
 			Statement stmtRM = con.createStatement();
@@ -616,7 +617,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	{
 		try
 		{
-			String sql = "select YEAR(d.Datum) as Jaar, sum(d.Divident) as Dividend, Sum(d.Bruto) as Bruto, Sum(d.Voorheffing) as Voorheffing, Sum(d.Netto) as Netto, '' as Rendement from Divident d, Effect e where e.Naam = '"+naam+"' and e.TickerId = d.TickerId group by YEAR(Datum) order by Jaar";
+			String sql = "select YEAR(d.Datum) as Jaar, sum(d.Dividend) as Dividend, Sum(d.Bruto) as Bruto, Sum(d.Voorheffing) as Voorheffing, Sum(d.Netto) as Netto, '' as Rendement from Dividend d, Effect e where e.Naam = '"+naam+"' and e.TickerId = d.TickerId group by YEAR(Datum) order by Jaar";
 			Statement stmtRM = con.createStatement();
 			ResultSet rsRM = stmtRM.executeQuery(sql);
 
@@ -735,7 +736,8 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 				l.setPreferredSize(cellDim);
 				JLabel v = new JLabel();
 				v.setPreferredSize(cellDim);
-				BigDecimal gem = tList.getGemiddeldeAankoopKoers(tickerId);
+//				BigDecimal gem = tList.getGemiddeldeAankoopKoers(tickerId);
+				BigDecimal gem = eList.getEffectBijTicker(tickerId).getGemiddeldePrijs();
 				v.setText(String.format("%.2f",gem));
 				gbc.gridy = gbc.gridy+1;
 				gbc.gridx = 0;
@@ -866,7 +868,8 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		int tableHeight = height-10;
 		try
 		{
-			MeerwaardenList ml = new MeerwaardenList(ds);
+//			MeerwaardenList ml = new MeerwaardenList(ds);
+			MeerwaardenList ml = new MeerwaardenList(eList);
 			JTable akoTable = ml.CreateTable();
 			akoTable.setPreferredScrollableViewportSize(new Dimension(bannerTwoWidth, tableHeight));
 			akoTable.setFillsViewportHeight(true);

@@ -55,6 +55,9 @@ public class EffectList extends ArrayList<Effect>
 				int aantalVerkocht = rsRM.getInt("AantalVerkocht");
 				BigDecimal verkoopWaarde = rsRM.getBigDecimal("VerkoopWaarde");
 				BigDecimal verkoopKost = rsRM.getBigDecimal("VerkoopKost");
+				int aantalInBezit = rsRM.getInt("AantalInBezit");
+				BigDecimal gemiddeldePrijs = rsRM.getBigDecimal("GemiddeldePrijs");
+				BigDecimal gerealiseerdeMeerwaarde = rsRM.getBigDecimal("GerealiseerdeMeerwaarde");
 				
 				Effect aEffect =  new Effect(naam,tickerId,isinCode,categorie,risico,koers,dividend);
 				aEffect.setAantalGekocht(aantalGekocht);
@@ -63,6 +66,9 @@ public class EffectList extends ArrayList<Effect>
 				aEffect.setAantalVerkocht(aantalVerkocht);
 				aEffect.setVerkoopWaarde(verkoopWaarde);
 				aEffect.setVerkoopKost(verkoopKost);
+				aEffect.setAantalInBezit(aantalInBezit);
+				aEffect.setGemiddeldePrijs(gemiddeldePrijs);
+				aEffect.setGerealiseerdeMeerwaarde(gerealiseerdeMeerwaarde);
 				
 				this.add(aEffect);
 			}
@@ -97,7 +103,7 @@ public class EffectList extends ArrayList<Effect>
 
 	public Object[][] getEffectTableData()
 	{
-		Object[][] result = new Object[this.size()][13];
+		Object[][] result = new Object[this.size()][16];
 		for(int i=0; i<this.size(); i++ )
 		{
 			ArrayList<Object> e = get(i).getFieldValues();
@@ -195,5 +201,46 @@ public class EffectList extends ArrayList<Effect>
 			e.printStackTrace();
 		}
 		return result;
+	}
+
+	public void ApplyTransactieList(TransactieList l)
+	{
+
+		String[] theResult = new String[this.size()];
+		int index=0;
+		for(Effect e :this)
+		{
+			String s= e.ApplyTransactieList(l);
+			if(s.isEmpty()) continue;
+			theResult[index]=s;
+			index++;
+		}
+		if(index==0) return;
+		Connection con=null;
+		try
+		{
+			con = theDataSource.getConnection();
+			for(int i=0; i<index; i++)
+			{
+				Statement stmt = con.createStatement();
+				stmt.execute(theResult[i]);
+				stmt.close();
+				if(!con.getAutoCommit()) con.commit();
+			}
+		}
+		catch (SQLException e)
+		{
+			e.printStackTrace();
+			try
+			{
+				if(con!=null && !con.getAutoCommit()) con.rollback();
+//				con.close();
+			}
+			catch (SQLException e1)
+			{
+				// e1.printStackTrace();
+			}
+		}
+		return;
 	}
 }

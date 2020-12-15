@@ -33,7 +33,7 @@ public class DividendList extends ArrayList<Dividend>
 		Connection con = null;
 		Statement stmtRM = null;
 		ResultSet rsRM = null;
-		String sql = "select * from Divident order by Datum";
+		String sql = "select * from Dividend order by Datum";
 		try 
 		{
 			con = ds.getConnection();
@@ -44,7 +44,7 @@ public class DividendList extends ArrayList<Dividend>
 				String tickerId = rsRM.getString("TickerId");
 				Date day = rsRM.getDate("Datum");
 				int count = rsRM.getInt("Aantal");
-				BigDecimal dividend = rsRM.getBigDecimal("Divident");
+				BigDecimal dividend = rsRM.getBigDecimal("Dividend");
 				BigDecimal bruto = rsRM.getBigDecimal("Bruto");
 				BigDecimal voorheffing = rsRM.getBigDecimal("Voorheffing");
 				BigDecimal netto = rsRM.getBigDecimal("Netto");

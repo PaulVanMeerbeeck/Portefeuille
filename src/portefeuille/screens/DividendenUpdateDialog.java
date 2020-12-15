@@ -120,8 +120,8 @@ public class DividendenUpdateDialog extends JDialog implements TableModelListene
 		this.add(buttonPane, BorderLayout.SOUTH);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 //		setSize(550, 320);
-		setMinimumSize(new Dimension(440,580));
-		setPreferredSize(new Dimension(440,580));
+		setMinimumSize(new Dimension(460,580));
+		setPreferredSize(new Dimension(460,580));
 		setLocationRelativeTo(null);
 		
 		setVisible(true);
@@ -168,10 +168,10 @@ public class DividendenUpdateDialog extends JDialog implements TableModelListene
 		while(newRowCount>0 && tableModel.getValueAt(newRowCount-1,0)==null) newRowCount--;
 //		System.out.println("Updated newRowCount = "+newRowCount);
 		String[] theResult = new String[newRowCount];
-		// UPDATE `Divident` SET `Koers` = '66.8201', `Div` = '1.8001' WHERE (`TickerId` = 'ABI');
+		// UPDATE `Dividend` SET `Koers` = '66.8201', `Div` = '1.8001' WHERE (`TickerId` = 'ABI');
 		for(int i=0; i <oldRowCount; i++)
 		{
-			StringBuilder sb = new StringBuilder("UPDATE `Divident` SET ");
+			StringBuilder sb = new StringBuilder("UPDATE `Dividend` SET ");
 			boolean bFound = false;
 			for(int j=0; j<columnNames.length; j++)
 			{
@@ -194,11 +194,11 @@ public class DividendenUpdateDialog extends JDialog implements TableModelListene
 		{
 			try
 			{
-				// INSERT INTO `Divident` (`TickerId`,`Datum`,`Divident`,`Aantal`,`Bruto`,`Voorheffing`,`Netto`)
+				// INSERT INTO `Dividend` (`TickerId`,`Datum`,`Dividend`,`Aantal`,`Bruto`,`Voorheffing`,`Netto`)
 				// VALUES (
-				StringBuilder sb = new StringBuilder("INSERT INTO `Divident`");
+				StringBuilder sb = new StringBuilder("INSERT INTO `Dividend`");
 				sb.append('(');
-				sb.append("`TickerId`,`Datum`,`Divident`,`Aantal`,`Bruto`,`Voorheffing`,`Netto`");
+				sb.append("`TickerId`,`Datum`,`Dividend`,`Aantal`,`Bruto`,`Voorheffing`,`Netto`");
 				sb.append(')');
 				sb.append(" VALUES ");
 				sb.append('(');

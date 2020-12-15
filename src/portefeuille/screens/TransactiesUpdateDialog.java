@@ -128,8 +128,8 @@ public class TransactiesUpdateDialog extends JDialog implements TableModelListen
 		this.add(buttonPane, BorderLayout.SOUTH);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 //		setSize(550, 320);
-		setMinimumSize(new Dimension(430,580));
-		setPreferredSize(new Dimension(430,580));
+		setMinimumSize(new Dimension(450,580));
+		setPreferredSize(new Dimension(450,580));
 		setLocationRelativeTo(null);
 		
 		setVisible(true);
@@ -225,7 +225,7 @@ public class TransactiesUpdateDialog extends JDialog implements TableModelListen
 				JOptionPane.showMessageDialog(this,"Iets niet ingevuld?","Gegevens fout", JOptionPane.ERROR_MESSAGE);
 			}
 		}
-		if(countSQLStatements>0) countSQLStatements++;
+//		if(countSQLStatements>0) countSQLStatements++;
 		String[] finalResult = new String[countSQLStatements];
 		int index = 0;
 		for(String s : theResult)
@@ -234,7 +234,7 @@ public class TransactiesUpdateDialog extends JDialog implements TableModelListen
 			finalResult[index]=s;
 			index++;
 		}
-		if(index>0)
+/*		if(index>0)
 		{
 			finalResult[index]=	"UPDATE Effect \n"+ 
 													"SET AantalGekocht = (SELECT sum(transactie.Aantal) \n"+
@@ -267,7 +267,7 @@ public class TransactiesUpdateDialog extends JDialog implements TableModelListen
 													"WHERE Effect.TickerId = (SELECT  distinct(transactie.Ticker)  \n"+
 													"                         FROM   transactie \n"+
 													"                         WHERE  Effect.TickerId = transactie.Ticker)";
-		}
+		}*/
 		return finalResult;
 	}
 	

@@ -208,11 +208,11 @@ public class KalenderUpdateDialog extends JDialog implements TableModelListener,
 		{
 			try
 			{
-				// INSERT INTO `Kalender` (`Ticker`,`Maand`,`Dag`,`Divident`,	`Voorheffing` )
+				// INSERT INTO `Kalender` (`Ticker`,`Maand`,`Dag`,`Dividend`,	`Voorheffing` )
 				// VALUES (
 				StringBuilder sb = new StringBuilder("INSERT INTO `Kalender`");
 				sb.append('(');
-				sb.append("`TickerId`,`Maand`,`Dag`,`Divident`,`Voorheffing` ");
+				sb.append("`TickerId`,`Maand`,`Dag`,`Dividend`,`Voorheffing` ");
 				sb.append(')');
 				sb.append(" VALUES ");
 				sb.append('(');

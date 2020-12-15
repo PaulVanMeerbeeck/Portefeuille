@@ -1,7 +1,10 @@
 package portefeuille.tables;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
+import portefeuille.tables.Transactie;
+import portefeuille.tables.TransactieList;
 
 public class Effect
 {
@@ -18,6 +21,9 @@ public class Effect
 	int theAantalVerkocht;
 	BigDecimal theVerkoopWaarde;
 	BigDecimal theVerkoopKost;
+	int theAantalInBezit;
+	BigDecimal theGemiddeldePrijs;
+	BigDecimal theGerealiseerdeMeerwaarde;
 
 
 	public Effect(String aName, String aTickerId, String aIsinCode, String aCategory, String aRisc, BigDecimal aKoers, BigDecimal aDividend)
@@ -35,6 +41,9 @@ public class Effect
 		theAankoopKost=BigDecimal.ZERO;
 		theVerkoopWaarde=BigDecimal.ZERO;
 		theVerkoopKost=BigDecimal.ZERO;
+		theAantalInBezit=0;
+		theGemiddeldePrijs=BigDecimal.ZERO;
+		theGerealiseerdeMeerwaarde=BigDecimal.ZERO;
 		return;		
 	}
 	
@@ -167,6 +176,36 @@ public class Effect
 	{
 		this.theVerkoopKost = aVerkoopKost;
 	}
+	
+	public int getAantalInBezit()
+	{
+		return this.theAantalInBezit;
+	}
+	
+	public void setAantalInBezit(int aAantalInBezit)
+	{
+		this.theAantalInBezit = aAantalInBezit;
+	}
+	
+	public BigDecimal getGemiddeldePrijs()
+	{
+		return this.theGemiddeldePrijs;
+	}
+	
+	public void setGemiddeldePrijs(BigDecimal aGemiddeldePrijs)
+	{
+		this.theGemiddeldePrijs = aGemiddeldePrijs;
+	}
+
+	public BigDecimal getGerealiseerdeMeerwaarde()
+	{
+		return this.theGerealiseerdeMeerwaarde;
+	}
+	
+	public void setGerealiseerdeMeerwaarde(BigDecimal aGerealiseerdeMeerwaarde)
+	{
+		this.theGerealiseerdeMeerwaarde = aGerealiseerdeMeerwaarde;
+	}
 
 	public ArrayList<String> getFieldNames()
 	{
@@ -184,6 +223,9 @@ public class Effect
 		l.add("AantalVerkocht");
 		l.add("VerkoopWaarde");
 		l.add("VerkoopKost");
+		l.add("AantalInBezit");
+		l.add("GemiddeldePrijs");
+		l.add("GerealiseerdeMeerwaarde");
 		return l;
 	}
 	
@@ -203,7 +245,126 @@ public class Effect
 		l.add(theAantalVerkocht);
 		l.add(theVerkoopWaarde);
 		l.add(theVerkoopKost);
+		l.add(theAantalInBezit);
+		l.add(theGemiddeldePrijs);
+		l.add(theGerealiseerdeMeerwaarde);
 		return l;
+	}
+
+	protected void ApplyTransactie(Transactie aTransactie)
+	{
+		if(aTransactie.getNumber()<0)
+		{	// verkoop
+			this.theAantalInBezit = this.theAantalInBezit+aTransactie.getNumber();
+			this.theAantalVerkocht = this.theAantalVerkocht-aTransactie.getNumber();
+			this.theGerealiseerdeMeerwaarde=this.theGerealiseerdeMeerwaarde.add(aTransactie.getSaleAmount());
+			this.theGerealiseerdeMeerwaarde=this.theGerealiseerdeMeerwaarde.add(this.theGemiddeldePrijs.multiply(new BigDecimal(aTransactie.getNumber())));
+			this.theVerkoopKost=this.theVerkoopKost.add(aTransactie.getTransactionCost());
+			this.theVerkoopWaarde=this.theVerkoopWaarde.add(aTransactie.getSaleAmount());
+		}
+		else
+		{	// aankoop
+			BigDecimal totaalAankoopBedrag = aTransactie.getPurchaseAmount().add(this.theGemiddeldePrijs.multiply(new BigDecimal(theAantalInBezit)));
+			this.theAantalInBezit = this.theAantalInBezit+aTransactie.getNumber();
+			this.theGemiddeldePrijs = totaalAankoopBedrag.divide(new BigDecimal(theAantalInBezit),4, RoundingMode.HALF_UP);
+			this.theAankoopKost = this.theAankoopKost.add(aTransactie.getTransactionCost());
+			this.theAankoopWaarde=this.theAankoopWaarde.add(aTransactie.getPurchaseAmount());
+			this.theAantalGekocht=this.theAantalGekocht+aTransactie.getNumber();
+		}
+		return;
+	}
+	
+	protected String ApplyTransactieList(TransactieList aTransactieList)
+	{
+		int aantalGekocht = this.theAantalGekocht;
+		int aantalVerkocht = this.theAantalVerkocht;
+		int aantalInBezit = this.theAantalInBezit;
+		BigDecimal aankoopWaarde = this.theAankoopWaarde;
+		BigDecimal aankoopKost = this.theAankoopKost;
+		BigDecimal verkoopWaarde = this.theVerkoopWaarde;
+		BigDecimal verkoopKost = this.theVerkoopKost;
+		BigDecimal gemiddeldePrijs = this.theGemiddeldePrijs;
+		BigDecimal gerealiseerdeMeerwaarde = this.theGerealiseerdeMeerwaarde;
+		
+		this.theAantalGekocht=0;
+		this.theAantalVerkocht=0;
+		this.theAantalInBezit=0;
+		this.theAankoopWaarde=BigDecimal.ZERO;
+		this.theAankoopKost=BigDecimal.ZERO;
+		this.theVerkoopWaarde=BigDecimal.ZERO;
+		this.theVerkoopKost=BigDecimal.ZERO;
+		this.theGemiddeldePrijs=BigDecimal.ZERO;
+		this.theGerealiseerdeMeerwaarde=BigDecimal.ZERO;
+		
+		for(Transactie t:aTransactieList)
+		{
+			if(t.getTickerId().compareTo(theTickerId)!=0) continue;
+			this.ApplyTransactie(t);
+		}
+		
+		StringBuilder sb = new StringBuilder("UPDATE `Effect` SET ");
+		
+		boolean bUpdate = false;
+		if(aantalGekocht != this.theAantalGekocht)
+		{
+			sb.append("`AantalGekocht` = '"+this.theAantalGekocht+"'");
+			bUpdate = true;
+		}
+		if(aankoopWaarde.compareTo(this.theAankoopWaarde) != 0)
+		{
+			if(bUpdate) sb.append(", ");
+			sb.append("`AankoopWaarde` = '"+this.theAankoopWaarde+"'");			
+			bUpdate = true;
+		}
+		if(aankoopKost.compareTo(this.theAankoopKost) != 0)
+		{
+			if(bUpdate) sb.append(", ");
+			sb.append("`AankoopKost` = '"+this.theAankoopKost+"'");			
+			bUpdate = true;
+		}
+		if(aantalVerkocht != this.theAantalVerkocht)
+		{
+			if(bUpdate) sb.append(", ");
+			sb.append("`AantalVerkocht` = '"+this.theAantalVerkocht+"'");
+			bUpdate = true;
+		}
+		if(verkoopWaarde.compareTo(this.theVerkoopWaarde) != 0)
+		{
+			if(bUpdate) sb.append(", ");
+			sb.append("`VerkoopWaarde` = '"+this.theVerkoopWaarde+"'");			
+			bUpdate = true;
+		}
+		if(verkoopKost.compareTo(this.theVerkoopKost) != 0)
+		{
+			if(bUpdate) sb.append(", ");
+			sb.append("`VerkoopKost` = '"+this.theVerkoopKost+"'");			
+			bUpdate = true;
+		}
+		if(aantalInBezit != this.theAantalInBezit)
+		{
+			if(bUpdate) sb.append(", ");
+			sb.append("`AantalInBezit` = '"+this.theAantalInBezit+"'");
+			bUpdate = true;
+		}
+		if(gemiddeldePrijs.compareTo(this.theGemiddeldePrijs) != 0)
+		{
+			if(bUpdate) sb.append(", ");
+			sb.append("`GemiddeldePrijs` = '"+this.theGemiddeldePrijs+"'");			
+			bUpdate = true;
+		}
+		if(gerealiseerdeMeerwaarde.compareTo(this.theGerealiseerdeMeerwaarde) != 0)
+		{
+			if(bUpdate) sb.append(", ");
+			sb.append("`GerealiseerdeMeerwaarde` = '"+this.theGerealiseerdeMeerwaarde+"'");			
+			bUpdate = true;
+		}
+		if(bUpdate)
+		{
+			sb.append(" WHERE (`TickerId` = '"+this.theTickerId+"');");
+			System.out.println(sb.toString());
+			return sb.toString();
+		}
+		return "";
 	}
 	
 	protected void print()

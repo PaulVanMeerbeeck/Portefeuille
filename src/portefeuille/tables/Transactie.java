@@ -120,6 +120,33 @@ public class Transactie
 		return l;
 	}
 	
+	public BigDecimal getTransactionCost()
+	{
+		return this.theBeurstaks.add(this.theMakelaarsloon);
+	}
+	
+	public BigDecimal getPurchaseAmount()
+	{
+		BigDecimal totalAmount = BigDecimal.ZERO;
+		if(this.theNumber>0)
+		{
+			totalAmount=totalAmount.add(this.thePrice.multiply(new BigDecimal(this.theNumber)));
+			totalAmount=totalAmount.add(this.getTransactionCost());
+		}
+		return totalAmount;
+	}
+	
+	public BigDecimal getSaleAmount()
+	{
+		BigDecimal totalAmount = BigDecimal.ZERO;
+		if(this.theNumber<0)
+		{
+			totalAmount=totalAmount.add(this.thePrice.multiply(new BigDecimal(this.theNumber*-1)));
+			totalAmount=totalAmount.subtract(this.getTransactionCost());
+		}
+		return totalAmount;
+	}
+	
 	public void print()
 	{
 		System.out.printf("%-6.6s  %tF  %05d\t%08.3f\t%05.2f\t%05.2f\n",theTickerId,theDate,theNumber, thePrice, theMakelaarsloon, theBeurstaks );

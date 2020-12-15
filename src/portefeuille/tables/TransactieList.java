@@ -161,9 +161,7 @@ public class TransactieList extends ArrayList<Transactie>
 		for(Transactie t : this)
 		{
 			if(t.theTickerId.compareToIgnoreCase(tickerId)!=0 || t.getNumber() < 0) continue;
-			aankoopWaarde=aankoopWaarde.add(t.getPrice().multiply(new BigDecimal(t.getNumber())));
-			aankoopWaarde=aankoopWaarde.add(t.getMakelaarsloon());
-			aankoopWaarde=aankoopWaarde.add(t.getBeurstaks());
+			aankoopWaarde=aankoopWaarde.add(t.getPurchaseAmount());
 			aantal=aantal+t.getNumber();
 		}
 		if(aantal!=0)
@@ -203,9 +201,7 @@ public class TransactieList extends ArrayList<Transactie>
 		for(Transactie t : this)
 		{
 			if(t.theTickerId.compareToIgnoreCase(tickerId)!=0 || t.getNumber() > 0) continue;
-			verkoopWaarde=verkoopWaarde.add(t.getPrice().multiply(new BigDecimal(t.getNumber())));
-			verkoopWaarde=verkoopWaarde.subtract(t.getMakelaarsloon());
-			verkoopWaarde=verkoopWaarde.subtract(t.getBeurstaks());
+			verkoopWaarde=verkoopWaarde.add(t.getSaleAmount());
 			aantal=aantal+t.getNumber();
 		}
 		if(aantal!=0)
@@ -225,9 +221,7 @@ public class TransactieList extends ArrayList<Transactie>
 			if(t.getDate().compareTo(aDate) > 0) continue;
 			if(t.getNumber() > 0)
 			{
-				moneyInvested=moneyInvested.add(t.getPrice().multiply(new BigDecimal(t.getNumber())));
-				moneyInvested=moneyInvested.add(t.getBeurstaks());
-				moneyInvested=moneyInvested.add(t.getMakelaarsloon());
+				moneyInvested=moneyInvested.add(t.getPurchaseAmount());
 				aantal=aantal+t.getNumber();
 			}
 			else
@@ -241,5 +235,5 @@ public class TransactieList extends ArrayList<Transactie>
 			}
 		}
 		return moneyInvested;		
-	}
-}
+	} 
+} 

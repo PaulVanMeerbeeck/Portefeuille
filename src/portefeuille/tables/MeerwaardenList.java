@@ -14,6 +14,8 @@ import javax.swing.JTable;
 import portefeuille.util.ColumnsAutoSizer;
 import portefeuille.util.DataTableModel;
 
+import portefeuille.tables.EffectList;
+
 public class MeerwaardenList extends ArrayList<Meerwaarden>
 {
 	private static final long serialVersionUID = 1L;
@@ -75,6 +77,17 @@ public class MeerwaardenList extends ArrayList<Meerwaarden>
 		}
 	}
 
+	public MeerwaardenList(EffectList anEffectList)
+	{
+		for(Effect e:anEffectList)
+		{
+			if(e.getAantalVerkocht()<1) continue;
+			Meerwaarden aMeerwaarden = new Meerwaarden(e.getTickerId(),null,e.getAantalVerkocht(),e.getGerealiseerdeMeerwaarde());
+			this.add(aMeerwaarden);
+		}
+		return;
+	}
+	
 	public void print()
 	{
 		System.out.format("Meerwaarden lijst\n");
@@ -95,7 +108,10 @@ public class MeerwaardenList extends ArrayList<Meerwaarden>
 		
 		for(Meerwaarden m : this)
 		{
-			calendar.setTime(m.getDate());
+			if(m.getDate()!=null)
+			{
+				calendar.setTime(m.getDate());
+			}
 			int mwYear = calendar.get(Calendar.YEAR);
 			data[rowIndex][0] = m.getTickerId();
 			data[rowIndex][1] = mwYear;
