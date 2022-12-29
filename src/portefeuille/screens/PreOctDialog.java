@@ -244,14 +244,14 @@ public class PreOctDialog extends JDialog
 			profitPercentage=profitPercentage.subtract(BigDecimal.ONE);
 			profitPercentage=profitPercentage.multiply(new BigDecimal(100));
 		}
-		data[0][colIdx] = selectedTransactions.getSharesPurchasedValue().setScale(2, BigDecimal.ROUND_HALF_DOWN); //  .setScale(2, BigDecimal.ROUND_HALF_DOWN);
-		data[1][colIdx] = selectedTransactions.getMakerlaarsAankoopCost().setScale(2, BigDecimal.ROUND_HALF_DOWN);
-		data[2][colIdx] = selectedTransactions.getBeursAankoopTaks().setScale(2, BigDecimal.ROUND_HALF_DOWN);
-		data[3][colIdx] = invest.setScale(2, BigDecimal.ROUND_HALF_DOWN);
-		data[5][colIdx] = presentValue.setScale(2, BigDecimal.ROUND_HALF_DOWN);
-		data[6][colIdx] = profit.setScale(2, BigDecimal.ROUND_HALF_DOWN);
-		data[7][colIdx] = profitPercentage.setScale(2, BigDecimal.ROUND_HALF_DOWN);
-		data[9][colIdx] = soldValue.setScale(2, BigDecimal.ROUND_HALF_DOWN);
+		data[0][colIdx] = selectedTransactions.getSharesPurchasedValue().setScale(2, RoundingMode.HALF_DOWN); //  .setScale(2, BigDecimal.ROUND_HALF_DOWN);
+		data[1][colIdx] = selectedTransactions.getMakerlaarsAankoopCost().setScale(2, RoundingMode.HALF_DOWN);
+		data[2][colIdx] = selectedTransactions.getBeursAankoopTaks().setScale(2, RoundingMode.HALF_DOWN);
+		data[3][colIdx] = invest.setScale(2, RoundingMode.HALF_DOWN);
+		data[5][colIdx] = presentValue.setScale(2, RoundingMode.HALF_DOWN);
+		data[6][colIdx] = profit.setScale(2, RoundingMode.HALF_DOWN);
+		data[7][colIdx] = profitPercentage.setScale(2, RoundingMode.HALF_DOWN);
+		data[9][colIdx] = soldValue.setScale(2, RoundingMode.HALF_DOWN);
 		return;
 	}
 

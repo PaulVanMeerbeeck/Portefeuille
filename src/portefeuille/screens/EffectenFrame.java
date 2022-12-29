@@ -10,7 +10,9 @@ import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.awt.Taskbar;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -41,7 +43,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-import com.apple.eawt.Application;
+import java.awt.Desktop;
 
 import portefeuille.tables.DataSourceFactory;
 import portefeuille.tables.Effect;
@@ -100,8 +102,9 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		super("Effecten overzicht");
 //		ImageIcon img = new ImageIcon("etc//DSC00675.icns");
 //		this.setIconImage(img.getImage());
+
 		MacOSXController osController = new MacOSXController(this);
-		Application macApplication = Application.getApplication();
+		Desktop macApplication =  Desktop.getDesktop();
 		macApplication.setAboutHandler(osController);
 		macApplication.setPreferencesHandler(null);
 		macApplication.setQuitHandler(osController);
@@ -109,7 +112,8 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		ImageIcon icon =  new ImageIcon(url);
 		if(icon!=null)
 		{
-			macApplication.setDockIconImage(icon.getImage());
+			Taskbar taskbar = Taskbar.getTaskbar();
+			taskbar.setIconImage(icon.getImage());
 		}
 		setIconImage(icon.getImage());
 		this.setPreferredSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT));
@@ -646,7 +650,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 					try
 					{
 						BigDecimal rendement = (BigDecimal) data[i][model.getColumnCount()-2];
-						rendement = rendement.divide(investment, 4, BigDecimal.ROUND_HALF_UP);
+						rendement = rendement.divide(investment, 4, RoundingMode.HALF_UP);
 						rendement = rendement.multiply(new BigDecimal(100));
 						data[i][model.getColumnCount()-1] = rendement.setScale(2);
 					}

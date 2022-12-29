@@ -219,10 +219,10 @@ public class AankoopTriggerDialog extends JDialog implements TableModelListener,
 		
 		for(int i=0;i<tableData.length;i++)
 		{
-    	tableData[i][theAKTList.colWaarde]=((BigDecimal)tableData[i][theAKTList.colWaarde]).setScale(2, BigDecimal.ROUND_HALF_DOWN);
-  		tableData[i][theAKTList.colGemAankWaarde] = ((BigDecimal)tableData[i][theAKTList.colGemAankWaarde]).setScale(2, BigDecimal.ROUND_HALF_DOWN);
-  		tableData[i][theAKTList.colDoelKoers] = ((BigDecimal)tableData[i][theAKTList.colDoelKoers]).setScale(2, BigDecimal.ROUND_HALF_DOWN); 
-   		tableData[i][theAKTList.colInvestering] = ((BigDecimal)tableData[i][theAKTList.colInvestering]).setScale(2, BigDecimal.ROUND_HALF_DOWN); 
+    	tableData[i][theAKTList.colWaarde]=((BigDecimal)tableData[i][theAKTList.colWaarde]).setScale(2, RoundingMode.HALF_DOWN);
+  		tableData[i][theAKTList.colGemAankWaarde] = ((BigDecimal)tableData[i][theAKTList.colGemAankWaarde]).setScale(2, RoundingMode.HALF_DOWN);
+  		tableData[i][theAKTList.colDoelKoers] = ((BigDecimal)tableData[i][theAKTList.colDoelKoers]).setScale(2, RoundingMode.HALF_DOWN); 
+   		tableData[i][theAKTList.colInvestering] = ((BigDecimal)tableData[i][theAKTList.colInvestering]).setScale(2, RoundingMode.HALF_DOWN); 
    		String date = tableData[i][theAKTList.colDatum].toString();
    		if(date.length()>10)
    		{

@@ -115,7 +115,7 @@ public class MeerwaardenList extends ArrayList<Meerwaarden>
 			int mwYear = calendar.get(Calendar.YEAR);
 			data[rowIndex][0] = m.getTickerId();
 			data[rowIndex][1] = mwYear;
-			mw = m.getMeerwaarde().setScale(2, BigDecimal.ROUND_HALF_UP);
+			mw = m.getMeerwaarde().setScale(2, RoundingMode.HALF_UP);
 			data[rowIndex][2] = mw;
 			totaleMw = totaleMw.add(mw);
 			rowIndex++;

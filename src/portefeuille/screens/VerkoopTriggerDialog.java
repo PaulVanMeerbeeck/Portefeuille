@@ -219,11 +219,11 @@ public class VerkoopTriggerDialog extends JDialog implements TableModelListener,
 		
 		for(int i=0;i<tableData.length;i++)
 		{
-    	tableData[i][theVKTList.colWaarde]=((BigDecimal)tableData[i][theVKTList.colWaarde]).setScale(2, BigDecimal.ROUND_HALF_DOWN);
-  		tableData[i][theVKTList.colGemAankWaarde] = ((BigDecimal)tableData[i][theVKTList.colGemAankWaarde]).setScale(2, BigDecimal.ROUND_HALF_DOWN);
-  		tableData[i][theVKTList.colDoelKoers] = ((BigDecimal)tableData[i][theVKTList.colDoelKoers]).setScale(2, BigDecimal.ROUND_HALF_DOWN); 
-   		tableData[i][theVKTList.colOmzet] = ((BigDecimal)tableData[i][theVKTList.colOmzet]).setScale(2, BigDecimal.ROUND_HALF_DOWN); 
-  		tableData[i][theVKTList.colWinst] = ((BigDecimal)tableData[i][theVKTList.colWinst]).setScale(2, BigDecimal.ROUND_HALF_DOWN); 
+    	tableData[i][theVKTList.colWaarde]=((BigDecimal)tableData[i][theVKTList.colWaarde]).setScale(2, RoundingMode.HALF_DOWN);
+  		tableData[i][theVKTList.colGemAankWaarde] = ((BigDecimal)tableData[i][theVKTList.colGemAankWaarde]).setScale(2, RoundingMode.HALF_DOWN);
+  		tableData[i][theVKTList.colDoelKoers] = ((BigDecimal)tableData[i][theVKTList.colDoelKoers]).setScale(2, RoundingMode.HALF_DOWN); 
+   		tableData[i][theVKTList.colOmzet] = ((BigDecimal)tableData[i][theVKTList.colOmzet]).setScale(2, RoundingMode.HALF_DOWN); 
+  		tableData[i][theVKTList.colWinst] = ((BigDecimal)tableData[i][theVKTList.colWinst]).setScale(2, RoundingMode.HALF_DOWN); 
    		String date = tableData[i][theVKTList.colDatum].toString();
    		if(date.length()>10)
    		{

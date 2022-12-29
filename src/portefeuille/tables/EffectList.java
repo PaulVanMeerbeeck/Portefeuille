@@ -162,7 +162,7 @@ public class EffectList extends ArrayList<Effect>
 				String[] tokens=strLine.split(";;");
 				if(tokens.length<14) continue;
 //				if(tokens[muntIndex].compareTo("EUR")!=0) continue;
-				if(tokens[typeIndex].compareTo(";Aandeel")==0 || tokens[typeIndex].compareTo(";ETF")==0)
+				if(tokens[typeIndex].compareTo(";Aandeel")==0 || tokens[typeIndex].compareTo(";ETF")==0 || tokens[typeIndex].compareTo(";Fonds")==0)
 				{
 					result[updateCount][0]=tokens[isinIndex];
 					result[updateCount][1]=new BigDecimal(tokens[koersIndex].replaceFirst(",", "."));

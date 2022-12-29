@@ -228,7 +228,7 @@ public class TransactieList extends ArrayList<Transactie>
 			{
 				if(t.getNumber()==0) continue; // should not happen
 				// handle sale
-				BigDecimal gemiddeldePrijs = moneyInvested.divide(new BigDecimal(aantal));
+				BigDecimal gemiddeldePrijs = moneyInvested.divide(new BigDecimal(aantal), 2, RoundingMode.HALF_UP);
 				aantal= aantal+t.getNumber();
 				if(aantal != 0)
 					moneyInvested = gemiddeldePrijs.multiply(new BigDecimal(aantal)); 

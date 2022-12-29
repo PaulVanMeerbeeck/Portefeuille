@@ -1,18 +1,122 @@
-CREATE TABLE `pvm`.`Categorie` (
+CREATE DATABASE  IF NOT EXISTS `portefeuille` /*!40100 DEFAULT CHARACTER SET latin1 */;
+USE `portefeuille`;
+-- MySQL dump 10.13  Distrib 5.6.21, for osx10.8 (x86_64)
+--
+-- Host: localhost    Database: portefeuille
+-- ------------------------------------------------------
+-- Server version	5.6.21
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `AankoopTrigger`
+--
+
+DROP TABLE IF EXISTS `AankoopTrigger`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `AankoopTrigger` (
+  `Id` int(11) NOT NULL AUTO_INCREMENT,
+  `TickerId` varchar(60) NOT NULL,
+  `Code` varchar(10) NOT NULL,
+  `Waarde` decimal(10,4) NOT NULL,
+  `Aantal` int(11) NOT NULL,
+  `Gem.Aank.Waarde` decimal(10,4) DEFAULT NULL,
+  `Aankoop koers` decimal(10,4) DEFAULT NULL,
+  `Investering` decimal(10,4) DEFAULT NULL,
+  `Status` varchar(16) DEFAULT NULL,
+  `Datum` datetime NOT NULL,
+  PRIMARY KEY (`Id`),
+  UNIQUE KEY `Id_UNIQUE` (`Id`),
+  KEY `Ticker_Id_Fk_idx` (`TickerId`),
+  KEY `Trigger_Code_Fk_idx` (`Code`),
+  CONSTRAINT `Ticker_Id_Fk` FOREIGN KEY (`TickerId`) REFERENCES `Effect` (`TickerId`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `Trigger_Code_Fk` FOREIGN KEY (`Code`) REFERENCES `TriggerCode` (`Code`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=33 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `AankoopTrigger`
+--
+
+LOCK TABLES `AankoopTrigger` WRITE;
+/*!40000 ALTER TABLE `AankoopTrigger` DISABLE KEYS */;
+INSERT INTO `AankoopTrigger` VALUES (5,'GBL','P',10.0000,25,82.7700,74.4900,1862.2500,'Uitgevoerd','2019-01-03 00:00:00'),(6,'MELE','P',15.0000,50,51.6100,46.4400,2322.0000,'Uitgevoerd','2018-12-23 00:00:00'),(7,'GIMVB','P',-5.0000,25,43.8300,46.0200,1150.5000,'Nieuw','2018-12-20 00:00:00'),(8,'SIP','P',10.0000,25,52.9600,47.6600,1191.5000,'Nieuw','2018-12-20 00:00:00'),(9,'SOLB','K',94.0800,25,97.5200,94.0800,2352.0000,'Uitgevoerd','2019-01-21 00:00:00'),(10,'XFAB','P',25.0000,250,5.3000,3.9700,992.5000,'Geannuleerd','2018-12-18 00:00:00'),(11,'BEKB','K',15.1300,100,22.6600,15.1300,1513.0000,'Geannuleerd','2018-12-18 00:00:00'),(12,'SOLB','P',20.0000,25,97.9300,78.3400,1958.5000,'Geannuleerd','2019-01-03 00:00:00'),(13,'AMG','P',15.0000,60,27.2600,23.1700,1390.2000,'Uitgevoerd','2019-05-10 00:00:00'),(14,'SGO','P',10.0000,100,32.7100,29.4400,2944.0000,'Geannuleerd','2019-01-22 00:00:00'),(15,'ABI','K',57.7000,25,77.5900,57.7000,1442.5000,'Uitgevoerd','2018-12-31 00:00:00'),(16,'UMI','K',32.2200,40,13.7100,32.2200,1288.8000,'Uitgevoerd','2019-05-10 00:00:00'),(17,'MITRA','K',16.0200,75,0.0000,16.0200,1201.5000,'Geannuleerd','2018-12-21 00:00:00'),(18,'APAM','P',20.0000,50,24.4000,19.5200,976.0000,'Geannuleerd','2018-12-18 00:00:00'),(19,'MITRA','K',18.5000,75,0.0000,18.5000,1387.5000,'Geannuleerd','2018-12-21 00:00:00'),(20,'MELE','P',10.0000,25,50.6400,45.5800,1139.5000,'Nieuw','2019-01-03 00:00:00'),(21,'GBL','P',15.0000,25,82.7700,70.3500,1758.7500,'Geannuleerd','2018-12-30 00:00:00'),(22,'KBCA','P',10.0000,25,40.7200,36.6500,916.2500,'Nieuw','2018-12-04 00:00:00'),(23,'ABI','K',57.5000,25,77.5900,57.5000,1437.5000,'Uitgevoerd','2019-01-02 00:00:00'),(24,'SIOE','P',12.5000,100,25.6500,22.4400,2244.0000,'Geannuleerd','2019-01-11 00:00:00'),(25,'SOLB','P',15.0000,25,99.9800,84.9800,2124.5000,'Uitgevoerd','2019-01-03 00:00:00'),(26,'UMI','K',34.5000,100,13.7100,34.5000,3450.0000,'Uitgevoerd','2019-02-08 00:00:00'),(27,'EURN','K',7.0200,200,0.0000,7.0200,1404.0000,'Geannuleerd','2019-02-05 00:00:00'),(28,'DIE','K',35.0000,50,35.2700,35.0000,1750.0000,'Uitgevoerd','2019-03-25 00:00:00'),(29,'SOLB','K',95.0000,15,97.5200,95.0000,1425.0000,'Uitgevoerd','2019-05-10 00:00:00'),(30,'SGO','K',30.9500,50,32.2400,30.9500,1547.5000,'Uitgevoerd','2019-03-25 00:00:00'),(31,'CDA','K',23.5000,50,0.0000,23.5000,1175.0000,'Uitgevoerd','2019-03-26 00:00:00'),(32,'SOLB','K',87.5000,15,97.4100,87.5000,1312.5000,'Nieuw','2019-05-13 00:00:00');
+/*!40000 ALTER TABLE `AankoopTrigger` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Categorie`
+--
+
+DROP TABLE IF EXISTS `Categorie`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Categorie` (
   `Code` varchar(10) NOT NULL,
   `Omschrijving` varchar(60) NOT NULL,
   PRIMARY KEY (`Code`),
   UNIQUE KEY `Code_UNIQUE` (`Code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-CREATE TABLE `pvm`.`Risico` (
-  `Code` int(11) NOT NULL,
-  `Omschrijving` varchar(80) NOT NULL,
-  PRIMARY KEY (`Code`)
+--
+-- Dumping data for table `Categorie`
+--
+
+LOCK TABLES `Categorie` WRITE;
+/*!40000 ALTER TABLE `Categorie` DISABLE KEYS */;
+INSERT INTO `Categorie` VALUES ('BT','Belofte & turnaround'),('DG','Duurzame groeier'),('DW','Divident waarde'),('ETF','Exchange Traded Fund'),('VA','Value');
+/*!40000 ALTER TABLE `Categorie` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Dividend`
+--
+
+DROP TABLE IF EXISTS `Dividend`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Dividend` (
+  `TickerId` varchar(60) NOT NULL,
+  `Datum` date NOT NULL,
+  `Dividend` decimal(10,2) NOT NULL,
+  `Aantal` int(11) NOT NULL,
+  `Bruto` decimal(10,2) NOT NULL,
+  `Voorheffing` decimal(10,2) NOT NULL,
+  `Netto` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`TickerId`,`Datum`),
+  CONSTRAINT `Dividend_tickerid` FOREIGN KEY (`TickerId`) REFERENCES `Effect` (`TickerId`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `Dividend`
+--
 
-CREATE TABLE `pvm`.`Effect` (
+LOCK TABLES `Dividend` WRITE;
+/*!40000 ALTER TABLE `Dividend` DISABLE KEYS */;
+INSERT INTO `Dividend` VALUES ('AALB','2020-07-17',0.80,50,40.00,16.67,23.33),('AAPL','2019-05-16',0.68,20,13.67,5.70,7.97),('ABI','2017-05-04',2.00,50,100.00,30.00,70.00),('ABI','2017-11-16',1.60,50,80.00,24.00,56.00),('ABI','2018-05-03',2.00,50,100.00,30.00,70.00),('ABI','2018-11-29',0.80,200,160.00,48.00,112.00),('ABI','2019-05-09',1.00,300,300.00,90.00,210.00),('ABI','2019-11-21',0.80,300,240.00,72.00,168.00),('ABI','2020-06-11',0.50,300,150.00,45.00,105.00),('ACKB','2017-05-31',2.04,40,81.60,24.48,57.12),('ACKB','2018-06-01',2.20,40,88.00,26.40,61.60),('ACKB','2019-06-05',2.32,40,92.80,27.84,64.96),('ACKB','2020-11-16',2.32,50,116.00,34.80,81.20),('AGS','2010-05-31',0.08,1000,80.00,20.00,60.00),('AGS','2011-05-31',0.08,1000,80.00,20.00,60.00),('AGS','2012-05-30',0.08,1000,80.00,20.00,60.00),('AGS','2013-05-07',1.20,100,120.00,30.00,90.00),('AGS','2013-12-31',1.00,100,100.00,0.00,100.00),('AGS','2014-05-13',1.40,100,140.00,35.00,105.00),('AGS','2015-05-08',1.55,100,155.00,38.75,116.25),('AGS','2016-05-11',1.65,100,165.00,44.55,120.45),('AGS','2017-05-31',2.10,100,210.00,63.00,147.00),('AGS','2018-05-30',2.10,100,210.00,63.00,147.00),('AGS','2019-05-29',2.20,100,220.00,66.00,154.00),('AGS','2020-06-04',0.27,350,94.50,28.35,66.15),('AGS','2020-11-05',2.38,350,833.00,249.90,583.10),('AMG','2019-05-08',0.30,40,12.00,5.01,6.99),('AMG','2019-08-15',0.20,100,20.00,8.34,11.66),('AMG','2020-05-14',0.20,150,30.00,12.51,17.49),('AMG','2020-08-13',0.10,150,15.00,6.26,8.74),('APAM','2019-03-26',0.44,250,109.38,45.61,63.77),('APAM','2019-06-13',0.44,250,109.38,45.61,63.77),('APAM','2019-09-13',0.44,250,109.38,45.61,63.77),('APAM','2019-12-11',0.44,250,109.38,45.61,63.77),('APAM','2020-03-26',0.44,250,109.38,45.61,63.77),('APAM','2020-06-12',0.44,250,109.38,45.61,63.77),('APAM','2020-09-11',0.44,250,109.38,45.61,63.77),('APAM','2020-12-09',0.44,250,109.38,45.61,63.77),('ATEB','2019-05-02',2.20,100,220.00,66.00,154.00),('ATEB','2020-04-29',2.31,100,231.00,69.30,161.70),('BEKB','2015-05-19',0.85,200,170.00,42.50,127.50),('BEKB','2016-05-17',0.90,200,180.00,48.60,131.40),('BEKB','2017-05-15',1.10,200,220.00,66.00,154.00),('BEKB','2018-05-15',1.10,200,220.00,66.00,154.00),('BEKB','2019-05-13',0.70,600,420.00,126.00,294.00),('BEKB','2020-11-20',0.35,600,210.00,63.00,147.00),('BOL','2020-09-04',0.02,400,8.00,3.21,4.79),('BREB','2019-05-27',0.94,100,94.00,29.52,64.48),('BREB','2020-05-20',1.02,100,102.00,32.03,69.97),('CDA','2020-03-12',0.70,50,35.00,14.06,20.94),('DIE','2019-06-14',1.00,150,150.00,45.00,105.00),('DIE','2020-06-05',1.00,150,150.00,45.00,105.00),('EN','2020-09-11',1.70,100,170.00,68.31,101.69),('ENGI','2008-11-28',0.80,200,160.00,72.99,87.01),('ENGI','2009-05-11',0.60,200,120.00,54.99,64.51),('ENGI','2009-06-04',0.80,200,160.00,72.99,87.01),('ENGI','2009-12-17',0.80,200,160.00,72.99,87.01),('ENGI','2010-05-07',0.67,200,134.00,61.62,72.38),('ENGI','2010-11-12',0.83,200,166.00,75.64,90.36),('ENGI','2011-05-09',0.67,200,134.00,61.62,72.38),('ENGI','2011-11-05',0.83,200,166.00,75.64,90.36),('ENGI','2012-10-25',0.83,200,166.00,81.84,84.16),('ENGI','2013-04-30',0.67,224,150.08,74.28,75.80),('ENGI','2013-11-21',0.83,224,185.92,91.47,94.45),('ENGI','2014-05-06',0.67,224,150.08,74.28,75.80),('ENGI','2014-10-15',0.50,224,112.00,56.79,55.81),('ENGI','2015-05-05',0.50,224,112.00,56.79,55.81),('ENGI','2015-10-05',0.50,224,112.00,56.79,55.81),('ENGI','2016-05-09',0.50,224,112.00,57.76,54.24),('ENGI','2016-10-14',0.50,224,112.00,57.76,54.24),('ENGI','2017-05-18',0.50,224,112.00,58.22,53.78),('ENGI','2017-10-13',0.35,224,78.40,40.75,37.65),('ENGI','2018-05-24',0.35,224,78.40,40.75,37.65),('ENGI','2018-10-12',0.37,224,82.88,43.08,39.80),('ENGI','2019-05-24',0.75,500,375.00,150.67,224.33),('EURN','2020-11-30',0.08,100,7.59,2.28,5.31),('EXO','2020-06-24',0.43,50,21.50,8.96,12.54),('FP','2020-01-08',0.66,100,66.00,26.53,39.47),('FP','2020-03-31',0.68,200,136.00,54.65,81.35),('FP','2020-07-16',0.68,200,136.00,54.65,81.35),('FP','2020-10-02',0.66,200,132.00,53.04,78.96),('GBL','2019-05-03',3.07,225,690.76,207.23,483.53),('GBL','2020-05-07',3.15,250,787.50,236.25,551.25),('GIMVB','2009-07-02',2.36,200,472.00,118.00,354.00),('GIMVB','2010-07-07',2.40,200,480.00,120.00,360.00),('GIMVB','2011-07-07',1.23,400,490.00,122.50,367.50),('GIMVB','2012-08-03',2.45,200,490.00,122.50,367.50),('GIMVB','2013-08-02',2.45,211,516.95,129.24,387.71),('GIMVB','2015-07-01',2.45,211,516.95,129.24,387.71),('GIMVB','2016-07-06',2.45,211,516.95,139.58,377.37),('GIMVB','2017-07-05',2.50,211,527.50,158.25,369.25),('GIMVB','2018-07-04',2.50,211,527.50,158.25,369.25),('GIMVB','2019-07-03',2.50,600,1500.00,450.00,1050.00),('GIMVB','2020-07-28',2.50,600,1500.00,450.00,1050.00),('HAL','2020-07-24',2.90,10,29.00,9.11,19.89),('HAL','2020-08-07',26.37,10,26.37,8.00,18.37),('INVEA','2019-11-14',0.37,50,18.57,7.74,10.83),('INVEA','2020-06-25',0.85,100,84.91,49.51,35.40),('IWRD','2019-06-26',0.33,10,2.91,0.92,2.00),('IWRD','2019-09-25',0.14,10,1.43,0.44,0.98),('IWRD','2019-12-27',0.15,10,1.51,0.48,1.04),('IWRD','2020-03-25',0.13,25,3.37,1.06,2.31),('IWRD','2020-06-24',0.19,25,4.84,1.51,3.33),('IWRD','2020-09-30',0.12,25,3.11,0.98,2.13),('KBC','2011-05-05',0.75,125,93.75,23.44,70.31),('KBC','2012-05-11',0.01,125,1.25,0.31,0.94),('KBC','2013-05-16',1.00,125,125.00,31.25,93.75),('KBC','2015-05-13',2.00,125,250.00,62.50,187.50),('KBC','2016-11-18',1.00,125,125.00,33.75,91.25),('KBC','2017-05-11',1.80,125,225.00,67.50,157.50),('KBC','2017-11-17',1.00,125,125.00,37.50,87.50),('KBC','2018-05-09',2.00,125,250.00,75.00,175.00),('KBC','2018-11-16',1.00,125,125.00,37.50,87.50),('KBC','2019-05-09',2.50,125,312.50,93.75,218.75),('KBC','2019-11-15',1.00,125,125.00,37.50,87.50),('KBCA','2019-06-06',3.08,300,924.00,277.20,646.80),('MELE','2016-10-27',1.30,100,130.00,35.10,94.90),('MELE','2017-04-27',0.70,100,70.00,21.00,49.00),('MELE','2017-10-26',1.30,100,130.00,39.00,91.00),('MELE','2018-04-26',0.80,100,80.00,24.00,56.00),('MELE','2018-10-25',1.30,100,130.00,39.00,91.00),('MELE','2019-04-26',0.90,250,225.00,67.50,157.50),('MELE','2019-10-24',1.30,250,325.00,97.50,227.50),('MELE','2020-10-22',1.30,250,325.00,97.50,227.50),('NESTE','2020-05-28',0.46,100,46.00,19.17,26.83),('NESTE','2020-11-02',0.56,100,56.00,23.35,32.65),('NN','2019-06-25',1.24,100,124.00,51.70,72.30),('NN','2020-09-02',2.26,300,678.00,282.66,395.34),('PIC','2015-04-22',0.10,10,1.00,0.25,0.75),('PIC','2016-05-04',0.10,10,1.00,0.27,0.73),('PIC','2017-05-04',0.10,10,1.00,0.30,0.70),('PIC','2018-04-24',0.20,10,2.00,0.60,1.40),('PIC','2019-04-24',0.20,10,2.00,0.60,1.40),('PROX','2017-04-28',1.00,100,100.00,30.00,70.00),('PROX','2017-12-08',0.50,120,60.00,18.00,42.00),('PROX','2018-04-27',1.00,120,120.00,36.00,84.00),('PROX','2018-12-07',0.50,600,300.00,90.00,210.00),('PROX','2019-04-26',1.00,600,600.00,180.00,420.00),('PROX','2019-12-06',0.50,600,300.00,90.00,210.00),('PROX','2020-04-24',1.00,600,600.00,180.00,420.00),('PROX','2020-12-11',0.50,700,350.00,105.00,245.00),('PRX','2020-11-17',0.11,50,5.50,1.22,3.78),('SAN','2020-05-06',3.15,25,78.75,31.64,47.11),('SGO','2019-06-13',1.33,150,199.50,80.16,119.34),('SIOE','2018-05-16',0.56,100,56.00,16.80,39.20),('SIOE','2019-05-13',0.62,500,310.00,93.00,217.00),('SIP','2019-07-03',0.55,100,55.00,16.50,38.50),('SOF','2020-05-18',2.90,10,29.00,8.70,20.30),('SOLB','2019-01-18',1.44,175,252.00,75.60,176.40),('SOLB','2019-05-23',2.31,230,531.30,159.39,371.91),('SOLB','2020-01-20',1.50,250,375.00,112.50,262.50),('SOLB','2020-05-20',2.25,300,675.00,202.50,472.50),('TINC','2020-10-28',0.51,133,67.84,2.00,65.84),('TX','2019-05-17',1.07,100,107.07,33.62,73.45),('UMI','2009-05-06',0.65,400,260.00,65.00,195.00),('UMI','2010-05-05',0.65,400,260.00,65.00,195.00),('UMI','2010-10-12',0.33,400,130.00,32.50,97.50),('UMI','2011-05-05',0.48,400,190.00,47.50,142.50),('UMI','2011-09-14',0.40,400,160.00,40.00,120.00),('UMI','2012-05-04',0.60,400,240.00,60.00,180.00),('UMI','2012-09-05',0.50,400,200.00,50.00,150.00),('UMI','2013-05-13',0.50,400,200.00,50.00,150.00),('UMI','2013-09-03',0.50,400,200.00,50.00,150.00),('UMI','2014-05-07',0.50,400,200.00,50.00,150.00),('UMI','2014-09-04',0.50,400,200.00,50.00,150.00),('UMI','2015-05-05',0.50,400,200.00,50.00,150.00),('UMI','2015-09-03',0.50,400,200.00,50.00,150.00),('UMI','2016-05-04',0.70,400,280.00,75.60,204.40),('UMI','2016-08-25',0.60,400,240.00,64.80,175.20),('UMI','2017-05-02',0.70,400,280.00,84.00,196.00),('UMI','2017-08-29',0.65,400,260.00,78.00,182.00),('UMI','2018-05-03',0.38,800,300.00,90.00,210.00),('UMI','2018-08-28',0.35,800,280.00,84.00,196.00),('UMI','2019-05-02',0.40,1000,400.00,120.00,280.00),('UMI','2019-08-27',0.38,1250,468.76,140.63,328.13),('UMI','2020-08-25',0.25,1000,250.00,75.00,175.00);
+/*!40000 ALTER TABLE `Dividend` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Effect`
+--
+
+DROP TABLE IF EXISTS `Effect`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Effect` (
   `TickerId` varchar(60) NOT NULL,
   `Naam` varchar(60) NOT NULL,
   `ISIN` varchar(60) NOT NULL,
@@ -20,6 +124,15 @@ CREATE TABLE `pvm`.`Effect` (
   `Risico` int(11) NOT NULL,
   `Koers` decimal(10,4) NOT NULL DEFAULT '0.0000',
   `Div` decimal(10,4) NOT NULL DEFAULT '0.0000',
+  `AantalGekocht` int(11) NOT NULL DEFAULT '0',
+  `AankoopWaarde` decimal(10,4) NOT NULL DEFAULT '0.0000',
+  `AankoopKost` decimal(10,4) NOT NULL DEFAULT '0.0000',
+  `AantalVerkocht` int(11) NOT NULL DEFAULT '0',
+  `VerkoopWaarde` decimal(10,4) NOT NULL DEFAULT '0.0000',
+  `VerkoopKost` decimal(10,4) NOT NULL DEFAULT '0.0000',
+  `AantalInBezit` int(11) NOT NULL DEFAULT '0',
+  `GemiddeldePrijs` decimal(10,4) NOT NULL DEFAULT '0.0000',
+  `GerealiseerdeMeerwaarde` decimal(10,4) NOT NULL DEFAULT '0.0000',
   PRIMARY KEY (`TickerId`),
   UNIQUE KEY `TickerId_UNIQUE` (`TickerId`),
   KEY `Risico_idx` (`Risico`),
@@ -27,70 +140,102 @@ CREATE TABLE `pvm`.`Effect` (
   CONSTRAINT `Categorie` FOREIGN KEY (`Categorie`) REFERENCES `Categorie` (`Code`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `Risico` FOREIGN KEY (`Risico`) REFERENCES `Risico` (`Code`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `Effect`
+--
 
-CREATE TABLE `pvm`.`Divident` (
-  `TickerId` varchar(60) NOT NULL,
-  `Datum` date NOT NULL,
-  `Divident` decimal(10,2) NOT NULL,
-  `Aantal` int(11) NOT NULL,
-  `Bruto` decimal(10,2) NOT NULL,
-  `Voorheffing` decimal(10,2) NOT NULL,
-  `Netto` decimal(10,2) NOT NULL,
-  PRIMARY KEY (`TickerId`,`Datum`),
-  CONSTRAINT `TickerId_Idx` FOREIGN KEY (`TickerId`) REFERENCES `Effect` (`TickerId`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+LOCK TABLES `Effect` WRITE;
+/*!40000 ALTER TABLE `Effect` DISABLE KEYS */;
+INSERT INTO `Effect` VALUES ('AALB','Aalberts','NL0000852564','DG',2,36.3200,0.8000,50,1299.5100,12.0100,0,0.0000,0.0000,50,25.9902,0.0000),('AAPL','Apple Inc','US0378331005','DW',1,219.7900,2.6000,20,3598.6640,30.3400,20,4490.8940,33.8200,0,179.9332,892.2300),('ABI','Anheuser-Busch Inbev','BE0974293251','DG',2,57.9300,1.8000,300,22301.0900,163.5900,0,0.0000,0.0000,300,74.3370,0.0000),('ACKB','Ackermans & van Haaren','BE0003764785','DG',1,123.8000,2.8500,50,6007.0400,65.0400,0,0.0000,0.0000,50,120.1408,0.0000),('AD','Ahold Delhaize','NL0011794037','DG',1,23.1900,0.0000,100,2455.4800,30.9800,0,0.0000,0.0000,100,24.5548,0.0000),('AGS','Ageas','BE0974264930','DW',2,41.9000,2.1000,350,19325.8600,190.8600,0,0.0000,0.0000,350,55.2167,0.0000),('AIR','Airbus','NL0000235190','DG',2,95.2100,0.0000,50,3000.4100,25.4100,0,0.0000,0.0000,50,60.0082,0.0000),('AMG','Advanced Metallurgical','NL0000888691','BT',3,23.5700,0.5000,150,3403.7000,34.3000,150,3461.7900,27.2100,0,22.6913,58.0950),('APAM','Aperam','LU0569974404','BT',3,32.6700,1.5200,250,6100.1800,51.1800,0,0.0000,0.0000,250,24.4008,0.0000),('ATEB','Atenor','BE0003837540','DW',2,57.0000,2.1000,100,5032.5000,32.5000,0,0.0000,0.0000,100,50.3250,0.0000),('BCART','Biocartis','BE0974281132','BT',3,4.6950,0.0000,600,6264.2640,46.0000,0,0.0000,0.0000,600,10.4404,0.0000),('BEKB','Bekaert','BE0974258874','DW',1,27.1800,1.3300,600,13593.4500,106.5700,400,10788.0000,68.0000,200,22.6558,1725.6800),('BEL','Lyxor UCITS ETF BEL 20 TR','FR0000021842','ETF',3,55.0900,0.0000,20,1006.7000,8.7000,20,1101.1700,8.8300,0,50.3350,94.4700),('BOL','Bollore','FR0000039299','VA',3,3.2340,0.0000,400,1235.4300,15.4300,0,0.0000,0.0000,400,3.0886,0.0000),('BREB','Brederode','LU1068091351','VA',2,83.9000,0.9000,100,5423.8700,33.8700,0,0.0000,0.0000,100,54.2387,0.0000),('BRK.B','Berkshire Hathaway B','US0846707026','DG',1,189.3064,0.0000,10,1768.9200,19.9300,0,0.0000,0.0000,10,176.8920,0.0000),('CDA','Compagnie Alpes','FR0000053324','VA',2,20.0000,0.6500,50,1186.6100,11.6100,0,0.0000,0.0000,50,23.7322,0.0000),('DIE','D Ieteren NV','BE0974259880','VA',2,60.9000,0.9500,150,5270.8100,40.8100,0,0.0000,0.0000,150,35.1387,0.0000),('EMIM','iShares Core MSCI Emerging Markets IMI UCITS ETF','IE00BKM4GZ66','ETF',3,28.6230,0.0000,150,3336.9800,18.9800,0,0.0000,0.0000,150,22.2465,0.0000),('EN','Bouygues SA','FR0000120503','VA',2,34.7400,1.7000,100,3145.2200,35.2200,0,0.0000,0.0000,100,31.4522,0.0000),('ENGI','Engie','FR0010208488','DW',2,12.5400,0.3000,700,12553.3100,172.6700,0,0.0000,0.0000,700,17.9334,0.0000),('EURN','Euronav','BE0003816338','BT',3,6.8000,0.1100,300,2234.2100,30.2100,200,2005.4300,14.5700,100,8.1030,581.5100),('EXO','Exor SpA','NL0012059018','VA',2,59.5400,0.4300,50,2542.7700,38.7700,0,0.0000,0.0000,50,50.8554,0.0000),('FAGR','Fagron','BE0003874915','DG',2,19.6600,0.0000,50,960.8300,10.8300,0,0.0000,0.0000,50,19.2166,0.0000),('FNG','FNG','BE0974332646','BT',3,3.5000,0.0000,100,1663.2800,13.2800,0,0.0000,0.0000,100,16.6328,0.0000),('FP','Total','FR0000120271','DW',2,37.1600,0.0000,200,7950.9100,81.1600,0,0.0000,0.0000,200,39.7546,0.0000),('GBL','Group Brussel Lambert','BE0003797140','VA',1,82.1600,3.0600,250,20018.1700,114.6700,0,0.0000,0.0000,250,80.0727,0.0000),('GIMVB','Gimv','BE0003699130','DW',1,49.6000,2.4500,700,31293.0525,237.3900,0,0.0000,0.0000,700,44.7044,0.0000),('GLPG','Galapagos','BE0003818359','BT',3,98.9800,0.0000,100,4358.2800,48.2800,0,0.0000,0.0000,100,43.5828,0.0000),('HAL','HAL Trust Unit','BMG455841020','VA',1,118.2000,0.0000,10,1352.1900,12.1900,0,0.0000,0.0000,10,135.2190,0.0000),('INVEA','Investor AB','SE0000107401','DG',1,57.6434,0.0000,100,4403.1150,45.4700,0,0.0000,0.0000,100,44.0312,0.0000),('IWDA','iShares Core MSCI World UCITS','IE00B4L5Y983','ETF',3,59.1700,0.0000,100,5658.9800,44.2300,0,0.0000,0.0000,100,56.5898,0.0000),('IWRD','iShares MSCI World','IE00B0M62Q58','ETF',3,46.3700,0.0000,25,1121.3300,16.3300,25,1141.3700,8.8800,0,44.8532,20.0400),('KBC','KBC Group','BE0003565737','DW',2,60.6200,3.5000,125,5182.4400,59.9400,0,0.0000,0.0000,125,41.4595,0.0000),('KBCA','KBC Ancora','BE0003867844','VA',2,36.1400,2.9000,300,12217.4500,87.4500,0,0.0000,0.0000,300,40.7248,0.0000),('MELE','Melexis','BE0165385973','DG',1,81.4000,2.6500,250,12660.2900,118.2900,0,0.0000,0.0000,250,50.6412,0.0000),('MITRA','Mithra Pharmaceuticals','BE0974283153','BT',3,23.5000,0.0000,100,1806.2500,21.2500,0,0.0000,0.0000,100,18.0625,0.0000),('MONT','Montea','BE0003853703','DW',2,58.4000,2.5200,75,4144.9500,19.9500,75,4479.6000,20.4000,0,55.2660,334.6500),('MSED','Lyxor Core Euro Stoxx 50 DR','LU0908501215','ETF',3,174.7000,0.0000,10,1669.4900,9.4900,10,1740.4000,9.6000,0,166.9490,70.9100),('NESTE','Neste Corporation','FI0009013296','BT',3,59.4000,0.3800,100,3115.7600,40.7600,0,0.0000,0.0000,100,31.1576,0.0000),('NN','NN Group','NL0010773842','DW',2,34.0200,1.8000,300,8441.4900,84.9900,0,0.0000,0.0000,300,28.1383,0.0000),('NOKIA','Nokia','FI0009000681','DW',2,3.3355,0.0000,750,2987.1350,55.2600,0,0.0000,0.0000,750,3.9828,0.0000),('NOVN.VX','Novartis','CH0012005267','DG',1,75.3570,0.0000,20,1476.3560,21.1500,0,0.0000,0.0000,20,73.8178,0.0000),('NYR','Nyrstar','BE0974294267','BT',4,0.1650,0.0000,1000,2205.1700,15.1700,1000,161.9000,8.1000,0,2.2052,-2043.3000),('OBEL','Orange Belgium','BE0003735496','DG',2,21.8000,0.0000,100,1432.4700,12.4700,0,0.0000,0.0000,100,14.3247,0.0000),('OCI','OCI','NL0010558797','BT',3,15.7000,0.0000,200,2365.7300,15.7300,0,0.0000,0.0000,200,11.8287,0.0000),('OPTI','Crescent','BE0003836534','BT',3,0.0800,0.0000,15000,1030.2500,10.2500,15000,1188.3000,11.7000,0,0.0687,157.8000),('PIC','Picanol','BE0003807246','DG',2,61.4000,0.2000,10,364.4300,20.9300,10,618.3000,9.7000,0,36.4430,253.8700),('PROX','Proximus','BE0003810273','DW',2,18.1000,1.5400,700,15193.6600,125.0600,0,0.0000,0.0000,700,21.7053,0.0000),('PRX','Prosus','NL0013654783','DG',3,92.8600,0.0000,50,3105.7900,25.7900,0,0.0000,0.0000,50,62.1158,0.0000),('RF','Eurazeo','FR0000121121','VA',1,54.3500,0.0000,150,7263.7600,84.1600,0,0.0000,0.0000,150,48.4251,0.0000),('SAN','Sanofi','FR0000120578','DG',1,82.8200,0.0000,25,2121.1500,21.1500,0,0.0000,0.0000,25,84.8460,0.0000),('SEQUA','Sequana Medical','BE0974340722','BT',4,7.0600,0.0000,200,1700.0000,0.0000,0,0.0000,0.0000,200,8.5000,0.0000),('SGO','Saint-Gobain','FR0000125007','BT',2,39.5200,1.4000,150,4835.6800,38.6800,0,0.0000,0.0000,150,32.2379,0.0000),('SIOE','Sioen Industries','BE0003743573','DG',2,22.0000,0.8500,500,12520.9700,85.9700,0,0.0000,0.0000,500,25.0419,0.0000),('SIP','Sipef','BE0003898187','VA',2,43.6000,1.6000,125,6181.4500,51.4500,0,0.0000,0.0000,125,49.4516,0.0000),('SOF','Sofina','BE0003717312','VA',1,268.0000,2.9000,10,1713.4500,13.4500,0,0.0000,0.0000,10,171.3450,0.0000),('SOLB','Solvay','BE0003470755','DW',2,98.7200,3.7300,300,27415.2800,192.7800,0,0.0000,0.0000,300,91.3843,0.0000),('TESB','Tessenderlo','BE0003555639','BT',2,29.7000,0.0000,100,3043.2100,33.7100,100,3024.3200,25.6800,0,30.4321,-18.8900),('TINC','TINC','BE0974282148','DW',1,12.8500,0.4900,133,1771.4300,12.2300,0,0.0000,0.0000,133,13.3190,0.0000),('TX','Ternium','US8808901081','DG',3,25.3686,0.0000,200,4571.8100,47.0200,0,0.0000,0.0000,200,22.8591,0.0000),('UMI','Umicore','BE0974320526','DG',2,37.0000,0.9200,1250,21030.3800,189.0800,250,11305.1900,69.8100,1000,16.8242,7099.1400),('XFAB','X-Fab','BE0974310428','BT',3,4.8200,0.0000,2000,8754.1000,82.8500,0,0.0000,0.0000,2000,4.3770,0.0000);
+/*!40000 ALTER TABLE `Effect` ENABLE KEYS */;
+UNLOCK TABLES;
 
-CREATE TABLE `pvm`.`Kalender` (
+--
+-- Table structure for table `Kalender`
+--
+
+DROP TABLE IF EXISTS `Kalender`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Kalender` (
   `TickerId` varchar(60) NOT NULL,
   `Maand` int(11) NOT NULL,
   `Dag` int(11) NOT NULL,
-  `Divident` decimal(10,4) NOT NULL,
+  `Dividend` decimal(10,4) NOT NULL,
   `Voorheffing` decimal(4,3) NOT NULL,
   PRIMARY KEY (`TickerId`,`Maand`,`Dag`),
   CONSTRAINT `TickerId_FK` FOREIGN KEY (`TickerId`) REFERENCES `Effect` (`TickerId`) ON DELETE NO ACTION ON UPDATE NO ACTION
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-CREATE TABLE `pvm`.`transactie` (
-  `Ticker` varchar(60) NOT NULL COMMENT 'Ticker id',
-  `Datum` date NOT NULL COMMENT 'Transactie datum',
-  `Aantal` int(11) NOT NULL,
-  `Prijs` decimal(10,4) NOT NULL,
-  `Makelaarsloon` decimal(10,2) NOT NULL,
-  `Beurstaks` decimal(10,2) NOT NULL,
-  PRIMARY KEY (`Ticker`,`Datum`),
-  KEY `Ticker` (`Ticker`),
-  CONSTRAINT `TickerId` FOREIGN KEY (`Ticker`) REFERENCES `Effect` (`TickerId`) ON DELETE NO ACTION ON UPDATE NO ACTION
+--
+-- Dumping data for table `Kalender`
+--
+
+LOCK TABLES `Kalender` WRITE;
+/*!40000 ALTER TABLE `Kalender` DISABLE KEYS */;
+INSERT INTO `Kalender` VALUES ('AAPL',8,15,0.6876,0.376),('ABI',5,9,1.0000,0.300),('ABI',11,21,0.8000,0.300),('ACKB',6,3,2.3200,0.300),('AGS',6,4,2.6500,0.300),('AMG',5,15,0.2000,0.417),('AMG',8,15,0.2000,0.417),('APAM',3,26,0.4375,0.420),('APAM',6,13,0.4375,0.420),('APAM',9,13,0.4400,0.417),('APAM',12,11,0.4375,0.417),('ATEB',4,29,2.3100,0.300),('BEKB',11,20,0.3500,0.300),('BREB',5,23,1.0200,0.300),('CDA',3,14,0.7000,0.402),('DIE',6,5,1.0000,0.300),('EN',5,3,1.7000,0.450),('ENGI',5,24,0.7500,0.410),('EURN',10,8,0.0548,0.300),('EXO',6,24,0.4300,0.420),('FP',1,6,0.6600,0.410),('FP',3,30,0.6800,0.410),('FP',6,30,0.6800,0.410),('FP',10,1,0.6600,0.410),('GBL',5,3,3.0700,0.300),('GIMVB',7,4,2.5000,0.300),('HAL',6,18,5.3000,0.417),('IWRD',3,25,0.1349,0.319),('IWRD',6,26,0.1937,0.319),('IWRD',9,25,0.1427,0.319),('IWRD',12,27,0.1505,0.319),('KBC',5,30,0.0000,0.300),('KBC',11,16,3.5000,0.300),('KBCA',6,7,2.9000,0.300),('MELE',4,26,0.0000,0.300),('MELE',10,25,1.3000,0.300),('MONT',6,8,4.1600,0.300),('NESTE',5,28,0.4600,0.420),('NESTE',10,11,0.3800,0.420),('NN',6,25,1.2400,0.417),('NN',9,10,0.7000,0.417),('PROX',4,27,1.0000,0.300),('PROX',12,7,0.2000,0.300),('SAN',5,6,3.1500,0.410),('SGO',6,11,1.3300,0.410),('SIOE',5,13,0.5500,0.300),('SIP',7,4,0.0000,0.300),('SOF',5,13,2.9000,0.300),('SOLB',1,15,1.5000,0.300),('SOLB',5,21,2.3100,0.300),('TINC',10,28,0.5100,0.300),('TX',5,20,1.0700,0.314),('UMI',5,2,0.4000,0.300),('UMI',8,27,0.0000,0.300);
+/*!40000 ALTER TABLE `Kalender` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Risico`
+--
+
+DROP TABLE IF EXISTS `Risico`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Risico` (
+  `Code` int(11) NOT NULL,
+  `Omschrijving` varchar(80) NOT NULL,
+  PRIMARY KEY (`Code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
+--
+-- Dumping data for table `Risico`
+--
+
+LOCK TABLES `Risico` WRITE;
+/*!40000 ALTER TABLE `Risico` DISABLE KEYS */;
+INSERT INTO `Risico` VALUES (1,'Laag'),(2,'Gemiddeld'),(3,'Hoger dan gemiddeld'),(4,'Hoog');
+/*!40000 ALTER TABLE `Risico` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `TriggerCode`
+--
+
+DROP TABLE IF EXISTS `TriggerCode`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `TriggerCode` (
   `Code` varchar(10) NOT NULL,
   `Omschrijving` varchar(60) DEFAULT NULL,
   PRIMARY KEY (`Code`),
   UNIQUE KEY `Code_UNIQUE` (`Code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-CREATE TABLE `AankoopTrigger` (
-  `Id` int(11) NOT NULL AUTO_INCREMENT,
-  `TickerId` varchar(60) NOT NULL,
-  `Code` varchar(10) NOT NULL,
-  `Waarde` decimal(10,4) NOT NULL,
-  `Aantal` int(11) NOT NULL,
-  PRIMARY KEY (`Id`),
-  UNIQUE KEY `Id_UNIQUE` (`Id`),
-  KEY `Ticker_Id_idx` (`TickerId`),
-  KEY `Code_Id_idx` (`Code`),
-  CONSTRAINT `Code_Id_Fk` FOREIGN KEY (`Code`) REFERENCES `TriggerCode` (`Code`) ON DELETE NO ACTION ON UPDATE NO ACTION,
-  CONSTRAINT `Ticker_Id_Fk` FOREIGN KEY (`TickerId`) REFERENCES `Effect` (`TickerId`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=latin1;
+--
+-- Dumping data for table `TriggerCode`
+--
 
-ALTER TABLE `AankoopTrigger` 
-ADD COLUMN `Gem.Aank.Waarde` DECIMAL(10,4) NULL AFTER `Aantal`,
-ADD COLUMN `Aankoop koers` DECIMAL(10,4) NULL AFTER `Gem.Aank.Waarde`,
-ADD COLUMN `Investering` DECIMAL(10,4) NULL AFTER `Aankoop koers`,
-ADD COLUMN `Status` VARCHAR(16) NULL AFTER `Investering`,
-ADD COLUMN `Datum` DATETIME NOT NULL AFTER `Status`;
+LOCK TABLES `TriggerCode` WRITE;
+/*!40000 ALTER TABLE `TriggerCode` DISABLE KEYS */;
+INSERT INTO `TriggerCode` VALUES ('K','Koers waarde'),('P','Percentage ten opzichte van gemiddelde aankoopprijs');
+/*!40000 ALTER TABLE `TriggerCode` ENABLE KEYS */;
+UNLOCK TABLES;
 
+--
+-- Table structure for table `VerkoopTrigger`
+--
+
+DROP TABLE IF EXISTS `VerkoopTrigger`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `VerkoopTrigger` (
   `Id` int(11) NOT NULL AUTO_INCREMENT,
   `TickerId` varchar(60) NOT NULL,
@@ -105,72 +250,166 @@ CREATE TABLE `VerkoopTrigger` (
   `Datum` datetime NOT NULL,
   PRIMARY KEY (`Id`),
   UNIQUE KEY `Id_UNIQUE` (`Id`),
-  KEY `Ticker_Id_idx` (`TickerId`),
   KEY `Code_Id_idx` (`Code`),
+  KEY `Ticker_Id_idx` (`TickerId`),
   CONSTRAINT `Code_Id` FOREIGN KEY (`Code`) REFERENCES `TriggerCode` (`Code`) ON DELETE NO ACTION ON UPDATE NO ACTION,
   CONSTRAINT `Ticker_Id` FOREIGN KEY (`TickerId`) REFERENCES `Effect` (`TickerId`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `VerkoopTrigger`
+--
+
+LOCK TABLES `VerkoopTrigger` WRITE;
+/*!40000 ALTER TABLE `VerkoopTrigger` DISABLE KEYS */;
+INSERT INTO `VerkoopTrigger` VALUES (1,'GLPG','P',200.0000,50,43.5800,130.7400,6537.0000,4358.0000,'Nieuw','2019-01-06 00:00:00'),(2,'UMI','P',400.0000,100,11.3700,56.8500,5685.0000,4548.0000,'Nieuw','2019-01-06 00:00:00'),(3,'ABI','P',75.0000,300,74.3400,130.0900,39027.0000,16725.0000,'Nieuw','2019-01-06 00:00:00'),(4,'PROX','P',10.0000,600,22.6300,24.8900,14934.0000,1356.0000,'Nieuw','2019-01-11 00:00:00'),(5,'MONT','K',60.0000,75,55.2700,60.0000,4500.0000,354.7500,'Uitgevoerd','2019-01-16 00:00:00'),(6,'SGO','P',30.0000,100,32.2400,41.9100,4191.0000,967.0000,'Nieuw','2019-10-22 00:00:00'),(7,'AAPL','K',227.2357,20,179.9300,227.2400,4544.8000,946.2000,'Uitgevoerd','2019-11-01 00:00:00'),(8,'EURN','K',10.1000,200,7.1200,10.1000,2020.0000,596.0000,'Uitgevoerd','2019-10-18 00:00:00'),(9,'TESB','K',30.5000,100,30.4300,30.5000,3050.0000,7.0000,'Uitgevoerd','2019-11-07 00:00:00');
+/*!40000 ALTER TABLE `VerkoopTrigger` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `Wisselkoers`
+--
+
+DROP TABLE IF EXISTS `Wisselkoers`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `Wisselkoers` (
+  `van` varchar(10) NOT NULL,
+  `naar` varchar(45) NOT NULL,
+  `koers` decimal(10,5) NOT NULL,
+  PRIMARY KEY (`van`,`naar`),
+  UNIQUE KEY `KEY_UNIQUE` (`van`,`naar`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
 
-ALTER TABLE `pvm`.`Effect` 
-	ADD COLUMN `AantalGekocht` int(11) NOT NULL DEFAULT '0' AFTER `Div`,
-	ADD COLUMN `AankoopWaarde` decimal(10,4) NOT NULL DEFAULT '0.0000' AFTER `AantalGekocht`,
-	ADD COLUMN `AankoopKost` decimal(10,4) NOT NULL DEFAULT '0.0000' AFTER `AankoopWaarde`,
-	ADD COLUMN `AantalVerkocht` int(11) NOT NULL DEFAULT '0' AFTER `AankoopKost`,
-	ADD COLUMN `VerkoopWaarde` decimal(10,4) NOT NULL DEFAULT '0.0000' AFTER `AantalVerkocht`,
-	ADD COLUMN `VerkoopKost` decimal(10,4) NOT NULL DEFAULT '0.0000' AFTER `VerkoopWaarde`;
+--
+-- Dumping data for table `Wisselkoers`
+--
 
-CREATE ALGORITHM=UNDEFINED DEFINER=`PVM_SCHEMA`@`localhost` SQL SECURITY DEFINER VIEW `pvm`.`divident_uitkeringen` AS select `e`.`Naam` AS `Naam`,`k`.`Maand` AS `Maand`,`k`.`Dag` AS `Dag`,round(`k`.`Divident`,2) AS `Divident`,sum(`t`.`Aantal`) AS `Aantal`,round((`k`.`Divident` * sum(`t`.`Aantal`)),2) AS `Bruto`,round(((sum(`t`.`Aantal`) * `k`.`Divident`) * (1 - `k`.`Voorheffing`)),2) AS `Netto` from ((`pvm`.`effect` `e` join `pvm`.`transactie` `t`) join `pvm`.`kalender` `k`) where ((`e`.`TickerId` = `k`.`TickerId`) and (`e`.`TickerId` = `t`.`Ticker`)) group by `t`.`Ticker`,`k`.`Maand` order by `k`.`Maand`,`k`.`Dag`;
-CREATE ALGORITHM=UNDEFINED DEFINER=`PVM_SCHEMA`@`localhost` SQL SECURITY DEFINER VIEW `pvm`.`toestand` AS select `e`.`Naam` AS `Naam`,sum(`t`.`Aantal`) AS `Aantal`,round(sum((`t`.`Prijs` * `t`.`Aantal`)),2) AS `Aankoop`,round(sum((`t`.`Makelaarsloon` + `t`.`Beurstaks`)),2) AS `Kosten`,round(sum((((`t`.`Prijs` * `t`.`Aantal`) + `t`.`Makelaarsloon`) + `t`.`Beurstaks`)),2) AS `Prijs`,round((sum(`t`.`Aantal`) * `e`.`Koers`),2) AS `Waarde`,round(((sum(`t`.`Aantal`) * `e`.`Koers`) - sum((((`t`.`Prijs` * `t`.`Aantal`) + `t`.`Makelaarsloon`) + `t`.`Beurstaks`))),2) AS `Winst`,`e`.`Categorie` AS `Cat` from (`pvm`.`transactie` `t` join `pvm`.`effect` `e`) where (`t`.`Ticker` = `e`.`TickerId`) group by `t`.`Ticker` order by `e`.`Naam`;
+LOCK TABLES `Wisselkoers` WRITE;
+/*!40000 ALTER TABLE `Wisselkoers` DISABLE KEYS */;
+INSERT INTO `Wisselkoers` VALUES ('CHF','EURO',0.92690),('EURO','EURO',1.00000),('SEK','EURO',0.09820),('USD','EURO',0.82580);
+/*!40000 ALTER TABLE `Wisselkoers` ENABLE KEYS */;
+UNLOCK TABLES;
 
-UPDATE Effect 
-SET AantalGekocht = (SELECT sum(transactie.Aantal)
-                     FROM   transactie 
-                     WHERE  Effect.TickerId = transactie.Ticker  and transactie.Aantal > 0
-                     GROUP BY transactie.Ticker),
-    AankoopWaarde = (SELECT sum(transactie.Aantal*transactie.Prijs)
-                     FROM   transactie 
-                     WHERE  Effect.TickerId = transactie.Ticker and transactie.Aantal > 0
-                     GROUP BY transactie.Ticker) ,
-    AankoopKost = (SELECT sum(transactie.Makelaarsloon+Beurstaks)
-                   FROM   transactie 
-                   WHERE  Effect.TickerId = transactie.Ticker and transactie.Aantal > 0
-                   GROUP BY transactie.Ticker),
-    AantalVerkocht = (SELECT sum(transactie.Aantal)*-1
-                      FROM   transactie 
-                      WHERE  Effect.TickerId = transactie.Ticker  and transactie.Aantal < 0
-                      GROUP BY transactie.Ticker),
-    VerkoopWaarde = (SELECT sum(transactie.Aantal*transactie.Prijs)*-1
-                     FROM   transactie 
-                     WHERE  Effect.TickerId = transactie.Ticker and transactie.Aantal < 0
-                     GROUP BY transactie.Ticker) ,
-    VerkoopKost = (SELECT sum(transactie.Makelaarsloon+Beurstaks)
-                   FROM   transactie 
-                   WHERE  Effect.TickerId = transactie.Ticker and transactie.Aantal < 0
-                   GROUP BY transactie.Ticker)
-WHERE Effect.TickerId = (SELECT  distinct(transactie.Ticker) 
-                         FROM   transactie
-                         WHERE  Effect.TickerId = transactie.Ticker);
-                             
-CREATE 
-    ALGORITHM = UNDEFINED 
-    DEFINER = `PVM_SCHEMA`@`localhost` 
-    SQL SECURITY DEFINER
-VIEW `toestand` AS
-    SELECT 
-       `e`.`Naam` AS `Naam`,
-        (`e`.`AantalGekocht` - `e`.`AantalVerkocht`) AS `Aantal`,
-        `e`.`Koers` AS `Koers`,
-        ROUND(((`e`.`AantalGekocht` - `e`.`AantalVerkocht`) * `e`.`Koers`), 2) AS `Waarde`,
-        `e`.`AantalGekocht` AS `Aantal gekocht`,
-        ROUND(`e`.`AankoopWaarde`, 2) AS `Aankoop`,
-        ROUND(`e`.`AankoopKost`, 2) AS `AankoopKosten`,
-        ROUND((`e`.`AankoopWaarde` + `e`.`AankoopKost`), 2) AS `AankoopPrijs`,
-        `e`.`AantalVerkocht` AS `Aantal verkocht`,
-        ROUND(`e`.`VerkoopWaarde`, 2) AS `Verkoop`,
-        ROUND(`e`.`VerkoopKost`, 2) AS `VerkoopKosten`,
-        ROUND((`e`.`VerkoopWaarde` - `e`.`VerkoopKost`), 2) AS `VerkoopPrijs`,
-        ROUND(((((((`e`.`AantalGekocht` - `e`.`AantalVerkocht`) * `e`.`Koers`) - `e`.`AankoopWaarde`) - `e`.`AankoopKost`) - `e`.`VerkoopKost`) + `e`.`VerkoopWaarde`), 2) AS `Winst`,
-        `e`.`Categorie` AS `Cat`
-    FROM
-		`effect` `e`
-    ORDER BY `e`.`Naam`
+--
+-- Temporary view structure for view `dividend_uitkeringen`
+--
+
+DROP TABLE IF EXISTS `dividend_uitkeringen`;
+/*!50001 DROP VIEW IF EXISTS `dividend_uitkeringen`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `dividend_uitkeringen` AS SELECT 
+ 1 AS `Naam`,
+ 1 AS `Maand`,
+ 1 AS `Dag`,
+ 1 AS `Dividend`,
+ 1 AS `Aantal`,
+ 1 AS `Bruto`,
+ 1 AS `Netto`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Temporary view structure for view `toestand`
+--
+
+DROP TABLE IF EXISTS `toestand`;
+/*!50001 DROP VIEW IF EXISTS `toestand`*/;
+SET @saved_cs_client     = @@character_set_client;
+SET character_set_client = utf8;
+/*!50001 CREATE VIEW `toestand` AS SELECT 
+ 1 AS `Naam`,
+ 1 AS `Aantal`,
+ 1 AS `Koers`,
+ 1 AS `Waarde`,
+ 1 AS `Aantal gekocht`,
+ 1 AS `Aankoop`,
+ 1 AS `AankoopKosten`,
+ 1 AS `AankoopPrijs`,
+ 1 AS `Aantal verkocht`,
+ 1 AS `Verkoop`,
+ 1 AS `VerkoopKosten`,
+ 1 AS `VerkoopPrijs`,
+ 1 AS `Winst`,
+ 1 AS `Investering`,
+ 1 AS `Cat`*/;
+SET character_set_client = @saved_cs_client;
+
+--
+-- Table structure for table `transactie`
+--
+
+DROP TABLE IF EXISTS `transactie`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `transactie` (
+  `Ticker` varchar(60) NOT NULL COMMENT 'Ticker id',
+  `Datum` date NOT NULL COMMENT 'Transactie datum',
+  `Aantal` int(11) NOT NULL,
+  `Prijs` decimal(10,4) NOT NULL,
+  `Makelaarsloon` decimal(10,2) NOT NULL,
+  `Beurstaks` decimal(10,2) NOT NULL,
+  PRIMARY KEY (`Ticker`,`Datum`),
+  UNIQUE KEY `Transactie_unique` (`Ticker`,`Datum`),
+  CONSTRAINT `transactie_ticker` FOREIGN KEY (`Ticker`) REFERENCES `Effect` (`TickerId`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `transactie`
+--
+
+LOCK TABLES `transactie` WRITE;
+/*!40000 ALTER TABLE `transactie` DISABLE KEYS */;
+INSERT INTO `transactie` VALUES ('AALB','2020-03-13',50,25.7500,7.50,4.51),('AAPL','2019-04-08',20,178.4162,17.85,12.49),('AAPL','2019-11-01',-20,226.2357,17.82,16.00),('ABI','2016-11-23',50,97.3300,15.00,13.14),('ABI','2018-06-13',50,83.5000,15.00,14.61),('ABI','2018-10-09',50,75.0000,15.00,13.13),('ABI','2018-11-02',50,68.2000,15.00,11.94),('ABI','2018-12-17',50,61.1700,15.00,10.70),('ABI','2018-12-31',25,57.7000,7.50,5.05),('ABI','2019-01-02',25,57.4000,7.50,5.02),('ACKB','2016-11-09',40,119.3000,40.56,12.88),('ACKB','2020-03-12',10,117.0000,7.50,4.10),('AD','2020-09-04',40,25.0000,7.50,3.50),('AD','2020-09-05',10,24.9500,7.50,0.87),('AD','2020-11-19',50,23.5000,7.50,4.11),('AGS','2008-09-02',100,96.2000,96.20,16.35),('AGS','2019-06-12',100,44.2500,15.00,15.49),('AGS','2020-03-10',50,37.0000,7.50,6.48),('AGS','2020-03-12',50,32.5000,7.50,5.69),('AGS','2020-05-04',30,32.5000,7.50,3.41),('AGS','2020-05-12',20,32.0000,7.50,2.24),('AIR','2020-04-14',50,59.5000,15.00,10.41),('AMG','2019-04-30',40,26.9800,7.50,3.78),('AMG','2019-05-08',60,23.1700,7.50,4.87),('AMG','2019-08-13',50,18.0000,7.50,3.15),('AMG','2020-12-08',-150,23.2600,15.00,12.21),('APAM','2018-11-30',50,25.0000,7.50,4.38),('APAM','2018-12-06',50,24.0000,7.50,4.20),('APAM','2018-12-07',100,24.4900,7.50,8.57),('APAM','2018-12-14',50,23.0000,7.50,4.03),('ATEB','2018-10-08',100,50.0000,15.00,17.50),('BCART','2015-04-27',160,11.5000,0.00,0.00),('BCART','2016-10-13',240,9.4761,25.00,6.14),('BCART','2019-06-25',200,10.5200,7.50,7.36),('BEKB','2015-04-22',200,26.3344,33.58,14.22),('BEKB','2018-10-08',200,21.6000,15.00,15.12),('BEKB','2018-10-15',200,19.5000,15.00,13.65),('BEKB','2020-12-07',-200,27.1400,15.00,19.00),('BEKB','2020-12-08',-200,27.1400,15.00,19.00),('BEL','2020-08-27',20,49.9000,7.50,1.20),('BEL','2020-12-04',-20,55.5000,7.50,1.33),('BOL','2020-08-06',400,3.0500,7.50,7.93),('BREB','2018-12-03',100,53.9000,15.00,18.87),('BRK.B','2020-04-13',10,174.8990,13.81,6.12),('CDA','2019-03-26',50,23.5000,7.50,4.11),('DIE','2018-12-05',100,35.0000,15.00,12.25),('DIE','2019-03-25',50,34.6000,7.50,6.06),('EMIM','2019-01-22',75,23.6400,7.50,2.13),('EMIM','2020-03-31',75,20.6000,7.50,1.85),('EN','2019-08-15',100,31.1000,15.00,20.22),('ENGI','2008-10-15',100,29.5000,32.00,5.02),('ENGI','2008-10-22',100,31.0000,32.00,5.27),('ENGI','2009-06-04',6,21.0500,7.50,0.00),('ENGI','2012-05-23',8,16.4300,7.50,0.00),('ENGI','2012-10-26',10,16.8600,7.50,0.00),('ENGI','2018-10-16',276,11.8000,15.00,21.17),('ENGI','2019-05-29',100,12.6000,7.50,8.19),('ENGI','2019-09-13',50,13.7500,7.50,4.47),('ENGI','2019-11-22',50,14.0000,7.50,4.55),('EURN','2019-08-05',200,7.0200,15.00,4.91),('EURN','2019-10-18',-200,10.1000,7.50,7.07),('EURN','2020-08-19',100,8.0000,7.50,2.80),('EXO','2020-03-09',20,57.7000,15.00,4.04),('EXO','2020-04-01',30,45.0000,15.00,4.73),('FAGR','2020-08-07',50,19.0000,7.50,3.33),('FNG','2019-07-19',100,16.5000,7.50,5.78),('FP','2019-10-14',50,46.0000,7.50,14.95),('FP','2019-11-07',50,49.5000,7.50,16.09),('FP','2020-03-10',50,33.0000,7.50,10.73),('FP','2020-03-13',50,28.8950,7.50,9.39),('GBL','2018-10-17',100,82.1600,15.00,28.76),('GBL','2018-11-02',100,82.5000,15.00,28.88),('GBL','2019-01-03',25,74.5000,7.50,6.52),('GBL','2020-03-13',25,63.0000,7.50,5.51),('GIMVB','2008-09-02',125,40.9900,51.24,8.71),('GIMVB','2008-10-15',75,30.5000,32.00,3.89),('GIMVB','2012-08-03',11,31.2375,0.00,0.00),('GIMVB','2018-10-17',289,47.2000,30.00,47.74),('GIMVB','2018-12-06',100,47.0000,15.00,16.45),('GIMVB','2020-12-07',100,49.6000,15.00,17.36),('GLPG','2016-05-11',100,43.1000,36.64,11.64),('HAL','2019-09-25',10,134.0000,7.50,4.69),('INVEA','2019-10-23',50,44.6790,15.05,7.82),('INVEA','2020-04-16',50,42.4739,15.17,7.43),('IWDA','2020-05-21',10,51.0000,7.50,0.61),('IWDA','2020-06-15',10,51.0000,7.50,0.61),('IWDA','2020-08-13',30,54.8250,7.50,1.97),('IWDA','2020-12-08',50,59.0000,15.00,3.54),('IWRD','2019-05-03',10,41.5000,7.50,0.50),('IWRD','2020-01-21',15,46.0000,7.50,0.83),('IWRD','2020-12-04',-25,46.0100,7.50,1.38),('KBC','2008-10-15',125,40.9800,51.23,8.71),('KBCA','2018-10-09',100,44.0000,15.00,15.40),('KBCA','2018-12-05',75,39.9000,15.00,10.47),('KBCA','2019-01-07',125,37.9000,15.00,16.58),('MELE','2016-05-11',100,47.9000,40.72,12.93),('MELE','2018-10-24',50,54.6000,15.00,9.56),('MELE','2018-10-25',50,54.0000,15.00,9.45),('MELE','2018-12-20',50,46.4400,7.50,8.13),('MITRA','2020-07-01',50,18.4400,7.50,3.23),('MITRA','2020-08-27',50,17.2600,7.50,3.02),('MONT','2018-10-08',75,55.0000,15.00,4.95),('MONT','2019-01-16',-75,60.0000,15.00,5.40),('MSED','2020-08-13',10,166.0000,7.50,1.99),('MSED','2020-12-04',-10,175.0000,7.50,2.10),('NESTE','2019-06-12',100,30.7500,30.00,10.76),('NN','2018-12-17',100,34.5000,15.00,12.08),('NN','2019-09-11',2,0.0000,18.24,0.00),('NN','2020-03-09',48,28.0000,7.50,4.70),('NN','2020-03-10',50,27.2500,7.50,4.77),('NN','2020-04-03',100,22.0000,7.50,7.70),('NOKIA','2019-08-05',250,4.7000,15.00,4.11),('NOKIA','2019-10-24',250,3.7545,15.00,3.29),('NOKIA','2019-11-04',250,3.2730,15.00,2.86),('NOVN.VX','2020-08-31',20,72.7603,16.06,5.09),('NYR','2018-10-05',1000,2.1900,7.50,7.67),('NYR','2020-02-21',-29,0.1700,4.90,0.02),('NYR','2020-02-24',-971,0.1700,2.60,0.58),('OBEL','2020-08-31',100,14.2000,7.50,4.97),('OCI','2020-04-17',200,11.7500,7.50,8.23),('OPTI','2017-06-16',15000,0.0680,7.50,2.75),('OPTI','2019-03-21',-15000,0.0800,7.50,4.20),('PIC','2015-02-12',10,34.3500,20.00,0.93),('PIC','2019-09-10',-10,62.8000,7.50,2.20),('PROX','2017-03-07',100,27.7500,15.00,7.49),('PROX','2017-09-13',20,29.0000,7.50,1.57),('PROX','2018-05-22',40,22.9700,7.50,3.22),('PROX','2018-08-14',40,20.8700,7.50,2.92),('PROX','2018-10-05',200,21.0000,15.00,14.70),('PROX','2018-10-09',200,20.8000,15.00,14.56),('PROX','2020-09-21',100,16.0000,7.50,5.60),('PRX','2019-11-04',40,62.2500,7.50,8.72),('PRX','2019-12-10',10,59.0000,7.50,2.07),('RF','2019-11-22',20,61.2000,7.50,7.95),('RF','2020-03-11',20,50.0000,7.50,6.50),('RF','2020-03-13',60,49.2600,15.00,19.21),('RF','2020-04-16',50,40.0000,7.50,13.00),('SAN','2020-04-07',25,84.0000,7.50,13.65),('SEQUA','2019-02-08',200,8.5000,0.00,0.00),('SGO','2018-11-30',100,32.5000,9.75,11.38),('SGO','2019-03-25',50,30.9400,7.50,10.05),('SIOE','2017-05-24',100,32.0000,15.00,8.64),('SIOE','2018-10-10',90,24.0000,7.50,7.56),('SIOE','2018-10-17',210,23.0000,15.00,16.91),('SIOE','2019-01-16',100,22.4500,7.50,7.86),('SIP','2018-11-02',25,52.7000,7.50,4.61),('SIP','2018-11-03',75,52.5000,15.00,13.78),('SIP','2019-08-16',25,35.0000,7.50,3.06),('SOF','2019-06-04',10,170.0000,7.50,5.95),('SOLB','2018-10-10',50,112.5000,15.00,19.69),('SOLB','2018-10-23',25,100.0000,7.50,8.75),('SOLB','2018-11-21',25,96.0000,7.50,8.40),('SOLB','2018-12-17',50,87.5000,15.00,15.31),('SOLB','2019-01-03',25,85.0000,7.50,7.44),('SOLB','2019-01-21',25,94.0800,7.50,8.23),('SOLB','2019-05-08',15,95.0000,7.50,4.99),('SOLB','2019-05-16',15,89.7000,7.50,4.71),('SOLB','2019-05-23',20,85.0000,7.50,5.95),('SOLB','2020-03-09',25,72.5000,7.50,6.34),('SOLB','2020-03-12',25,62.5000,7.50,5.47),('TESB','2016-10-13',100,30.0950,25.58,8.13),('TESB','2019-11-07',-100,30.5000,15.00,10.68),('TINC','2019-10-22',100,13.5000,7.50,4.73),('TINC','2019-12-05',33,12.4000,0.00,0.00),('TX','2019-03-28',100,24.1100,17.86,8.44),('TX','2019-06-12',100,21.1379,13.32,7.40),('UMI','2008-10-14',400,9.0000,36.00,6.12),('UMI','2008-10-22',400,7.5000,32.00,5.10),('UMI','2018-12-06',50,35.0000,7.50,6.13),('UMI','2018-12-07',50,35.5000,7.50,6.21),('UMI','2019-02-08',100,34.5000,15.00,12.08),('UMI','2019-05-08',40,32.2200,7.50,4.51),('UMI','2019-05-09',60,31.5000,7.50,6.62),('UMI','2019-06-06',150,27.2500,15.00,14.31),('UMI','2020-07-21',-250,45.5000,30.00,39.81),('XFAB','2018-10-24',100,6.0000,7.50,2.10),('XFAB','2018-10-25',400,5.4000,7.50,7.56),('XFAB','2018-11-21',500,4.9900,7.50,8.73),('XFAB','2019-07-19',250,4.1800,7.50,3.66),('XFAB','2019-08-14',250,3.8000,7.50,3.33),('XFAB','2020-05-21',150,2.8250,7.50,1.48),('XFAB','2020-07-07',350,2.8500,7.50,3.49);
+/*!40000 ALTER TABLE `transactie` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Final view structure for view `dividend_uitkeringen`
+--
+
+/*!50001 DROP VIEW IF EXISTS `dividend_uitkeringen`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`PVM_SCHEMA`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `dividend_uitkeringen` AS select `e`.`Naam` AS `Naam`,`k`.`Maand` AS `Maand`,`k`.`Dag` AS `Dag`,round(`k`.`Dividend`,2) AS `Dividend`,sum(`e`.`AantalInBezit`) AS `Aantal`,round((`k`.`Dividend` * `e`.`AantalInBezit`),2) AS `Bruto`,round(((`e`.`AantalInBezit` * `k`.`Dividend`) * (1 - `k`.`Voorheffing`)),2) AS `Netto` from (`effect` `e` join `kalender` `k`) where (`e`.`TickerId` = `k`.`TickerId`) group by `e`.`TickerId`,`k`.`Maand` order by `k`.`Maand`,`k`.`Dag` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+
+--
+-- Final view structure for view `toestand`
+--
+
+/*!50001 DROP VIEW IF EXISTS `toestand`*/;
+/*!50001 SET @saved_cs_client          = @@character_set_client */;
+/*!50001 SET @saved_cs_results         = @@character_set_results */;
+/*!50001 SET @saved_col_connection     = @@collation_connection */;
+/*!50001 SET character_set_client      = utf8mb4 */;
+/*!50001 SET character_set_results     = utf8mb4 */;
+/*!50001 SET collation_connection      = utf8mb4_general_ci */;
+/*!50001 CREATE ALGORITHM=UNDEFINED */
+/*!50013 DEFINER=`PVM_SCHEMA`@`localhost` SQL SECURITY DEFINER */
+/*!50001 VIEW `toestand` AS select `e`.`Naam` AS `Naam`,`e`.`AantalInBezit` AS `Aantal`,`e`.`Koers` AS `Koers`,round((`e`.`AantalInBezit` * `e`.`Koers`),2) AS `Waarde`,`e`.`AantalGekocht` AS `Aantal gekocht`,round((`e`.`AankoopWaarde` - `e`.`AankoopKost`),2) AS `Aankoop`,round(`e`.`AankoopKost`,2) AS `AankoopKosten`,round(`e`.`AankoopWaarde`,2) AS `AankoopPrijs`,`e`.`AantalVerkocht` AS `Aantal verkocht`,round(`e`.`VerkoopWaarde`,2) AS `Verkoop`,round(`e`.`VerkoopKost`,2) AS `VerkoopKosten`,round((`e`.`VerkoopWaarde` + `e`.`VerkoopKost`),2) AS `VerkoopPrijs`,round(((`e`.`Koers` - `e`.`GemiddeldePrijs`) * `e`.`AantalInBezit`),2) AS `Winst`,round((`e`.`GemiddeldePrijs` * `e`.`AantalInBezit`),2) AS `Investering`,`e`.`Categorie` AS `Cat` from `effect` `e` order by `e`.`Naam` */;
+/*!50001 SET character_set_client      = @saved_cs_client */;
+/*!50001 SET character_set_results     = @saved_cs_results */;
+/*!50001 SET collation_connection      = @saved_col_connection */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+
+-- Dump completed on 2020-12-15 13:14:48

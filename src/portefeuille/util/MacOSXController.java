@@ -16,7 +16,7 @@ import javax.swing.JRootPane;
 import javax.swing.JTextPane;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
-
+/*
 import com.apple.eawt.AboutHandler;
 import com.apple.eawt.AppEvent.AboutEvent;
 import com.apple.eawt.AppEvent.PreferencesEvent;
@@ -24,6 +24,9 @@ import com.apple.eawt.AppEvent.QuitEvent;
 import com.apple.eawt.PreferencesHandler;
 import com.apple.eawt.QuitHandler;
 import com.apple.eawt.QuitResponse;
+*/
+
+import java.awt.desktop.*;
 
 public class MacOSXController implements AboutHandler, QuitHandler, PreferencesHandler
 {

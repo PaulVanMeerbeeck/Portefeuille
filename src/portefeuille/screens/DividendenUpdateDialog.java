@@ -102,6 +102,8 @@ public class DividendenUpdateDialog extends JDialog implements TableModelListene
 					else
 					{
 						JOptionPane.showMessageDialog((Component)e.getSource(),dbUpdateResult,"DB Update - fout", JOptionPane.ERROR_MESSAGE);
+						applyButton.setEnabled(false);
+						
 					}
 					
 				}
@@ -185,7 +187,7 @@ public class DividendenUpdateDialog extends JDialog implements TableModelListene
 				bFound = true;
 			}
 			if(!bFound) continue;
-			sb.append(" WHERE (`TickerId` = '"+tableData[i][0]+"' and `TickerId` = '"+tableData[i][1]+"');");
+			sb.append(" WHERE (`TickerId` = '"+tableData[i][0]+"' and `Datum` = '"+tableData[i][1]+"');");
 //			System.out.println("Constructed SQL: "+sb.toString());
 			theResult[i]=sb.toString();
 			countSQLStatements++;
