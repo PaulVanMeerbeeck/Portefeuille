@@ -2,6 +2,7 @@ package portefeuille.util;
 
 import java.awt.Color;
 import java.awt.Component;
+
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
 import javax.swing.JTable;

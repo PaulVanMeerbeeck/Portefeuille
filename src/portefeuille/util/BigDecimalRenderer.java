@@ -2,7 +2,6 @@ package portefeuille.util;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
-import java.sql.Date;
 
 import javax.swing.table.DefaultTableCellRenderer;
 

@@ -14,8 +14,6 @@ import javax.swing.JTable;
 import portefeuille.util.ColumnsAutoSizer;
 import portefeuille.util.DataTableModel;
 
-import portefeuille.tables.EffectList;
-
 public class MeerwaardenList extends ArrayList<Meerwaarden>
 {
 	private static final long serialVersionUID = 1L;

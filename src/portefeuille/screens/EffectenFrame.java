@@ -588,7 +588,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	{
 		try
 		{
-			String sql = "select t.Datum, t.Aantal, t.Prijs, t.Makelaarsloon, t.Beurstaks from transactie t, Effect where Effect.TickerId = t.Ticker and Effect.Naam ='"+naam+"' order by Datum";
+			String sql = "select Date_Format(t.Datum,'%Y-%m-%d') as Datum, t.Aantal, t.Prijs, t.Makelaarsloon, t.Beurstaks from transactie t, Effect where Effect.TickerId = t.Ticker and Effect.Naam ='"+naam+"' order by Datum";
 			Statement stmtRM = con.createStatement();
 			ResultSet rsRM = stmtRM.executeQuery(sql);
 	

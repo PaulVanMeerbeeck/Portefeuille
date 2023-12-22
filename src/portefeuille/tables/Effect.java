@@ -3,8 +3,6 @@ package portefeuille.tables;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import portefeuille.tables.Transactie;
-import portefeuille.tables.TransactieList;
 
 public class Effect
 {

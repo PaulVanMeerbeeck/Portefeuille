@@ -3,6 +3,8 @@ package portefeuille.tables;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import portefeuille.util.DBHelper;
+
 
 public class Transactie
 {
@@ -110,9 +112,10 @@ public class Transactie
 	
 	public ArrayList<Object> getFieldValues()
 	{
+		DBHelper dbHelper = new DBHelper();
 		ArrayList<Object> l = new ArrayList<Object>();
 		l.add(getTickerId());
-		l.add(getDate());
+		l.add(dbHelper.formatDate(getDate(), "yyyy-MM-dd HH:mm:ss"));
 		l.add(getNumber());
 		l.add(getPrice());
 		l.add(getMakelaarsloon());
@@ -151,6 +154,5 @@ public class Transactie
 	{
 		System.out.printf("%-6.6s  %tF  %05d\t%08.3f\t%05.2f\t%05.2f\n",theTickerId,theDate,theNumber, thePrice, theMakelaarsloon, theBeurstaks );
 	}
-
-
+	
 }

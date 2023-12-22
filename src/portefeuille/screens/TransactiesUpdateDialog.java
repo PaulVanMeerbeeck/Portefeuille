@@ -128,8 +128,8 @@ public class TransactiesUpdateDialog extends JDialog implements TableModelListen
 		this.add(buttonPane, BorderLayout.SOUTH);
 		setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 //		setSize(550, 320);
-		setMinimumSize(new Dimension(450,580));
-		setPreferredSize(new Dimension(450,580));
+		setMinimumSize(new Dimension(500,580));
+		setPreferredSize(new Dimension(500,580));
 		setLocationRelativeTo(null);
 		
 		setVisible(true);

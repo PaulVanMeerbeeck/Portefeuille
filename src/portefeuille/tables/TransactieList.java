@@ -53,7 +53,7 @@ public class TransactieList extends ArrayList<Transactie>
 			while (rsRM.next()) 
 			{
 				String tickerId = rsRM.getString("Ticker");
-				Date day = rsRM.getDate("Datum");
+				Date day = (Date) rsRM.getTimestamp("Datum");
 				int count = rsRM.getInt("Aantal");
 				BigDecimal price = rsRM.getBigDecimal("Prijs");
 				BigDecimal makelaarsLoon = rsRM.getBigDecimal("Makelaarsloon");

@@ -10,7 +10,7 @@ import javax.sql.DataSource;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
 
-import portefeuille.http.Client;
+//import portefeuille.http.Client;
 import portefeuille.screens.EffectenFrame;
 import portefeuille.tables.DataSourceFactory;
 import portefeuille.tables.DividendList;
