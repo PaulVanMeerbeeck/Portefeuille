@@ -2,9 +2,9 @@ package portefeuille.tables;
 
 import java.math.BigDecimal;
 import java.sql.Connection;
+import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
@@ -37,7 +37,7 @@ public class DividendList extends ArrayList<Dividend>
 		try 
 		{
 			con = ds.getConnection();
-			stmtRM = con.createStatement();
+			stmtRM = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			rsRM = stmtRM.executeQuery(sql);
 			while (rsRM.next()) 
 			{

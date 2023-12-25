@@ -8,9 +8,9 @@ import java.io.InputStreamReader;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.sql.Connection;
+import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 
 import javax.sql.DataSource;
@@ -38,7 +38,7 @@ public class EffectList extends ArrayList<Effect>
 		try 
 		{
 			con = ds.getConnection();
-			stmtRM = con.createStatement();
+			stmtRM = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			rsRM = stmtRM.executeQuery(sql);
 			while (rsRM.next()) 
 			{

@@ -24,7 +24,7 @@ public class WisselkoersList extends ArrayList<Wisselkoers>
 	public WisselkoersList(DataSource ds)
 	{
 		super();
-		String sql = "select * from wisselkoers order by van,naar";
+		String sql = "select * from Wisselkoers order by van,naar";
 		makeList(ds,sql);
 	}
 
@@ -36,7 +36,7 @@ public class WisselkoersList extends ArrayList<Wisselkoers>
 		try 
 		{
 			con = ds.getConnection();
-			stmtRM = con.createStatement();
+			stmtRM = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			rsRM = stmtRM.executeQuery(sql);
 			while (rsRM.next()) 
 			{

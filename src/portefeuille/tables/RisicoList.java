@@ -29,7 +29,7 @@ public class RisicoList
 		try 
 		{
 			con = ds.getConnection();
-			stmtRM = con.createStatement();
+			stmtRM = con.createStatement(ResultSet.TYPE_SCROLL_INSENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			rsRM = stmtRM.executeQuery(sql);
 			ResultSetMetaData rsMtd = rsRM.getMetaData();
 			colCount=rsMtd.getColumnCount();

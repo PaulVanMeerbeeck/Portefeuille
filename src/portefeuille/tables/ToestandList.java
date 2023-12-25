@@ -49,7 +49,9 @@ public class ToestandList extends ArrayList<Toestand>
 				BigDecimal presentSharesValue = rsRM.getBigDecimal("Waarde");
 //				System.out.println("aantal = "+aantal+ " sharesPurchaseValue = "+sharesPurchaseValue+" aveargeSharePurchaseValue = "+aveargeSharePurchaseValue);
 				totalPresentValueShares=totalPresentValueShares.add(presentSharesValue);
-				BigDecimal cost = rsRM.getBigDecimal("Kosten");
+				BigDecimal cost = rsRM.getBigDecimal("AankoopKosten");
+				totalCosts=totalCosts.add(cost);
+				cost = rsRM.getBigDecimal("VerkoopKosten");
 				totalCosts=totalCosts.add(cost);
 				BigDecimal profit = rsRM.getBigDecimal("Winst");
 				totalProfits=totalProfits.add(profit);

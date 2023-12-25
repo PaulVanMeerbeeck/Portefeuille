@@ -25,7 +25,7 @@ public class Portefeuille
 
 	public Portefeuille()
 	{
-		DataSource ds = DataSourceFactory.getInputDataSource("portefeuille");
+		DataSource ds = DataSourceFactory.getInputDataSource("pvm");
 		if(ds==null)
 		{
 			System.out.println("Niet gelukt!");
@@ -162,19 +162,20 @@ public class Portefeuille
 					{
 						try
 						{
-							System.setProperty("apple.laf.useScreenMenuBar", "true");
-							//				  		UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+							String osName = System.getProperty("os.name").toLowerCase();
+							if(osName.startsWith("mac os x"))
+							{
+								System.setProperty("apple.laf.useScreenMenuBar", "true");
+//							UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+								System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Portefeuille");
+							}
 							UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-//							String lcOSName = System.getProperty("os.name").toLowerCase();
-//								System.out.println("OS Name= "+lcOSName);
-//							boolean IS_MAC = lcOSName.startsWith("mac os x");
-							System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Portefeuille");
 						}
 						catch(Exception evt)
 						{
 							System.out.println("Exceprion "+evt.getStackTrace());
 						}
-//						for(String s: args) { System.out.println("Argument = "+s);}
+//					for(String s: args) { System.out.println("Argument = "+s);}
 						System.out.println("We zijn al hier");
 						String arg1="pvm";
 						if(args.length>1)

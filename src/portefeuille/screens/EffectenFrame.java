@@ -43,6 +43,8 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import java.lang.UnsupportedOperationException;
+
 import java.awt.Desktop;
 
 import portefeuille.tables.DataSourceFactory;
@@ -56,6 +58,8 @@ import portefeuille.util.DataTableModel;
 import portefeuille.util.MacOSXController;
 import portefeuille.util.ResultSetTableModel;
 import portefeuille.util.WinstRenderer;
+
+import java.lang.System;
 
 public class EffectenFrame extends JFrame implements WindowListener, ListSelectionListener
 {
@@ -103,21 +107,64 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 //		ImageIcon img = new ImageIcon("etc//DSC00675.icns");
 //		this.setIconImage(img.getImage());
 
-		MacOSXController osController = new MacOSXController(this);
-		Desktop macApplication =  Desktop.getDesktop();
-		macApplication.setAboutHandler(osController);
-		macApplication.setPreferencesHandler(null);
-		macApplication.setQuitHandler(osController);
+		String osName = System.getProperty("os.name");
+		System.out.println("System = "+osName);
+
+		if(Desktop.isDesktopSupported())
+		{
+			Desktop desktop =  Desktop.getDesktop();
+			MacOSXController osController = new MacOSXController(this);
+			try
+			{
+				desktop.setAboutHandler(osController);
+			}
+			catch(UnsupportedOperationException e)
+			{
+				System.out.println("Geen AboutHandler op dit OS");
+			}
+			try
+			{
+				desktop.setPreferencesHandler(null);
+			}
+			catch(UnsupportedOperationException e)
+			{
+				System.out.println("Geen PreferenceHandler op dit OS");
+			}
+			try
+			{
+				desktop.setQuitHandler(osController);
+			}
+			catch(UnsupportedOperationException e)
+			{
+				System.out.println("Geen QuitHandler op dit OS");
+			}
+		}
+		
 		URL url = this.getClass().getClassLoader().getResource("Resource/Portefeuille.png");
 		ImageIcon icon =  new ImageIcon(url);
 		if(icon!=null)
 		{
-			Taskbar taskbar = Taskbar.getTaskbar();
-			taskbar.setIconImage(icon.getImage());
+			try
+			{
+				Taskbar taskbar = Taskbar.getTaskbar();
+				taskbar.setIconImage(icon.getImage());
+			}
+			catch(UnsupportedOperationException e)
+			{
+				System.out.println("Geen TaskBar API op dit OS");
+			}
 		}
 		setIconImage(icon.getImage());
-		this.setPreferredSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT));
-		this.setMinimumSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT));
+		if(osName.startsWith("Mac"))
+		{
+			this.setPreferredSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT));
+			this.setMinimumSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT));
+		}
+		else
+		{
+			this.setPreferredSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT));
+			this.setMinimumSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT+50));
+		}
 //		this.setMaximumSize(new Dimension(DEFAULT_WIDTH,DEAFULT_HEIGHT));
 /*		int width=node.getInt("width", DEFAULT_WIDTH);
 		int height=node.getInt("height", DEAFULT_HEIGHT);
@@ -345,7 +392,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			String sql = "select sum(Aantal) as 'Aantal aandelen', sum(Investering) as 'Investering', sum(AankoopKosten) as kosten, sum(Waarde) as 'Huidige waarde', sum(Winst) as Winst from toestand"; // where Aantal > 0";
 			try
 			{
-				Statement stmt = con.createStatement();
+				Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 				ResultSet rs = stmt.executeQuery(sql);
 				rs.next();
 				ResultSetMetaData rsmd = rs.getMetaData();
@@ -399,7 +446,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			Object[][] tableData;
 			Object[] columnNames;
 			int rowCount=0, colCount, colBruto = -1, colNetto=-1, colMaand=-1;
-			Statement stmt = con.createStatement();
+			Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			ResultSet rs = stmt.executeQuery(sql);
 //			ResultSetTableModel model = new ResultSetTableModel(rs);
 			ResultSetMetaData rsMtd = rs.getMetaData();
@@ -497,7 +544,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 								 "GROUP BY Categorie.Omschrijving";
 		try
 		{
-			Statement stmt = con.createStatement();
+			Statement stmt = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			ResultSet rs = stmt.executeQuery(sql);
 
 			ResultSetTableModel model = new ResultSetTableModel(rs);
@@ -543,7 +590,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 					"`toestand`.`Winst`, `toestand`.`Cat` FROM `toestand` where `Aantal` > 0"; // or `VerkoopPrijs` >0";
 //			boolean scrolling = con.getMetaData().supportsResultSetType(ResultSet.TYPE_SCROLL_SENSITIVE);
 //			System.out.println("TYPE_SCROLL_INSENSITIVE = "+scrolling);
-			Statement stmtRM = con.createStatement();
+			Statement stmtRM = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			ResultSet rsRM = stmtRM.executeQuery(sql);
 	
 			ResultSetTableModel model = new ResultSetTableModel(rsRM);
@@ -589,7 +636,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		try
 		{
 			String sql = "select Date_Format(t.Datum,'%Y-%m-%d') as Datum, t.Aantal, t.Prijs, t.Makelaarsloon, t.Beurstaks from transactie t, Effect where Effect.TickerId = t.Ticker and Effect.Naam ='"+naam+"' order by Datum";
-			Statement stmtRM = con.createStatement();
+			Statement stmtRM = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			ResultSet rsRM = stmtRM.executeQuery(sql);
 	
 			ResultSetTableModel model = new ResultSetTableModel(rsRM);
@@ -622,7 +669,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		try
 		{
 			String sql = "select YEAR(d.Datum) as Jaar, sum(d.Dividend) as Dividend, Sum(d.Bruto) as Bruto, Sum(d.Voorheffing) as Voorheffing, Sum(d.Netto) as Netto, '' as Rendement from Dividend d, Effect e where e.Naam = '"+naam+"' and e.TickerId = d.TickerId group by YEAR(Datum) order by Jaar";
-			Statement stmtRM = con.createStatement();
+			Statement stmtRM = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			ResultSet rsRM = stmtRM.executeQuery(sql);
 
 			ResultSetTableModel model = new ResultSetTableModel(rsRM);
@@ -771,7 +818,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		try
 		{
 			String sql = "select `TickerId`, `Aantal`,round(`Aankoop koers`,2) AS `Aank. koers`,round(`Investering`,2) AS `Investering`,`Status`,Date(`Datum`) AS Datum from AankoopTrigger where Status = 'Geplaatst' or Status ='Uitgevoerd' order by Status;";
-			Statement stmtRM = con.createStatement();
+			Statement stmtRM = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			ResultSet rsRM = stmtRM.executeQuery(sql);
 	
 			ResultSetTableModel model = new ResultSetTableModel(rsRM);
@@ -823,7 +870,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		try
 		{
 			String sql = "select `TickerId`, `Aantal`,round(`Verkoop koers`,2) AS `Verk. koers`,round(`Omzet`,2) AS `Omzet`,`Status`,Date(`Datum`) AS Datum from VerkoopTrigger where Status = 'Geplaatst' or Status ='Uitgevoerd' order by Status;";
-			Statement stmtRM = con.createStatement();
+			Statement stmtRM = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			ResultSet rsRM = stmtRM.executeQuery(sql);
 	
 			ResultSetTableModel model = new ResultSetTableModel(rsRM);

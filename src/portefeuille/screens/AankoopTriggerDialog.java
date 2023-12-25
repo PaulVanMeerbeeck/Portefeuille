@@ -466,7 +466,6 @@ public class AankoopTriggerDialog extends JDialog implements TableModelListener,
 	@Override
 	public void valueChanged(ListSelectionEvent e)
 	{
-		// TODO Auto-generated method stub
 //		System.out.println("valueChanged called "+e.toString());
 		if(e.getValueIsAdjusting()) return;
 		DefaultListSelectionModel sm = (DefaultListSelectionModel)e.getSource();
