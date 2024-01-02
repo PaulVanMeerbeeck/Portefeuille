@@ -1,14 +1,27 @@
 package portefeuille.main;
 
 import java.math.BigDecimal;
+import java.net.URL;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Map;
 import java.util.Set;
+import java.awt.AWTException;
+import java.awt.Frame;
+import java.awt.MenuItem;
+import java.awt.PopupMenu;
+import java.awt.SystemTray;
+import java.awt.TrayIcon;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 
 import javax.sql.DataSource;
+import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
+import javax.swing.WindowConstants;
 
 //import portefeuille.http.Client;
 import portefeuille.screens.EffectenFrame;
@@ -154,41 +167,121 @@ public class Portefeuille
 		try
 		{
 	//		new Portefeuille();
+			try
+			{
+				String osName = System.getProperty("os.name").toLowerCase();
+				if(osName.startsWith("mac os x"))
+				{
+					System.setProperty("apple.laf.useScreenMenuBar", "true");
+//							UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
+					System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Portefeuille");
+				}
+				UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+			}
+			catch(Exception evt)
+			{
+				System.out.println("Exceprion "+evt.getStackTrace());
+			}
+//					for(String s: args) { System.out.println("Argument = "+s);}
+			System.out.println("We zijn al hier");
+			
 			SwingUtilities.invokeLater
 			(
 				new Runnable()
 				{
 					public void run()
 					{
-						try
+						EffectenFrame effectenFrame;
+						URL imageURL = this.getClass().getClassLoader().getResource("Resource/Portefeuille.png");
+						if(imageURL != null)
 						{
-							String osName = System.getProperty("os.name").toLowerCase();
-							if(osName.startsWith("mac os x"))
+							ImageIcon ic = new ImageIcon(imageURL,"Portefeuille");
+							String arg1="pvm";
+							if(args.length>1)
 							{
-								System.setProperty("apple.laf.useScreenMenuBar", "true");
-//							UIManager.setLookAndFeel("com.sun.java.swing.plaf.windows.WindowsLookAndFeel");
-								System.setProperty("com.apple.mrj.application.apple.menu.about.name", "Portefeuille");
+								arg1 = args[1];
 							}
-							UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-						}
-						catch(Exception evt)
-						{
-							System.out.println("Exceprion "+evt.getStackTrace());
-						}
-//					for(String s: args) { System.out.println("Argument = "+s);}
-						System.out.println("We zijn al hier");
-						String arg1="pvm";
-						if(args.length>1)
-						{
-							arg1 = args[1];
-						}
-						if(args.length>0)
-						{
-							System.out.println("args[0] = "+args[0]);
-							new EffectenFrame(args[0],arg1);
+							if(args.length>0)
+							{
+								System.out.println("args[0] = "+args[0]);
+								effectenFrame=new EffectenFrame(args[0],arg1,ic);
+							}
+							else
+							{
+								effectenFrame=new EffectenFrame("secure",arg1,ic);
+							}
+							if(SystemTray.isSupported())
+							{
+								TrayIcon ti = new TrayIcon(ic.getImage());
+								ti.setImageAutoSize(true);
+								ti.setToolTip("Portefeuille");
+								ActionListener iconListerener = new ActionListener() 
+								{
+									@Override
+									public void actionPerformed(ActionEvent e) 
+									{
+										MenuItem item = (MenuItem) e.getSource();
+										switch(item.getLabel())
+										{
+											case "Show":
+											if(effectenFrame.getState()==Frame.ICONIFIED)
+											{
+												effectenFrame.setState(Frame.NORMAL);
+											}
+											effectenFrame.setVisible(true);
+											break;
+
+											case "Minimise":
+												effectenFrame.setState(Frame.ICONIFIED);
+											break;
+
+											case "Hide":
+												effectenFrame.setVisible(false);
+											break;
+
+											case "Quit":
+												if(effectenFrame.quit())
+												{
+													SystemTray.getSystemTray().remove(ti);
+												};
+										}
+									}
+								};
+								PopupMenu tiMenu = new PopupMenu("Portefeuille");
+								MenuItem showItem =  new MenuItem("Show");
+								showItem.addActionListener(iconListerener);
+								tiMenu.add(showItem);
+								MenuItem hideItem =  new MenuItem("Hide");
+								hideItem.addActionListener(iconListerener);
+								tiMenu.add(hideItem);
+								MenuItem minimiseItem =  new MenuItem("Minimise");
+								minimiseItem.addActionListener(iconListerener);
+								tiMenu.add(minimiseItem);
+								tiMenu.addSeparator();
+								MenuItem exitItem =  new MenuItem("Quit");
+								exitItem.addActionListener(iconListerener);
+								tiMenu.add(exitItem);
+								ti.setPopupMenu(tiMenu);
+								SystemTray st = SystemTray.getSystemTray();
+								try
+								{
+									st.add(ti);
+								}
+								catch (AWTException e) 
+								{
+									e.printStackTrace();
+								}
+							}
+							else
+							{
+								System.out.println("System Tray niet ondersteund!");
+							}
 						}
 						else
-							new EffectenFrame("secure",arg1);
+						{
+							System.out.println("Portefeuille.png niet gevonden!");
+						}
+
 					}
 				}
 			);

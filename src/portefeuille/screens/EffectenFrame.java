@@ -4,16 +4,15 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Frame;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
-import java.awt.Taskbar;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -100,14 +99,17 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	DataSource ds;
 	Connection con;
 	int selectedOverzichtRow = -1;
+	String osName = System.getProperty("os.name").toLowerCase();
 
-	public EffectenFrame(String argument, String configId) throws HeadlessException 
+
+	public EffectenFrame(String argument, String configId, ImageIcon icon) throws HeadlessException 
 	{
-		super("Effecten overzicht");
-//		ImageIcon img = new ImageIcon("etc//DSC00675.icns");
-//		this.setIconImage(img.getImage());
+		super("Portefeuille - Effecten overzicht");
+		if(icon!=null)
+		{
+			setIconImage(icon.getImage());
+		}
 
-		String osName = System.getProperty("os.name");
 		System.out.println("System = "+osName);
 
 		if(Desktop.isDesktopSupported())
@@ -139,31 +141,21 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 				System.out.println("Geen QuitHandler op dit OS");
 			}
 		}
-		
-		URL url = this.getClass().getClassLoader().getResource("Resource/Portefeuille.png");
-		ImageIcon icon =  new ImageIcon(url);
-		if(icon!=null)
+		if(osName.startsWith("linux"))
 		{
-			try
-			{
-				Taskbar taskbar = Taskbar.getTaskbar();
-				taskbar.setIconImage(icon.getImage());
-			}
-			catch(UnsupportedOperationException e)
-			{
-				System.out.println("Geen TaskBar API op dit OS");
-			}
+			this.setPreferredSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT+50));
+			this.setMinimumSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT+50));
 		}
-		setIconImage(icon.getImage());
-		if(osName.startsWith("Mac"))
+		else if(osName.startsWith("windows"))
 		{
-			this.setPreferredSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT));
-			this.setMinimumSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT));
+			this.setPreferredSize(new Dimension(DEFAULT_WIDTH+30,DEFAULT_HEIGHT+50));
+			this.setMinimumSize(new Dimension(DEFAULT_WIDTH+30,DEFAULT_HEIGHT+50));
+			System.out.println("Window size set to: "+(DEFAULT_WIDTH+30)+", "+(DEFAULT_HEIGHT+5));
 		}
 		else
 		{
 			this.setPreferredSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT));
-			this.setMinimumSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT+50));
+			this.setMinimumSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT));
 		}
 //		this.setMaximumSize(new Dimension(DEFAULT_WIDTH,DEAFULT_HEIGHT));
 /*		int width=node.getInt("width", DEFAULT_WIDTH);
@@ -519,6 +511,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			as.sizeColumnsToFit(table);
 			table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			table.setSelectionBackground(Color.LIGHT_GRAY);
+			table.setShowGrid(false);
 			JScrollPane pane =  new JScrollPane(table);
 			table.scrollRectToVisible(table.getCellRect(tableModel.getRowCount()-1,0, true)); 
 
@@ -559,14 +552,21 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			table.setPreferredScrollableViewportSize(new Dimension(bannerTwoWidth, 70));
 			table.setFillsViewportHeight(true);
 			
+			if(osName.startsWith("windows"))
+			{
+				table.setFont(new Font(f.getName(),Font.PLAIN, 13));
+			}
+			else
+			{
+				table.setFont(new Font(f.getName(),Font.PLAIN, 11));
+			}
 			ColumnsAutoSizer as = new ColumnsAutoSizer();
 			as.sizeColumnsToFit(table);
 	//		table.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
 			table.setBackground(Color.YELLOW);
 			table.setEnabled(false);
 			table.setRowHeight(14);
-			table.setFont(new Font(f.getName(),Font.PLAIN, 11));
-
+			table.setShowGrid(false);
 
 			pane.add(table);
 //			pane.setMinimumSize(new Dimension(270, 65));
@@ -615,6 +615,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			}
 			
 			overzichtTable.setSelectionBackground(Color.LIGHT_GRAY);
+			overzichtTable.setShowGrid(false);
 			JScrollPane scrollPane = new JScrollPane(overzichtTable);
 			scrollPane.setAutoscrolls(true);
 			scrollPane.setMinimumSize(new Dimension(bannerOneWidth, 800));
@@ -646,7 +647,8 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			transactiesTable.setFillsViewportHeight(true);
 			transactiesTable.setSelectionBackground(Color.LIGHT_GRAY);
 			transactiesTable.setEnabled(false);
-			
+			transactiesTable.setShowGrid(false);
+
 			ColumnsAutoSizer as = new ColumnsAutoSizer();
 			as.sizeColumnsToFit(transactiesTable);
 			transactiesTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
@@ -691,8 +693,8 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 				}
 				if(tickerId != null)
 				{
-					int year = (int) model.getValueAt(i, 0);
-					LocalDate theDate = LocalDate.of(year, Month.DECEMBER, 31);
+					long year = (long)model.getValueAt(i, 0);
+					LocalDate theDate = LocalDate.of(Math.toIntExact(year), Month.DECEMBER, 31);
 					BigDecimal investment = tList.getInvestmentByTickerAndDate(tickerId, java.sql.Date.valueOf(theDate));
 					try
 					{
@@ -713,6 +715,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			effectDividendenTable.setFillsViewportHeight(true);
 			effectDividendenTable.setSelectionBackground(Color.LIGHT_GRAY);
 			effectDividendenTable.setEnabled(false);
+			effectDividendenTable.setShowGrid(false);
 			
 			ColumnsAutoSizer as = new ColumnsAutoSizer();
 			as.sizeColumnsToFit(effectDividendenTable);
@@ -761,6 +764,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 				gbc.gridx = 0;
 				JLabel l = new JLabel(names.get(j));
 				l.setPreferredSize(cellDim);
+				l.setBorder(null);
 				pane.add(l,gbc);
 				
 				gbc.gridx = 1;
@@ -778,6 +782,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 				{
 					v.setText(values.get(j).toString());
 				}
+				v.setBorder(null);
 				pane.add(v,gbc);
 			}
 			
@@ -839,6 +844,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			akoTable.setSelectionBackground(Color.LIGHT_GRAY);
 			akoTable.setEnabled(true);
 			akoTable.setAutoCreateRowSorter(true);
+			akoTable.setShowGrid(false);
 			
 			ColumnsAutoSizer as = new ColumnsAutoSizer();
 			as.sizeColumnsToFit(akoTable);
@@ -889,6 +895,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			akoTable.setSelectionBackground(Color.LIGHT_GRAY);
 			akoTable.setEnabled(true);
 			akoTable.setAutoCreateRowSorter(true);
+			akoTable.setShowGrid(false);
 			
 			ColumnsAutoSizer as = new ColumnsAutoSizer();
 			as.sizeColumnsToFit(akoTable);
@@ -925,6 +932,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			akoTable.setPreferredScrollableViewportSize(new Dimension(bannerTwoWidth, tableHeight));
 			akoTable.setFillsViewportHeight(true);
 			akoTable.setEnabled(false);
+			akoTable.setShowGrid(false);
 			
 			ColumnsAutoSizer as = new ColumnsAutoSizer();
 			as.sizeColumnsToFit(akoTable);
@@ -951,21 +959,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	@Override
 	public void windowClosing(WindowEvent e)
 	{
-		if(JOptionPane.showConfirmDialog(this, "Do you really want to quit?", "Portefeuille", JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE)==JOptionPane.YES_OPTION)
-		{
-			node.putInt("width", getWidth());
-			node.putInt("height", getHeight());	
-			if(con!=null) try
-			{
-				con.close();
-			}
-			catch (SQLException e1)
-			{
-				e1.printStackTrace();
-			}
-			dispose();
-			System.exit(0);			
-		}
+		quit();
 	}
 
 	@Override
@@ -1066,4 +1060,37 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		add(effectDividenden,gbc);
 		return;
 	}
+	public boolean quit()
+	{
+		int answer = JOptionPane.NO_OPTION;
+		if(isVisible()==false || getState()==Frame.ICONIFIED)
+		{
+			answer = JOptionPane.showConfirmDialog(null, "Do you really want to quit?", "Portefeuille", JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE);
+		}
+		else
+		{
+			answer = JOptionPane.showConfirmDialog(this, "Do you really want to quit?", "Portefeuille", JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE);
+		}
+		if(answer==JOptionPane.YES_OPTION)
+		{
+			node.putInt("width", getWidth());
+			node.putInt("height", getHeight());	
+			if(con!=null) try
+			{
+				con.close();
+			}
+			catch (SQLException e1)
+			{
+				e1.printStackTrace();
+			}
+			dispose();
+			System.exit(0);
+			return true;		
+		}
+		else
+		{
+			return false;
+		}
+	}
+
 }
