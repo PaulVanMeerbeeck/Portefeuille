@@ -95,7 +95,6 @@ public class EffectenUpdateDialog extends JDialog implements TableModelListener,
 				chooseFile.setFileFilter(new FileFilter() {
 					@Override
 					public boolean accept(File f) {
-            // TODO Auto-generated method stub
             return f.getName().endsWith(".csv");
 					}
 

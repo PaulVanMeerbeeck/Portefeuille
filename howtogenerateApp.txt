@@ -1,0 +1,15 @@
+
+On Mac
+
+In eclipse or vs code export runnable jar in /Users/pvm/Portefeuille/jar with option "Copied required libraries in sub-folder next to generated JAR"
+
+
+$JAVA_HOME/bin/jpackage --input /Users/pvm/Portefeuille/jar \
+                        --main-jar Portefeuille.jar \
+                        --main-class portefeuille.main.Portefeuille \
+                        --type app-image \
+                        --verbose \
+                        --icon /Users/pvm/git/Portefeuille/src/Resource/Portefeuille.icns \
+                        --app-version 2.1.0
+
+Note that the code signing is not ready yet.

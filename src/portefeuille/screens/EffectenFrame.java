@@ -166,13 +166,21 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		setPreferredSize(aDim); */
 		
 		setLocationRelativeTo(null);
-		setVisible(true);
+		if("service".compareToIgnoreCase(argument)==0)
+		{
+			setVisible(false);
+		}
+		else
+		{
+			setVisible(true);
+		}
 		menu = new EffectenMenu(this);
 		setJMenuBar(menu.getMenuBar());
 		
 		addWindowListener(this);
 		
-		if(argument!=null && argument.compareToIgnoreCase("unsecure")==0)
+		if(argument!=null && 
+			 (argument.compareToIgnoreCase("unsecure")==0 || argument.compareToIgnoreCase("service")==0))
 		{
 			setPasswordValid(true);
 		}
@@ -198,7 +206,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			JOptionPane.showMessageDialog(this,"DB not available","Database", JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
-		setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
 		GridBagLayout gridbagLayout = new GridBagLayout();
 		setLayout(gridbagLayout);
@@ -953,43 +961,45 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	@Override
 	public void windowOpened(WindowEvent e)
 	{
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 	}
 
 	@Override
 	public void windowClosing(WindowEvent e)
 	{
+		EffectenFrame ef = (EffectenFrame)e.getSource();
+		if(ef.getDefaultCloseOperation()==WindowConstants.HIDE_ON_CLOSE) return;
 		quit();
 	}
 
 	@Override
 	public void windowClosed(WindowEvent e)
 	{
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 	}
 
 	@Override
 	public void windowIconified(WindowEvent e)
 	{
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 	}
 
 	@Override
 	public void windowDeiconified(WindowEvent e)
 	{
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 	}
 
 	@Override
 	public void windowActivated(WindowEvent e)
 	{
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 	}
 
 	@Override
 	public void windowDeactivated(WindowEvent e)
 	{
-		// TODO Auto-generated method stub
+		// Auto-generated method stub
 	}
 
 	@Override

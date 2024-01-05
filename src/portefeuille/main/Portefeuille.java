@@ -12,16 +12,15 @@ import java.awt.MenuItem;
 import java.awt.PopupMenu;
 import java.awt.SystemTray;
 import java.awt.TrayIcon;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 
 import javax.sql.DataSource;
 import javax.swing.ImageIcon;
 import javax.swing.SwingUtilities;
 import javax.swing.UIManager;
-import javax.swing.WindowConstants;
 
 //import portefeuille.http.Client;
 import portefeuille.screens.EffectenFrame;
@@ -229,6 +228,7 @@ public class Portefeuille
 												effectenFrame.setState(Frame.NORMAL);
 											}
 											effectenFrame.setVisible(true);
+											effectenFrame.toFront();
 											break;
 
 											case "Minimise":
@@ -248,6 +248,38 @@ public class Portefeuille
 									}
 								};
 								PopupMenu tiMenu = new PopupMenu("Portefeuille");
+								MouseListener mouseListener = new MouseListener() {
+									@Override
+									public void mouseClicked(MouseEvent e) {
+										System.out.println("Mouse clicked!");
+									}
+
+									@Override
+									public void mousePressed(MouseEvent e) {
+										System.out.println("Mouse pressed!");
+		/*								if(effectenFrame.getState()==Frame.ICONIFIED)
+										{
+												effectenFrame.setState(Frame.NORMAL);
+										}
+										if(effectenFrame.isVisible()==false) effectenFrame.setVisible(true); */
+									}
+
+									@Override
+									public void mouseReleased(MouseEvent e) {
+										System.out.println("Mouse released!");
+									}
+
+									@Override
+									public void mouseEntered(MouseEvent e) {
+										System.out.println("Mouse entered!");
+									}
+
+									@Override
+									public void mouseExited(MouseEvent e) {
+										System.out.println("Mouse exit!");
+									}
+									
+								};
 								MenuItem showItem =  new MenuItem("Show");
 								showItem.addActionListener(iconListerener);
 								tiMenu.add(showItem);
@@ -262,6 +294,7 @@ public class Portefeuille
 								exitItem.addActionListener(iconListerener);
 								tiMenu.add(exitItem);
 								ti.setPopupMenu(tiMenu);
+								ti.addMouseListener(mouseListener);
 								SystemTray st = SystemTray.getSystemTray();
 								try
 								{

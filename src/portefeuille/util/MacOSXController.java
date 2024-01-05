@@ -80,29 +80,25 @@ public class MacOSXController implements AboutHandler, QuitHandler, PreferencesH
 			@Override
 			public void mousePressed(MouseEvent e)
 			{
-				// TODO Auto-generated method stub
-				
+				// Auto-generated method stub
 			}
 
 			@Override
 			public void mouseReleased(MouseEvent e)
 			{
-				// TODO Auto-generated method stub
-				
+				// Auto-generated method stub
 			}
 
 			@Override
 			public void mouseEntered(MouseEvent e)
 			{
-				// TODO Auto-generated method stub
-				
+				// Auto-generated method stub
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e)
 			{
-				// TODO Auto-generated method stub
-				
+				// Auto-generated method stub
 			}});
 	
 		aboutDialog.add(p, BorderLayout.CENTER);
@@ -124,15 +120,14 @@ public class MacOSXController implements AboutHandler, QuitHandler, PreferencesH
 			@Override
 			public void mouseClicked(MouseEvent e)
 			{
-				// TODO Auto-generated method stub
+				// Auto-generated method stub
 				// System.out.println("handleAbout - mouseClicked = "+e.toString());
 			}
 
 			@Override
 			public void mousePressed(MouseEvent e)
 			{
-				// TODO Auto-generated method stub
-				
+				// Auto-generated method stub
 			}
 
 			@Override
@@ -144,16 +139,15 @@ public class MacOSXController implements AboutHandler, QuitHandler, PreferencesH
 			@Override
 			public void mouseEntered(MouseEvent e)
 			{
-				// TODO Auto-generated method stub
-				
+				// Auto-generated method stub
 			}
 
 			@Override
 			public void mouseExited(MouseEvent e)
 			{
-				// TODO Auto-generated method stub
-				
-			}});
+				// Auto-generated method stub
+			}
+		});
 		aboutDialog.addWindowListener(new WindowListener()
 		{
 			@Override
@@ -172,37 +166,33 @@ public class MacOSXController implements AboutHandler, QuitHandler, PreferencesH
 			@Override
 			public void windowClosed(WindowEvent e)
 			{
-				// TODO Auto-generated method stub
-				
+				// Auto-generated method stub
 			}
 
 			@Override
 			public void windowIconified(WindowEvent e)
 			{
-				// TODO Auto-generated method stub
-				
+				// Auto-generated method stub
 			}
 
 			@Override
 			public void windowDeiconified(WindowEvent e)
 			{
-				// TODO Auto-generated method stub
-				
+				// Auto-generated method stub
 			}
 
 			@Override
 			public void windowActivated(WindowEvent e)
 			{
-				// TODO Auto-generated method stub
-				
+				// Auto-generated method stub
 			}
 
 			@Override
 			public void windowDeactivated(WindowEvent e)
 			{
-				// TODO Auto-generated method stub
-				
-			}});
+				// Auto-generated method stub
+			}
+		});
 		aboutDialog.setVisible(true);
 //		System.out.println("handleAbout - AboutEvent = "+e.toString());
 	}
