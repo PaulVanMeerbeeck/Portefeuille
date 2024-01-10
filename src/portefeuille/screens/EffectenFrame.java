@@ -141,19 +141,19 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		}
 		if(osName.startsWith("linux"))
 		{
-			this.setPreferredSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT+50));
-			this.setMinimumSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT+50));
+			this.setPreferredSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT+51));
+			this.setMinimumSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT+51));
 		}
 		else if(osName.startsWith("windows"))
 		{
-			this.setPreferredSize(new Dimension(DEFAULT_WIDTH+30,DEFAULT_HEIGHT+50));
-			this.setMinimumSize(new Dimension(DEFAULT_WIDTH+30,DEFAULT_HEIGHT+50));
-			System.out.println("Window size set to: "+(DEFAULT_WIDTH+30)+", "+(DEFAULT_HEIGHT+5));
+			this.setPreferredSize(new Dimension(DEFAULT_WIDTH+30,DEFAULT_HEIGHT+51));
+			this.setMinimumSize(new Dimension(DEFAULT_WIDTH+30,DEFAULT_HEIGHT+51));
+			System.out.println("Window size set to: "+(DEFAULT_WIDTH+30)+", "+(DEFAULT_HEIGHT+51));
 		}
 		else
 		{
-			this.setPreferredSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT));
-			this.setMinimumSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT));
+			this.setPreferredSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT+1));
+			this.setMinimumSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT+1));
 		}
 //		this.setMaximumSize(new Dimension(DEFAULT_WIDTH,DEAFULT_HEIGHT));
 /*		int width=node.getInt("width", DEFAULT_WIDTH);
@@ -317,7 +317,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		
 		if(alleDividenden!=null) remove(alleDividenden);
 		String sqlAlleDiv = "SELECT YEAR(Datum) AS Jaar,MONTH(Datum) as Maand, sum(Bruto) as Bruto, sum(Netto) as Netto FROM Dividend group by YEAR(Datum),MONTH(Datum) order by YEAR(Datum),MONTH(Datum)";
-		alleDividenden = CreateSQLPane(sqlAlleDiv,new Dimension(bannerThreeWidth, 810));
+		alleDividenden = CreateSQLPane(sqlAlleDiv,new Dimension(bannerThreeWidth, 811));
 		gbc.gridx=38;
 		gbc.gridy=2;
 		gbc.gridwidth=10;
@@ -347,7 +347,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		{
 			remove(meerwaardenPanel);
 		}
-		meerwaardenPanel = CreateMeerwaardenPanel(570);
+		meerwaardenPanel = CreateMeerwaardenPanel(571);
 		gbc.gridx = 48;
 		gbc.gridy=26;
 		gbc.gridwidth=7;
@@ -662,7 +662,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			
 			JScrollPane scrollPane = new JScrollPane(transactiesTable);
 			scrollPane.setAutoscrolls(true);
-			scrollPane.setPreferredSize(new Dimension(bannerTwoWidth, 300)); 
+			scrollPane.setPreferredSize(new Dimension(bannerTwoWidth, 301)); 
 			return scrollPane;			
 		}
 		catch(SQLException e)
@@ -700,8 +700,19 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 				}
 				if(tickerId != null)
 				{
-					long year = (long)model.getValueAt(i, 0);
-					LocalDate theDate = LocalDate.of(Math.toIntExact(year), Month.DECEMBER, 31);
+					int year = 0;
+					Object o = model.getValueAt(i, 0);
+					if(o.getClass()==Integer.class)
+					{
+						year = (int) o;
+					}
+					else
+					{
+						long lYear = (long)o;
+						year = Math.toIntExact(lYear);
+					}
+					
+					LocalDate theDate = LocalDate.of(year, Month.DECEMBER, 31);
 					BigDecimal investment = tList.getInvestmentByTickerAndDate(tickerId, java.sql.Date.valueOf(theDate));
 					try
 					{
