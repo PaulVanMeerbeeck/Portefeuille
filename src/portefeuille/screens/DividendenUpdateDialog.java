@@ -67,6 +67,7 @@ public class DividendenUpdateDialog extends JDialog implements TableModelListene
 		JTable table = createDividendenTable();
 		table.setFillsViewportHeight(true);
 		table.setRowSelectionInterval(tableModel.getRowCount()-1,tableModel.getRowCount()-1);
+		table.setShowGrid(false);
 //		table.setBorder(BorderFactory.createEmptyBorder(0, 10, 0,10));
 		JScrollPane scrollPane = new JScrollPane(table,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		scrollPane.setAutoscrolls(true);

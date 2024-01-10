@@ -222,13 +222,17 @@ public class Portefeuille
 										MenuItem item = (MenuItem) e.getSource();
 										switch(item.getLabel())
 										{
+											case "About":
+												ti.displayMessage("Portefeuille app", "Copyright pvm ©2018", TrayIcon.MessageType.NONE);
+											break;
+
 											case "Show":
-											if(effectenFrame.getState()==Frame.ICONIFIED)
-											{
-												effectenFrame.setState(Frame.NORMAL);
-											}
-											effectenFrame.setVisible(true);
-											effectenFrame.toFront();
+												if(effectenFrame.getState()==Frame.ICONIFIED)
+												{
+													effectenFrame.setState(Frame.NORMAL);
+												}
+												effectenFrame.setVisible(true);
+												effectenFrame.toFront();
 											break;
 
 											case "Minimise":
@@ -251,27 +255,33 @@ public class Portefeuille
 								MouseListener mouseListener = new MouseListener() {
 									@Override
 									public void mouseClicked(MouseEvent e) {
-										System.out.println("Mouse clicked!");
+	//									System.out.println("Mouse clicked!");
+	//									ti.displayMessage("Portefeuille", "Mouse clicked!", TrayIcon.MessageType.INFO);
 									}
 
 									@Override
 									public void mousePressed(MouseEvent e) {
-										System.out.println("Mouse pressed!");
-		/*								if(effectenFrame.getState()==Frame.ICONIFIED)
+	//									System.out.println("Mouse pressed!");
+	/* 									if(effectenFrame.getState()==Frame.ICONIFIED)
 										{
-												effectenFrame.setState(Frame.NORMAL);
+											effectenFrame.setState(Frame.NORMAL);
+											effectenFrame.toFront();
+										}
+										else
+										{
+											effectenFrame.setState(Frame.ICONIFIED);
 										}
 										if(effectenFrame.isVisible()==false) effectenFrame.setVisible(true); */
 									}
 
 									@Override
 									public void mouseReleased(MouseEvent e) {
-										System.out.println("Mouse released!");
+		//								System.out.println("Mouse released!");
 									}
 
 									@Override
 									public void mouseEntered(MouseEvent e) {
-										System.out.println("Mouse entered!");
+		//								System.out.println("Mouse entered!");
 									}
 
 									@Override
@@ -280,6 +290,10 @@ public class Portefeuille
 									}
 									
 								};
+								MenuItem aboutItem =  new MenuItem("About");
+								aboutItem.addActionListener(iconListerener);
+								tiMenu.add(aboutItem);
+								tiMenu.addSeparator();
 								MenuItem showItem =  new MenuItem("Show");
 								showItem.addActionListener(iconListerener);
 								tiMenu.add(showItem);

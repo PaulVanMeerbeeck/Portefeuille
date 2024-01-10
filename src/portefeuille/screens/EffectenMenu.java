@@ -10,10 +10,6 @@ import javax.swing.JMenuItem;
 
 public class EffectenMenu extends JMenuBar implements ActionListener
 {
-
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 	
 	JMenuBar menuBar = new JMenuBar();
@@ -21,8 +17,6 @@ public class EffectenMenu extends JMenuBar implements ActionListener
 	JDialog dTransactie;
 	JDialog dKalender;
 	JDialog dDividend;
-	JDialog dAKT;
-	JDialog dVKT;
 	JDialog dWK;
 	JDialog dPreOct;
 	JDialog dDivVU;
@@ -49,14 +43,6 @@ public class EffectenMenu extends JMenuBar implements ActionListener
 		miDividend.setActionCommand("Dividend");
 		miDividend.addActionListener(this);
 		menuTables.add(miDividend);
-		JMenuItem miAankoopTrigger = new JMenuItem("Aankoop trigger");
-		miAankoopTrigger.setActionCommand("AKT");
-		miAankoopTrigger.addActionListener(this);
-		menuTables.add(miAankoopTrigger);
-		JMenuItem miVerkoopTrigger = new JMenuItem("Verkoop trigger");
-		miVerkoopTrigger.setActionCommand("VKT");
-		miVerkoopTrigger.addActionListener(this);
-		menuTables.add(miVerkoopTrigger);
 		JMenuItem wisselkoersTrigger = new JMenuItem("Wisselkoersen");
 		wisselkoersTrigger.setActionCommand("WK");
 		wisselkoersTrigger.addActionListener(this);
@@ -109,16 +95,6 @@ public class EffectenMenu extends JMenuBar implements ActionListener
 		{
 			if(dDividend!=null && dDividend.isDisplayable()) return;
 			dDividend = new DividendenUpdateDialog(theEffectenFrame);
-		}
-		else if(action.compareTo("AKT")==0)
-		{
-			if(dAKT!=null && dAKT.isDisplayable()) return;
-			dAKT = new AankoopTriggerDialog(theEffectenFrame);
-		}
-		else if(action.compareTo("VKT")==0)
-		{
-			if(dVKT!=null && dVKT.isDisplayable()) return;
-			dVKT = new VerkoopTriggerDialog(theEffectenFrame);
 		}
 		else if(action.compareTo("WK")==0)
 		{

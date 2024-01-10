@@ -63,6 +63,7 @@ public class KalenderUpdateDialog extends JDialog implements TableModelListener,
 		JTable table = createKalenderTable();
 		JScrollPane scrollPane = new JScrollPane(table,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		table.setFillsViewportHeight(true);
+		table.setShowGrid(false);
 		scrollPane.setAutoscrolls(true);
 		scrollPane.setMinimumSize(new Dimension(360, 250));
 		scrollPane.setPreferredSize(new Dimension(360, 250));

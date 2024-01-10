@@ -87,8 +87,6 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	JPanel totalsPane;
 	JPanel ePane;
 	JPanel cPane; // category totals pane
-	JPanel aankooporderPanel;
-	JPanel verkooporderPanel;
 	JPanel meerwaardenPanel;
 	JScrollPane transacties;
 	JScrollPane effectDividenden;
@@ -166,9 +164,10 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		setPreferredSize(aDim); */
 		
 		setLocationRelativeTo(null);
-		if("service".compareToIgnoreCase(argument)==0)
+		if("-service".compareToIgnoreCase(argument)==0)
 		{
 			setVisible(false);
+			setState((Frame.ICONIFIED));
 		}
 		else
 		{
@@ -180,7 +179,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		addWindowListener(this);
 		
 		if(argument!=null && 
-			 (argument.compareToIgnoreCase("unsecure")==0 || argument.compareToIgnoreCase("service")==0))
+			 (argument.compareToIgnoreCase("unsecure")==0 || argument.compareToIgnoreCase("-service")==0))
 		{
 			setPasswordValid(true);
 		}
@@ -278,6 +277,18 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		gbc.gridheight=3;
 		add(totalsPane, gbc);
 		
+		if(overzicht != null)
+		{
+			remove(overzicht);
+		}
+		overzicht = CreateOverzichtPane();
+		gbc.gridx=0;
+		gbc.gridy=3;
+		gbc.gridwidth=24;
+		gbc.gridheight=82; //60; //57
+		//GBC(int gridx, int gridy, int gridwidth, int gridheight)
+		add(overzicht,gbc);
+		
 		if(cPane!=null) remove(cPane);
 		cPane = CreateTotalsByCategoryPane();
 		gbc.gridx=24;
@@ -285,6 +296,15 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		gbc.gridwidth=14;
 		gbc.gridheight=7;
 		add(cPane,gbc);
+		
+		if( selectedOverzichtRow!=-1 )
+		{
+			overzichtTableGlobal.setRowSelectionInterval(selectedOverzichtRow, selectedOverzichtRow);
+		}
+		else
+		{
+			doEffectTransactieDividend(null,gbc);
+		}
 		
 		if(divInkomsten!=null) remove(divInkomsten);
 		divInkomsten = new JLabel("Dividend inkomsten");
@@ -297,11 +317,11 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		
 		if(alleDividenden!=null) remove(alleDividenden);
 		String sqlAlleDiv = "SELECT YEAR(Datum) AS Jaar,MONTH(Datum) as Maand, sum(Bruto) as Bruto, sum(Netto) as Netto FROM Dividend group by YEAR(Datum),MONTH(Datum) order by YEAR(Datum),MONTH(Datum)";
-		alleDividenden = CreateSQLPane(sqlAlleDiv,new Dimension(bannerThreeWidth, 610));
+		alleDividenden = CreateSQLPane(sqlAlleDiv,new Dimension(bannerThreeWidth, 810));
 		gbc.gridx=38;
 		gbc.gridy=2;
 		gbc.gridwidth=10;
-		gbc.gridheight=63;
+		gbc.gridheight=83;
 		add(alleDividenden,gbc);
 		
 		if(divForecast!=null) remove(divForecast);
@@ -316,70 +336,49 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		if(forecastDividenden!=null) remove(forecastDividenden);
 //		String sqlDivForecast = "select k.Maand, round(sum(t.Aantal)*k.Dividend,2) as Bruto, round(sum(t.Aantal)*k.Dividend*(1-k.Voorheffing),2) as Netto from Effect e, pvm.Kalender k, pvm.transactie t where e.TickerId = k.TickerId and e.TickerId = t.Ticker group by k.Maand order by k.Maand";
 		String sqlDivForecast = "select Maand, Sum(Bruto) as Bruto, Sum(Netto) as Netto from `dividend_uitkeringen` group by Maand order by Maand";
-		forecastDividenden = CreateSQLPane(sqlDivForecast,new Dimension(bannerFourWidth, 380));
+		forecastDividenden = CreateSQLPane(sqlDivForecast,new Dimension(bannerFourWidth, 240));
 		gbc.gridx=48;
 		gbc.gridy=2;
 		gbc.gridwidth=7;
-		gbc.gridheight=38;
+		gbc.gridheight=24;
 		add(forecastDividenden,gbc);
 		
 		if(meerwaardenPanel != null)
 		{
 			remove(meerwaardenPanel);
 		}
-		meerwaardenPanel = CreateMeerwaardenPanel(230);
+		meerwaardenPanel = CreateMeerwaardenPanel(570);
 		gbc.gridx = 48;
-		gbc.gridy=40;
+		gbc.gridy=26;
 		gbc.gridwidth=7;
-		gbc.gridheight=25;
+		gbc.gridheight=57;
 		add(meerwaardenPanel,gbc);
 		
-		if(overzicht != null)
-		{
-			remove(overzicht);
-		}
-		overzicht = CreateOverzichtPane();
-		gbc.gridx=0;
-		gbc.gridy=3;
-		gbc.gridwidth=24;
-		gbc.gridheight=82; //60; //57
-		//GBC(int gridx, int gridy, int gridwidth, int gridheight)
-		add(overzicht,gbc);
-		
-		if( selectedOverzichtRow!=-1 )
-		{
-			overzichtTableGlobal.setRowSelectionInterval(selectedOverzichtRow, selectedOverzichtRow);
-		}
-		else
-		{
-			doEffectTransactieDividend(null,gbc);
-		}
-		
-		if(aankooporderPanel != null)
-		{
-			remove(aankooporderPanel);
-		}
-		aankooporderPanel = CreateAankooporderPanel();
+// 		if(aankooporderPanel != null)
+//		{
+//			remove(aankooporderPanel);
+//		}
+//		aankooporderPanel = CreateAankooporderPanel();
 		gbc.gridx=38;
 //		gbc.gridy=45;
 		gbc.gridy=65;
 		gbc.gridwidth=17;
 //		gbc.gridheight=15;
 		gbc.gridheight=20;
-		add(aankooporderPanel,gbc);
+//		add(aankooporderPanel,gbc);
 
-		if(verkooporderPanel != null)
+/*		if(verkooporderPanel != null)
 		{
 			remove(verkooporderPanel);
 		}
-		verkooporderPanel = CreateVerkooporderPanel();
+		verkooporderPanel = CreateVerkooporderPanel(); */
 		gbc.gridx=24;
 //		gbc.gridy=45;
 		gbc.gridy=65;
 		gbc.gridwidth=14;
 //		gbc.gridheight=15;
 		gbc.gridheight=20;
-		add(verkooporderPanel,gbc);
+//		add(verkooporderPanel,gbc);
 		return;
 	}
 
@@ -651,7 +650,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			ResultSetTableModel model = new ResultSetTableModel(rsRM);
 			
 			transactiesTable = new JTable(model);
-			transactiesTable.setPreferredScrollableViewportSize(new Dimension(bannerTwoWidth, 200));
+			transactiesTable.setPreferredScrollableViewportSize(new Dimension(bannerTwoWidth, 300)); 
 			transactiesTable.setFillsViewportHeight(true);
 			transactiesTable.setSelectionBackground(Color.LIGHT_GRAY);
 			transactiesTable.setEnabled(false);
@@ -663,7 +662,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			
 			JScrollPane scrollPane = new JScrollPane(transactiesTable);
 			scrollPane.setAutoscrolls(true);
-			scrollPane.setPreferredSize(new Dimension(bannerTwoWidth, 200));
+			scrollPane.setPreferredSize(new Dimension(bannerTwoWidth, 300)); 
 			return scrollPane;			
 		}
 		catch(SQLException e)
@@ -719,7 +718,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			}
 			DataTableModel theModel = new DataTableModel(data,columnNames);
 			effectDividendenTable = new JTable(theModel);
-			effectDividendenTable.setPreferredScrollableViewportSize(new Dimension(bannerTwoWidth, 230));
+			effectDividendenTable.setPreferredScrollableViewportSize(new Dimension(bannerTwoWidth, 330)); 
 			effectDividendenTable.setFillsViewportHeight(true);
 			effectDividendenTable.setSelectionBackground(Color.LIGHT_GRAY);
 			effectDividendenTable.setEnabled(false);
@@ -731,7 +730,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			
 			JScrollPane scrollPane = new JScrollPane(effectDividendenTable);
 			scrollPane.setAutoscrolls(true);
-			scrollPane.setPreferredSize(new Dimension(bannerTwoWidth, 230));
+			scrollPane.setPreferredSize(new Dimension(bannerTwoWidth, 330));
 			return scrollPane;			
 		}
 		catch(SQLException e)
@@ -817,110 +816,6 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		return pane;
 	}
 	
-	private JPanel CreateAankooporderPanel()
-	{
-		JPanel pane =  new JPanel(new BorderLayout());
-//		pane.setPreferredSize(new Dimension(bannerThreeWidth+bannerFourWidth,150));
-		pane.setPreferredSize(new Dimension(bannerThreeWidth+bannerFourWidth,200));
-//		pane.setBackground(Color.ORANGE);
-		JLabel head = new JLabel("Aankoop orders");
-		head.setSize(new Dimension(bannerThreeWidth+bannerFourWidth,10));
-		head.setBackground(Color.LIGHT_GRAY);
-		pane.add(head,BorderLayout.NORTH);
-		
-		try
-		{
-			String sql = "select `TickerId`, `Aantal`,round(`Aankoop koers`,2) AS `Aank. koers`,round(`Investering`,2) AS `Investering`,`Status`,Date(`Datum`) AS Datum from AankoopTrigger where Status = 'Geplaatst' or Status ='Uitgevoerd' order by Status;";
-			Statement stmtRM = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
-			ResultSet rsRM = stmtRM.executeQuery(sql);
-	
-			ResultSetTableModel model = new ResultSetTableModel(rsRM);
-			
-			JTable akoTable = new JTable(model);
-			
-			TableColumnModel colModel = akoTable.getColumnModel();
-			for(int i=0; i<colModel.getColumnCount();i++)
-			{
-				TableColumn aColumn = colModel.getColumn(i);
-				aColumn.setCellRenderer(new BigDecimalRenderer());
-			}
-			
-			
-//			akoTable.setPreferredScrollableViewportSize(new Dimension(bannerThreeWidth+bannerFourWidth, 140));
-			akoTable.setPreferredScrollableViewportSize(new Dimension(bannerThreeWidth+bannerFourWidth, 190));
-			akoTable.setFillsViewportHeight(true);
-			akoTable.setSelectionBackground(Color.LIGHT_GRAY);
-			akoTable.setEnabled(true);
-			akoTable.setAutoCreateRowSorter(true);
-			akoTable.setShowGrid(false);
-			
-			ColumnsAutoSizer as = new ColumnsAutoSizer();
-			as.sizeColumnsToFit(akoTable);
-//			akoTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-			
-			JScrollPane scrollPane = new JScrollPane(akoTable);
-			scrollPane.setAutoscrolls(true);
-//			scrollPane.setPreferredSize(new Dimension(bannerThreeWidth+bannerFourWidth, 140));
-			scrollPane.setPreferredSize(new Dimension(bannerThreeWidth+bannerFourWidth, 190));
-			pane.add(scrollPane,BorderLayout.CENTER);
-		}
-		catch(SQLException e)
-		{
-			e.printStackTrace();
-		}
-		return pane;			
-	}
-	
-	private JPanel CreateVerkooporderPanel()
-	{
-		JPanel pane =  new JPanel(new BorderLayout());
-		pane.setPreferredSize(new Dimension(bannerTwoWidth,200));
-//		pane.setBackground(Color.ORANGE);
-		JLabel head = new JLabel("Verkoop orders");
-		head.setSize(new Dimension(bannerTwoWidth,10));
-		head.setBackground(Color.LIGHT_GRAY);
-		pane.add(head,BorderLayout.NORTH);
-		
-		try
-		{
-			String sql = "select `TickerId`, `Aantal`,round(`Verkoop koers`,2) AS `Verk. koers`,round(`Omzet`,2) AS `Omzet`,`Status`,Date(`Datum`) AS Datum from VerkoopTrigger where Status = 'Geplaatst' or Status ='Uitgevoerd' order by Status;";
-			Statement stmtRM = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
-			ResultSet rsRM = stmtRM.executeQuery(sql);
-	
-			ResultSetTableModel model = new ResultSetTableModel(rsRM);
-			
-			JTable akoTable = new JTable(model);
-			
-			TableColumnModel colModel = akoTable.getColumnModel();
-			for(int i=0; i<colModel.getColumnCount();i++)
-			{
-				TableColumn aColumn = colModel.getColumn(i);
-				aColumn.setCellRenderer(new BigDecimalRenderer());
-			}
-			
-			akoTable.setPreferredScrollableViewportSize(new Dimension(bannerTwoWidth, 190));
-			akoTable.setFillsViewportHeight(true);
-			akoTable.setSelectionBackground(Color.LIGHT_GRAY);
-			akoTable.setEnabled(true);
-			akoTable.setAutoCreateRowSorter(true);
-			akoTable.setShowGrid(false);
-			
-			ColumnsAutoSizer as = new ColumnsAutoSizer();
-			as.sizeColumnsToFit(akoTable);
-//			akoTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
-			
-			JScrollPane scrollPane = new JScrollPane(akoTable);
-			scrollPane.setAutoscrolls(true);
-			scrollPane.setPreferredSize(new Dimension(bannerTwoWidth, 190));
-			pane.add(scrollPane,BorderLayout.CENTER);
-		}
-		catch(SQLException e)
-		{
-			e.printStackTrace();
-		}
-		return pane;			
-	}
-
 	private JPanel CreateMeerwaardenPanel(int height)
 	{
 		JPanel panel =  new JPanel(new BorderLayout());
@@ -938,6 +833,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			MeerwaardenList ml = new MeerwaardenList(eList);
 			JTable akoTable = ml.CreateTable();
 			akoTable.setPreferredScrollableViewportSize(new Dimension(bannerTwoWidth, tableHeight));
+//			akoTable.setRowSelectionInterval(akoTable.getRowCount()-1,akoTable.getRowCount()-1);
 			akoTable.setFillsViewportHeight(true);
 			akoTable.setEnabled(false);
 			akoTable.setShowGrid(false);
@@ -947,6 +843,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 //			akoTable.setAutoResizeMode(JTable.AUTO_RESIZE_ALL_COLUMNS);
 			
 			JScrollPane scrollPane = new JScrollPane(akoTable);
+			akoTable.scrollRectToVisible(akoTable.getCellRect(akoTable.getRowCount()-1,0, true));
 			scrollPane.setAutoscrolls(true);
 			scrollPane.setPreferredSize(new Dimension(bannerTwoWidth, tableHeight));
 			panel.add(scrollPane,BorderLayout.CENTER);
@@ -1056,20 +953,21 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		gbc.gridy=20;
 		gbc.gridwidth = 14;
 //		gbc.gridheight = 12;
-		gbc.gridheight = 20;
+		gbc.gridheight = 30;
 		add(transacties,gbc);
 		
 		if(effectDividenden!=null) remove(effectDividenden);
 		effectDividenden = CreateEffectDividendenPane(effect);
-		gbc.gridx = 24;
+		gbc.gridx = 24; 
 //		gbc.gridy = 32;
-		gbc.gridy = 40;
+		gbc.gridy = 50;
 		gbc.gridwidth = 14;
 //		gbc.gridheight = 13;
-		gbc.gridheight = 25;
+		gbc.gridheight = 33; 
 		add(effectDividenden,gbc);
 		return;
 	}
+
 	public boolean quit()
 	{
 		int answer = JOptionPane.NO_OPTION;

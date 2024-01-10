@@ -72,6 +72,7 @@ public class EffectenUpdateDialog extends JDialog implements TableModelListener,
 		con = theParent.getCon();
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
 		JTable table = createEffectenTable();
+		table.setShowGrid(false);
 		JScrollPane scrollPane = new JScrollPane(table,ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		table.setFillsViewportHeight(true);
 		scrollPane.setAutoscrolls(true);
