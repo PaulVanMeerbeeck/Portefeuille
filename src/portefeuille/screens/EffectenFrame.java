@@ -9,6 +9,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
+import java.awt.SystemTray;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.math.BigDecimal;
@@ -205,7 +206,14 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			JOptionPane.showMessageDialog(this,"DB not available","Database", JOptionPane.ERROR_MESSAGE);
 			System.exit(0);
 		}
-		setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+		if(SystemTray.isSupported())
+		{
+			setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+		}
+		else
+		{
+			setDefaultCloseOperation(WindowConstants.DO_NOTHING_ON_CLOSE);
+		}
 
 		GridBagLayout gridbagLayout = new GridBagLayout();
 		setLayout(gridbagLayout);
