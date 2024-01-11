@@ -990,6 +990,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	public boolean quit()
 	{
 		int answer = JOptionPane.NO_OPTION;
+		toFront();
 		if(isVisible()==false || getState()==Frame.ICONIFIED)
 		{
 			answer = JOptionPane.showConfirmDialog(null, "Do you really want to quit?", "Portefeuille", JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE);

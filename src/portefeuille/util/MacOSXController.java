@@ -41,6 +41,7 @@ public class MacOSXController implements AboutHandler, QuitHandler, PreferencesH
 	@Override
 	public void handleQuitRequestWith(QuitEvent e, QuitResponse r)
 	{
+		theFrame.toFront();
 //		System.out.println("handleQuitRequestWith - response = "+r.toString());
 		if(JOptionPane.showConfirmDialog(theFrame, "Do you really want to quit?", "Portefeuille", JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE)==JOptionPane.YES_OPTION)
 		{
@@ -55,6 +56,7 @@ public class MacOSXController implements AboutHandler, QuitHandler, PreferencesH
 		if(aboutPanelDisplayed)
 		{
 			aboutDialog.setVisible(true);
+			aboutDialog.toFront();
 			return;
 		}
 		aboutDialog = new JDialog(theFrame);

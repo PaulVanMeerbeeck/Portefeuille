@@ -10,6 +10,6 @@ $JAVA_HOME/bin/jpackage --input /Users/pvm/Portefeuille/jar \
                         --type app-image \
                         --verbose \
                         --icon /Users/pvm/git/Portefeuille/src/Resource/Portefeuille.icns \
-                        --app-version 2.1.0
+                        --app-version 2.2.1
 
 Note that the code signing is not ready yet.
