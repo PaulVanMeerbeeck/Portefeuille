@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 //import portefeuille.tables.TransactieList;
 import java.util.GregorianCalendar;
+import java.util.Set;
+import java.util.TreeMap;
 
 import javax.sql.DataSource;
 import javax.swing.JTable;
@@ -127,11 +129,56 @@ public class MeerwaardenList extends ArrayList<Meerwaarden>
 		ColumnsAutoSizer as = new ColumnsAutoSizer();
 		as.sizeColumnsToFit(table);
 		table.setSelectionBackground(Color.LIGHT_GRAY);
+		table.setSelectionForeground(Color.BLACK);
 //		table.setDefaultRenderer(Object.class,new PortefeuilleTableCellRenderer());
 		table.setRowSelectionInterval(model.getRowCount()-1,model.getRowCount()-1);
 		
 		return table;
 	}
 
+	public MeerwaardenList sortAndGroup()
+	{
+		Calendar calendar = new GregorianCalendar();
+		TreeMap<Integer, TreeMap<String,Meerwaarden>> tYearMap = new TreeMap<Integer,TreeMap<String,Meerwaarden>>();
+		for(Meerwaarden m: this)
+		{
+			TreeMap<String,Meerwaarden> tTickerMap = null;
+			calendar.setTime(m.getDate());
+			Integer year = calendar.get(Calendar.YEAR);
+			tTickerMap = tYearMap.get(year);
+			if(tTickerMap==null)
+			{
+				tTickerMap = new TreeMap<String,Meerwaarden>();
+				tTickerMap.put(m.getTickerId(),m);
+				tYearMap.put(year,tTickerMap);
+			}
+			else
+			{
+				Meerwaarden aMw = tTickerMap.get(m.getTickerId());
+				if(aMw==null)
+				{
+					tTickerMap.put(m.getTickerId(),m);
+				}
+				else
+				{
+					aMw.setNumber(aMw.getNumber()+m.getNumber());
+					aMw.setMeerwaarde(aMw.getMeerwaarde().add(m.getMeerwaarde()));
+					aMw.setDate(m.getDate());
+				}
+			}
+		}
+		MeerwaardenList result = new MeerwaardenList();
+		Set<Integer> sYears = tYearMap.keySet();
+		for(Integer i : sYears)
+		{
+			TreeMap<String,Meerwaarden> tTickerMap = tYearMap.get(i);
+			Set<String> sTickers = tTickerMap.keySet();
+			for(String t: sTickers)
+			{
+				result.add(tTickerMap.get(t));
+			}
+		}
+		return result;
+	}
 
 }

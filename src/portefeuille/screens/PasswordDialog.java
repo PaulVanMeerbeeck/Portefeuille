@@ -33,6 +33,7 @@ public class PasswordDialog extends JDialog
 	  pack();
 	  setLocationRelativeTo(null);	
 	  setVisible(true);
+		toFront();
 	}
 	
 	void setPasswordValid(boolean value)

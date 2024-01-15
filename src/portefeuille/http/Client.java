@@ -4,8 +4,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 
 public class Client
 {
@@ -17,7 +18,8 @@ public class Client
 		URL obj;
 		try
 		{
-			obj = new URL(url);
+			URI myUri = new URI(url);
+			obj = myUri.toURL();
 			HttpURLConnection con = (HttpURLConnection) obj.openConnection();
 		
 			// optional default is GET
@@ -40,15 +42,20 @@ public class Client
 			in.close();
 			return response.toString();
 		}
-		catch (MalformedURLException e)
-		{
-			e.printStackTrace();
-			return e.getMessage();
-		}
+//		catch (MalformedURLException e)
+//		{
+//			e.printStackTrace();
+//			return e.getMessage();
+//		}
 		catch (IOException e)
 		{
 			e.printStackTrace();
-			return e.getMessage();
+			return e.getLocalizedMessage();
+		}
+		catch (URISyntaxException e)
+		{
+			e.printStackTrace();
+			return e.getLocalizedMessage();
 		}
 
 	}

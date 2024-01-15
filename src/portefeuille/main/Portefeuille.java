@@ -7,15 +7,7 @@ import java.util.GregorianCalendar;
 import java.util.Map;
 import java.util.Set;
 import java.awt.AWTException;
-import java.awt.Frame;
-import java.awt.MenuItem;
-import java.awt.PopupMenu;
 import java.awt.SystemTray;
-import java.awt.TrayIcon;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 
 import javax.sql.DataSource;
 import javax.swing.ImageIcon;
@@ -31,6 +23,7 @@ import portefeuille.tables.EffectList;
 import portefeuille.tables.ToestandList;
 import portefeuille.tables.Transactie;
 import portefeuille.tables.TransactieList;
+import portefeuille.util.PortefeuilleTrayIcon;
 
 public class Portefeuille
 {
@@ -211,108 +204,11 @@ public class Portefeuille
 							}
 							if(SystemTray.isSupported())
 							{
-								TrayIcon ti = new TrayIcon(ic.getImage());
-								ti.setImageAutoSize(true);
-								ti.setToolTip("Portefeuille");
-								ActionListener iconListerener = new ActionListener() 
-								{
-									@Override
-									public void actionPerformed(ActionEvent e) 
-									{
-										MenuItem item = (MenuItem) e.getSource();
-										switch(item.getLabel())
-										{
-											case "About":
-												ti.displayMessage("Portefeuille app", "Copyright pvm ©2018", TrayIcon.MessageType.NONE);
-											break;
-
-											case "Show":
-												if(effectenFrame.getState()==Frame.ICONIFIED)
-												{
-													effectenFrame.setState(Frame.NORMAL);
-												}
-												effectenFrame.setVisible(true);
-												effectenFrame.toFront();
-											break;
-
-											case "Minimise":
-												effectenFrame.setState(Frame.ICONIFIED);
-											break;
-
-											case "Hide":
-												effectenFrame.setVisible(false);
-											break;
-
-											case "Quit":
-												if(effectenFrame.quit())
-												{
-													SystemTray.getSystemTray().remove(ti);
-												};
-										}
-									}
-								};
-								PopupMenu tiMenu = new PopupMenu("Portefeuille");
-								MouseListener mouseListener = new MouseListener() {
-									@Override
-									public void mouseClicked(MouseEvent e) {
-	//									System.out.println("Mouse clicked!");
-	//									ti.displayMessage("Portefeuille", "Mouse clicked!", TrayIcon.MessageType.INFO);
-									}
-
-									@Override
-									public void mousePressed(MouseEvent e) {
-	//									System.out.println("Mouse pressed!");
-	/* 									if(effectenFrame.getState()==Frame.ICONIFIED)
-										{
-											effectenFrame.setState(Frame.NORMAL);
-											effectenFrame.toFront();
-										}
-										else
-										{
-											effectenFrame.setState(Frame.ICONIFIED);
-										}
-										if(effectenFrame.isVisible()==false) effectenFrame.setVisible(true); */
-									}
-
-									@Override
-									public void mouseReleased(MouseEvent e) {
-		//								System.out.println("Mouse released!");
-									}
-
-									@Override
-									public void mouseEntered(MouseEvent e) {
-		//								System.out.println("Mouse entered!");
-									}
-
-									@Override
-									public void mouseExited(MouseEvent e) {
-										System.out.println("Mouse exit!");
-									}
-									
-								};
-								MenuItem aboutItem =  new MenuItem("About");
-								aboutItem.addActionListener(iconListerener);
-								tiMenu.add(aboutItem);
-								tiMenu.addSeparator();
-								MenuItem showItem =  new MenuItem("Show");
-								showItem.addActionListener(iconListerener);
-								tiMenu.add(showItem);
-								MenuItem hideItem =  new MenuItem("Hide");
-								hideItem.addActionListener(iconListerener);
-								tiMenu.add(hideItem);
-								MenuItem minimiseItem =  new MenuItem("Minimise");
-								minimiseItem.addActionListener(iconListerener);
-								tiMenu.add(minimiseItem);
-								tiMenu.addSeparator();
-								MenuItem exitItem =  new MenuItem("Quit");
-								exitItem.addActionListener(iconListerener);
-								tiMenu.add(exitItem);
-								ti.setPopupMenu(tiMenu);
-								ti.addMouseListener(mouseListener);
+								PortefeuilleTrayIcon pti = new PortefeuilleTrayIcon(ic,effectenFrame);
 								SystemTray st = SystemTray.getSystemTray();
 								try
 								{
-									st.add(ti);
+									st.add(pti);
 								}
 								catch (AWTException e) 
 								{

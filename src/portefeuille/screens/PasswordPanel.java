@@ -139,8 +139,7 @@ public class PasswordPanel extends JPanel implements ActionListener
   protected void doQuit()
   {
   	controllingFrame.setVisible(false);
-    controllingFrame.toFront();
-  	JOptionPane.showMessageDialog(controllingFrame,"See you ...\n");
+  	JOptionPane.showMessageDialog(null,"See you ...\n");
   	controllingFrame.dispose();
  }
 }

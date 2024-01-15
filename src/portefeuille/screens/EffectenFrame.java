@@ -56,6 +56,7 @@ import portefeuille.util.BigDecimalRenderer;
 import portefeuille.util.ColumnsAutoSizer;
 import portefeuille.util.DataTableModel;
 import portefeuille.util.MacOSXController;
+import portefeuille.util.PortefeuilleTrayIcon;
 import portefeuille.util.ResultSetTableModel;
 import portefeuille.util.WinstRenderer;
 
@@ -97,8 +98,11 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	JLabel divForecast;
 	DataSource ds;
 	Connection con;
+	boolean quitPending = false;
 	int selectedOverzichtRow = -1;
 	String osName = System.getProperty("os.name").toLowerCase();
+	PortefeuilleTrayIcon pti;
+	boolean isService = false;
 
 
 	public EffectenFrame(String argument, String configId, ImageIcon icon) throws HeadlessException 
@@ -107,6 +111,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		if(icon!=null)
 		{
 			setIconImage(icon.getImage());
+			pti = new PortefeuilleTrayIcon(icon,this);
 		}
 
 		System.out.println("System = "+osName);
@@ -167,6 +172,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		setLocationRelativeTo(null);
 		if("-service".compareToIgnoreCase(argument)==0)
 		{
+			isService = true;
 			setVisible(false);
 			setState((Frame.ICONIFIED));
 		}
@@ -219,8 +225,6 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		setLayout(gridbagLayout);
 		CreateJFrameContents();
 		pack();
-//		MeerwaardenList ml = new MeerwaardenList(ds);
-//		ml.print();
 	}
 
 	EffectList getEList()
@@ -426,7 +430,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 						if(j+1 == countCol)
 						{
 							if(rs.getBigDecimal(j+1).signum()>0)
-								l.setForeground(Color.green);
+								l.setForeground(Color.black);
 							else
 								l.setForeground(Color.red);
 						}
@@ -678,7 +682,6 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			e.printStackTrace();
 			return null;
 		}
-
 	}
 	
 	JScrollPane CreateEffectDividendenPane(String naam)
@@ -848,8 +851,9 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		int tableHeight = height-10;
 		try
 		{
-//			MeerwaardenList ml = new MeerwaardenList(ds);
-			MeerwaardenList ml = new MeerwaardenList(eList);
+			MeerwaardenList ml = new MeerwaardenList(ds);
+			ml = ml.sortAndGroup();
+//			MeerwaardenList ml = new MeerwaardenList(eList);
 			JTable akoTable = ml.CreateTable();
 			akoTable.setPreferredScrollableViewportSize(new Dimension(bannerTwoWidth, tableHeight));
 //			akoTable.setRowSelectionInterval(akoTable.getRowCount()-1,akoTable.getRowCount()-1);
@@ -877,45 +881,59 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	@Override
 	public void windowOpened(WindowEvent e)
 	{
-		// Auto-generated method stub
+		System.out.println("window opened");
 	}
 
 	@Override
 	public void windowClosing(WindowEvent e)
 	{
-		EffectenFrame ef = (EffectenFrame)e.getSource();
-		if(ef.getDefaultCloseOperation()==WindowConstants.HIDE_ON_CLOSE) return;
-		quit();
+		if(getDefaultCloseOperation()==WindowConstants.HIDE_ON_CLOSE)
+		{ 
+			pti.enableItem("Hide",false);
+			pti.enableItem("Show", true);
+			pti.enableItem("Minimise",false);
+			return; 
+		}
+		else
+		{
+			quit();
+		}
 	}
 
 	@Override
 	public void windowClosed(WindowEvent e)
 	{
-		// Auto-generated method stub
+		System.out.println("window closed");
 	}
 
 	@Override
 	public void windowIconified(WindowEvent e)
 	{
-		// Auto-generated method stub
+		pti.enableItem("Show",true);
+		pti.enableItem("Minimise",false);
 	}
 
 	@Override
 	public void windowDeiconified(WindowEvent e)
 	{
-		// Auto-generated method stub
+		pti.enableItem("Show",false);
+		pti.enableItem("Minimise",true);
 	}
 
 	@Override
 	public void windowActivated(WindowEvent e)
 	{
-		// Auto-generated method stub
+		System.out.println("window activated");
+		pti.enableItem("Show", false);
 	}
 
 	@Override
 	public void windowDeactivated(WindowEvent e)
 	{
-		// Auto-generated method stub
+		System.out.println("window deactivated");
+		pti.enableItem("Show", true);
+		pti.enableItem("Hide", false);
+		pti.enableItem("Minimise", false);
 	}
 
 	@Override
@@ -990,6 +1008,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	public boolean quit()
 	{
 		int answer = JOptionPane.NO_OPTION;
+		setQuitPending(true);
 		toFront();
 		if(isVisible()==false || getState()==Frame.ICONIFIED)
 		{
@@ -997,6 +1016,8 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		}
 		else
 		{
+			pti.enableItem("Hide", true);
+			pti.enableItem("Minimise", true);
 			answer = JOptionPane.showConfirmDialog(this, "Do you really want to quit?", "Portefeuille", JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE);
 		}
 		if(answer==JOptionPane.YES_OPTION)
@@ -1017,8 +1038,29 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		}
 		else
 		{
+			setQuitPending(false);
+			if(isVisible()==true && getState()==Frame.NORMAL)
+			{
+				pti.enableItem("Show",false);
+				pti.enableItem("Hide",true);
+				pti.enableItem("Minimise", true);
+			}
 			return false;
 		}
 	}
 
+	public void setQuitPending(boolean pending)
+	{
+		quitPending = pending;
+	}
+
+	public boolean getQuitPending()
+	{
+		return quitPending;
+	}
+
+	public boolean isService()
+	{
+		return isService;
+	} 
 }
