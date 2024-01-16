@@ -2,6 +2,7 @@ package portefeuille.util;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Frame;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowEvent;
@@ -9,7 +10,6 @@ import java.awt.event.WindowListener;
 
 import javax.swing.BorderFactory;
 import javax.swing.JDialog;
-import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JRootPane;
@@ -26,27 +26,39 @@ import com.apple.eawt.QuitHandler;
 import com.apple.eawt.QuitResponse;
 */
 
+import portefeuille.screens.EffectenFrame;
+
 import java.awt.desktop.*;
 
-public class MacOSXController implements AboutHandler, QuitHandler, PreferencesHandler
+public class DesktopListeners implements AboutHandler, QuitHandler, PreferencesHandler
 {
-	JFrame theFrame;
+	EffectenFrame theFrame;
 	boolean aboutPanelDisplayed=false;
 	JDialog aboutDialog;
+	PortefeuilleTrayIcon pti;
 	
-	public MacOSXController(JFrame f)
+	public DesktopListeners(EffectenFrame f)
 	{
 		theFrame = f;
+		pti = f.getPortefeuilleTrayIcon();
 	}
 	@Override
 	public void handleQuitRequestWith(QuitEvent e, QuitResponse r)
 	{
+		pti.exitItem.setEnabled(false);
 		theFrame.toFront();
 //		System.out.println("handleQuitRequestWith - response = "+r.toString());
 		if(JOptionPane.showConfirmDialog(theFrame, "Do you really want to quit?", "Portefeuille", JOptionPane.YES_NO_OPTION,JOptionPane.QUESTION_MESSAGE)==JOptionPane.YES_OPTION)
 		{
 			System.exit(0);
 		}
+		if(theFrame.getState()==Frame.NORMAL)
+		{
+			pti.showItem.setEnabled(false);
+			pti.hideItem.setEnabled(true);
+			pti.minimiseItem.setEnabled(true);
+		}
+		pti.exitItem.setEnabled(true);
 		r.cancelQuit();
 	}
 

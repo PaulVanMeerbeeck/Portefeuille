@@ -10,6 +10,8 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.SystemTray;
+import java.awt.desktop.AppHiddenEvent;
+import java.awt.desktop.AppHiddenListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
 import java.math.BigDecimal;
@@ -55,14 +57,14 @@ import portefeuille.tables.MeerwaardenList;
 import portefeuille.util.BigDecimalRenderer;
 import portefeuille.util.ColumnsAutoSizer;
 import portefeuille.util.DataTableModel;
-import portefeuille.util.MacOSXController;
+import portefeuille.util.DesktopListeners;
 import portefeuille.util.PortefeuilleTrayIcon;
 import portefeuille.util.ResultSetTableModel;
 import portefeuille.util.WinstRenderer;
 
 import java.lang.System;
 
-public class EffectenFrame extends JFrame implements WindowListener, ListSelectionListener
+public class EffectenFrame extends JFrame implements WindowListener, ListSelectionListener, AppHiddenListener
 {
 	/**
 	 * 
@@ -119,10 +121,11 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		if(Desktop.isDesktopSupported())
 		{
 			Desktop desktop =  Desktop.getDesktop();
-			MacOSXController osController = new MacOSXController(this);
+			DesktopListeners desktopListeners = new DesktopListeners(this);
+			desktop.addAppEventListener(this);
 			try
 			{
-				desktop.setAboutHandler(osController);
+				desktop.setAboutHandler(desktopListeners);
 			}
 			catch(UnsupportedOperationException e)
 			{
@@ -138,7 +141,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			}
 			try
 			{
-				desktop.setQuitHandler(osController);
+				desktop.setQuitHandler(desktopListeners);
 			}
 			catch(UnsupportedOperationException e)
 			{
@@ -175,10 +178,13 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			isService = true;
 			setVisible(false);
 			setState((Frame.ICONIFIED));
+			pti.enableItem("Hide", false);
+			pti.enableItem("Minimise", false);
 		}
 		else
 		{
 			setVisible(true);
+			pti.enableItem("Show", false);
 		}
 		menu = new EffectenMenu(this);
 		setJMenuBar(menu.getMenuBar());
@@ -881,7 +887,6 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	@Override
 	public void windowOpened(WindowEvent e)
 	{
-		System.out.println("window opened");
 	}
 
 	@Override
@@ -903,13 +908,13 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	@Override
 	public void windowClosed(WindowEvent e)
 	{
-		System.out.println("window closed");
 	}
 
 	@Override
 	public void windowIconified(WindowEvent e)
 	{
 		pti.enableItem("Show",true);
+		pti.enableItem("Hide", false);
 		pti.enableItem("Minimise",false);
 	}
 
@@ -917,23 +922,18 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	public void windowDeiconified(WindowEvent e)
 	{
 		pti.enableItem("Show",false);
+		pti.enableItem("Hide", true);
 		pti.enableItem("Minimise",true);
 	}
 
 	@Override
 	public void windowActivated(WindowEvent e)
 	{
-		System.out.println("window activated");
-		pti.enableItem("Show", false);
 	}
 
 	@Override
 	public void windowDeactivated(WindowEvent e)
 	{
-		System.out.println("window deactivated");
-		pti.enableItem("Show", true);
-		pti.enableItem("Hide", false);
-		pti.enableItem("Minimise", false);
 	}
 
 	@Override
@@ -1062,5 +1062,25 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	public boolean isService()
 	{
 		return isService;
-	} 
+	}
+	
+	public PortefeuilleTrayIcon getPortefeuilleTrayIcon()
+	{
+		return pti;
+	}
+	@Override
+	public void appHidden(AppHiddenEvent e)
+	{
+		pti.enableItem("Show",true);
+		pti.enableItem("Hide",false);
+		pti.enableItem("Minimise",false);
+	}
+	@Override
+	public void appUnhidden(AppHiddenEvent e)
+	{
+		pti.enableItem("Show",false);
+		pti.enableItem("Hide",true);
+		pti.enableItem("Minimise",true);
+	}
+
 }

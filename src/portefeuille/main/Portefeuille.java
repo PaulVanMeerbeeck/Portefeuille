@@ -6,8 +6,6 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Map;
 import java.util.Set;
-import java.awt.AWTException;
-import java.awt.SystemTray;
 
 import javax.sql.DataSource;
 import javax.swing.ImageIcon;
@@ -23,7 +21,6 @@ import portefeuille.tables.EffectList;
 import portefeuille.tables.ToestandList;
 import portefeuille.tables.Transactie;
 import portefeuille.tables.TransactieList;
-import portefeuille.util.PortefeuilleTrayIcon;
 
 public class Portefeuille
 {
@@ -183,7 +180,6 @@ public class Portefeuille
 				{
 					public void run()
 					{
-						EffectenFrame effectenFrame;
 						URL imageURL = this.getClass().getClassLoader().getResource("Resource/Portefeuille.png");
 						if(imageURL != null)
 						{
@@ -196,35 +192,17 @@ public class Portefeuille
 							if(args.length>0)
 							{
 								System.out.println("args[0] = "+args[0]);
-								effectenFrame=new EffectenFrame(args[0],arg1,ic);
+								new EffectenFrame(args[0],arg1,ic);
 							}
 							else
 							{
-								effectenFrame=new EffectenFrame("secure",arg1,ic);
-							}
-							if(SystemTray.isSupported())
-							{
-								PortefeuilleTrayIcon pti = new PortefeuilleTrayIcon(ic,effectenFrame);
-								SystemTray st = SystemTray.getSystemTray();
-								try
-								{
-									st.add(pti);
-								}
-								catch (AWTException e) 
-								{
-									e.printStackTrace();
-								}
-							}
-							else
-							{
-								System.out.println("System Tray niet ondersteund!");
+								new EffectenFrame("secure",arg1,ic);
 							}
 						}
 						else
 						{
 							System.out.println("Portefeuille.png niet gevonden!");
 						}
-
 					}
 				}
 			);

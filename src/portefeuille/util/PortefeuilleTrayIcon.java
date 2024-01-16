@@ -1,5 +1,6 @@
 package portefeuille.util;
 
+import java.awt.AWTException;
 import java.awt.Frame;
 import java.awt.MenuItem;
 import java.awt.PopupMenu;
@@ -47,10 +48,18 @@ public class PortefeuilleTrayIcon extends TrayIcon implements ActionListener
     exitItem.addActionListener(this);
     tiMenu.add(exitItem);
     setPopupMenu(tiMenu);
-    if(ef.isService())
+    if(SystemTray.isSupported())
     {
-      hideItem.setEnabled(false);
-      minimiseItem.setEnabled(false);
+      SystemTray st = SystemTray.getSystemTray();
+      try
+      {
+        st.add(this);
+      }
+      catch (AWTException e) 
+      {
+        e.printStackTrace();
+        System.out.println("Exception in setSystemTrayIcon: "+e.getLocalizedMessage());
+      }
     }
   }
 
@@ -80,6 +89,8 @@ public class PortefeuilleTrayIcon extends TrayIcon implements ActionListener
         if(ef.getQuitPending()==false)
         {
           ef.setState(Frame.ICONIFIED);
+          minimiseItem.setEnabled(false);
+          showItem.setEnabled(true);
         }
       break;
 
@@ -106,22 +117,19 @@ public class PortefeuilleTrayIcon extends TrayIcon implements ActionListener
 
   public void enableItem(String item, boolean value)
   {
-    TrayIcon[] icons = SystemTray.getSystemTray().getTrayIcons();
-    if(icons.length < 1) return;
-    PortefeuilleTrayIcon theIcon = (PortefeuilleTrayIcon)icons[0];
     switch(item)
     {
       case "Show":
-        theIcon.showItem.setEnabled(value);
+        showItem.setEnabled(value);
       break;
       case "Hide":
-        theIcon.hideItem.setEnabled(value);
+        hideItem.setEnabled(value);
       break;
       case "Minimise":
-        theIcon.minimiseItem.setEnabled(value);
+        minimiseItem.setEnabled(value);
       break;
       case "Quit":
-        theIcon.exitItem.setEnabled(value);
+        exitItem.setEnabled(value);
       break;
     }
   }
