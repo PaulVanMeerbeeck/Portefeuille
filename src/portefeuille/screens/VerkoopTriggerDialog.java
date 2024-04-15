@@ -40,6 +40,9 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableRowSorter;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import portefeuille.tables.EffectList;
 import portefeuille.tables.TransactieList;
 import portefeuille.tables.TriggerCodeList;
@@ -49,6 +52,7 @@ import portefeuille.util.ColumnsAutoSizer;
 public class VerkoopTriggerDialog extends JDialog implements TableModelListener, ListSelectionListener
 {
 	private static final long serialVersionUID = 1L;
+	private static final Logger logger = LogManager.getLogger(EffectenFrame.class.getName());
 	
 	Object[][] tableData;
 	Object[] columnNames;
@@ -74,6 +78,7 @@ public class VerkoopTriggerDialog extends JDialog implements TableModelListener,
 	public VerkoopTriggerDialog(EffectenFrame theParent)
 	{
 		super(theParent,"Verkoop triggers",false);
+		logger.traceEntry("VerkoopTriggerDialog");
 		theEFrame = theParent;
 		theEList = theParent.getEList();
 		theTList = theParent.getTList();
@@ -185,6 +190,7 @@ public class VerkoopTriggerDialog extends JDialog implements TableModelListener,
 		setLocationRelativeTo(null);
 		
 		setVisible(true);
+		logger.traceExit("VerkoopTriggerDialog");
 	}
 	void newFilter()
 	{

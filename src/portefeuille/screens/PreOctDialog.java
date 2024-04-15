@@ -20,6 +20,9 @@ import javax.swing.JTable;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import portefeuille.tables.Effect;
 import portefeuille.tables.EffectList;
 import portefeuille.tables.Transactie;
@@ -31,6 +34,7 @@ import portefeuille.util.DataTableModel;
 public class PreOctDialog extends JDialog
 {
 	private static final long serialVersionUID = 1L;
+	private static final Logger logger = LogManager.getLogger(EffectenFrame.class.getName());
 	
 	EffectList theEList;
 	TransactieList theTList;
@@ -44,6 +48,7 @@ public class PreOctDialog extends JDialog
 	public PreOctDialog(EffectenFrame theParent)
 	{
 		super(theParent,"Rapport - Pré Oct 2018");
+		logger.traceEntry("PreOctDialog");
 		theEFrame = theParent;
 		theEList = theParent.getEList();
 		theTList = theParent.getTList();
@@ -80,6 +85,7 @@ public class PreOctDialog extends JDialog
 		setLocationRelativeTo(null);
 
 		setVisible(true);
+		logger.traceExit("PreOctDialog");
 	}
 	
 	JTable CreateTable()

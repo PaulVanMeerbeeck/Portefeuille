@@ -7,9 +7,10 @@ In eclipse or vs code export runnable jar in /Users/pvm/Portefeuille/jar with op
 $JAVA_HOME/bin/jpackage --input /Users/pvm/Portefeuille/jar \
                         --main-jar Portefeuille.jar \
                         --main-class portefeuille.main.Portefeuille \
+                        --arguments "'-service'" \
                         --type app-image \
                         --verbose \
                         --icon /Users/pvm/git/Portefeuille/src/Resource/Portefeuille.icns \
-                        --app-version 2.3.1
+                        --app-version 2.5.0
 
 Note that the code signing is not ready yet.

@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration status="WARN" packages="eu.pvm.swingappender">
+
+  <Properties>
+    <Property name = "filename">c:\Users\paulv\git\portefeuille.log</Property> 
+  </Properties>
+  
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+    </Console>
+    <File name="file" fileName="${filename}">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+    </File> 
+    <SwingAppender name="Swing" tabsize="2" push="head" maxLines="1000" wrap="false">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+      <Property name="width">1024</Property>
+      <Property name="height">512</Property>
+      </SwingAppender>
+  </Appenders>
+  <Loggers>
+   <Logger name = "portefeuille.screens.EffectenFrame" level="trace">
+      <AppenderRef ref="Swing"/>
+    </Logger>   
+    <Logger name = "portefeuille.screens.LogViewDialog" level="trace">
+      <AppenderRef ref="Swing"/>
+    </Logger> 
+    <Root level = "All">
+      <AppenderRef ref="Console" />
+    </Root>
+  </Loggers>
+</Configuration>

@@ -2,6 +2,8 @@ package portefeuille.screens;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 import javax.swing.JDialog;
 import javax.swing.JMenu;
@@ -20,7 +22,9 @@ public class EffectenMenu extends JMenuBar implements ActionListener
 	JDialog dWK;
 	JDialog dPreOct;
 	JDialog dDivVU;
+	JDialog dLogView;
 	EffectenFrame theEffectenFrame;
+	PortefeuilleDeTijd pDTijd;
 
 	public EffectenMenu(EffectenFrame theParent)
 	{
@@ -58,7 +62,21 @@ public class EffectenMenu extends JMenuBar implements ActionListener
 		miDivVU.setActionCommand("divVU");
 		miDivVU.addActionListener(this);
 		menuReports.add(miDivVU);
-		
+
+		JMenu menuView = new JMenu("View");
+		menuBar.add(menuView);
+		JMenuItem logView = new JMenuItem("Log viewer");
+		logView.setActionCommand("logView");
+		logView.addActionListener(this);
+		menuView.add(logView);
+		logView.setEnabled(theParent.getSwingLogger()!=null);
+		if(theParent.isBrowseSupported())
+		{
+			JMenuItem miPTijd = new JMenuItem("Portefeuille - Tijd");
+			miPTijd.setActionCommand("miPTijd");
+			miPTijd.addActionListener(this);
+			menuView.add(miPTijd);
+		}
 	}
 
 	protected JMenuBar getMenuBar()
@@ -110,6 +128,33 @@ public class EffectenMenu extends JMenuBar implements ActionListener
 		{
 			if(dDivVU!=null && dDivVU.isDisplayable()) return;
 			dDivVU = new DividendUitkeringDialog(theEffectenFrame);
+		}
+		else if(action.compareTo("logView")==0)
+		{
+		//	if(theEffectenFrame.getSwingLogger()==null) return;
+			if(dLogView!=null && dLogView.isDisplayable()) return;
+			dLogView = new LogViewDialog(theEffectenFrame);
+		}
+		else if(action.compareTo("miPTijd")==0)
+		{
+/* 			if(pDTijd == null)
+			{
+				pDTijd = new PortefeuilleDeTijd();
+			}
+			pDTijd.toFront();
+			pDTijd.setVisible(true);
+			System.out.println("na new PortefeuilleDeTijd: "); */
+			URI uri;
+			try 
+			{
+				uri = new URI("https://www.tijd.be/mijn-diensten/portefeuille.htm");
+				theEffectenFrame.launchBrowser(uri);
+			}
+			catch (URISyntaxException e1)
+			{
+				e1.printStackTrace();
+				System.out.println("In PortefeuilleDeTijd menu : "+e1.getLocalizedMessage()); 
+			}
 		}
 	}
 }

@@ -33,6 +33,9 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import portefeuille.tables.EffectList;
 import portefeuille.tables.TransactieList;
 import portefeuille.util.ColumnsAutoSizer;
@@ -41,6 +44,7 @@ import portefeuille.util.PortefeuilleTableCellRenderer;
 public class TransactiesUpdateDialog extends JDialog implements TableModelListener, ListSelectionListener
 {
 	private static final long serialVersionUID = 1L;
+	private static final Logger logger = LogManager.getLogger(EffectenFrame.class.getName());
 	
 	Object[][] tableData;
 	Object[] columnNames;
@@ -56,6 +60,7 @@ public class TransactiesUpdateDialog extends JDialog implements TableModelListen
 	public TransactiesUpdateDialog(EffectenFrame theParent)
 	{
 		super(theParent,"Transactie lijst",false);
+		logger.traceEntry("TransactiesUpdateDialog");
 		theEFrame = theParent;
 		theEList = theParent.getEList();
 		theTList = theParent.getTList();
@@ -99,6 +104,7 @@ public class TransactiesUpdateDialog extends JDialog implements TableModelListen
 					if(dbUpdateResult.compareTo("OK")==0)
 					{
 						String msg = String.format("%d row(s) updated!", sqllist.length);
+						logger.trace(msg);
 						JOptionPane.showMessageDialog((Component)e.getSource(),msg,"DB Update", JOptionPane.INFORMATION_MESSAGE);
 						theEFrame.CreateJFrameContents();
 						theEList = theEFrame.getEList();
@@ -132,6 +138,7 @@ public class TransactiesUpdateDialog extends JDialog implements TableModelListen
 		setLocationRelativeTo(null);
 		
 		setVisible(true);
+		logger.traceExit("TransactiesUpdateDialog");
 	}
 
 	JTable createTransactiesTable()
@@ -169,6 +176,7 @@ public class TransactiesUpdateDialog extends JDialog implements TableModelListen
 
 	String[] generateSQLStatements()
 	{
+		logger.traceEntry("generateSQLStatements()");
 		int countSQLStatements = 0;
 		int newRowCount = tableModel.getRowCount();
 		int oldRowCount = theTList.size();
@@ -193,8 +201,8 @@ public class TransactiesUpdateDialog extends JDialog implements TableModelListen
 			}
 			if(!bFound) continue;
 			sb.append(" WHERE (`Ticker` = '"+tableData[i][0]+"' and `Datum` = '"+tableData[i][1]+"');");
-//			System.out.println("Constructed SQL: "+sb.toString());
 			theResult[i]=sb.toString();
+			logger.trace("Constructed SQL: "+sb.toString());
 			countSQLStatements++;
 		}
 		for(int i=oldRowCount; i<newRowCount; i++)
@@ -217,6 +225,7 @@ public class TransactiesUpdateDialog extends JDialog implements TableModelListen
 				sb.append("\""+tableModel.getValueAt(i, 5).toString()+"\" ");
 				sb.append(");");
 				theResult[i]=sb.toString();
+				logger.trace("Constructed SQL: "+sb.toString());
 				countSQLStatements++;
 			}
 			catch(Exception e)
@@ -267,11 +276,13 @@ public class TransactiesUpdateDialog extends JDialog implements TableModelListen
 													"                         FROM   transactie \n"+
 													"                         WHERE  Effect.TickerId = transactie.Ticker)";
 		}*/
+		logger.traceExit("generateSQLStatements()");
 		return finalResult;
 	}
 	
 	Boolean confirmUpdates(String[] sqls)
 	{
+		logger.traceEntry("confirmUpdates()");
 		boolean theResult = false;
 		JTextArea theText = new JTextArea();
 		theText.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -288,11 +299,13 @@ public class TransactiesUpdateDialog extends JDialog implements TableModelListen
 			int antwoord = JOptionPane.showOptionDialog(this, theText, "Confirm DB Update", JOptionPane.YES_NO_OPTION, JOptionPane.QUESTION_MESSAGE, null, options, options[1]); 
 			if(antwoord==0) theResult=true;
 		}
+		logger.traceExit("confirmUpdates() - "+theResult);
 		return theResult;
 	}
 	
 	String updateTransactieTable(String[] sqls)
 	{
+		logger.traceEntry("updateTransactieTable()");
 		String theResult="OK";
 		try
 		{
@@ -307,6 +320,7 @@ public class TransactiesUpdateDialog extends JDialog implements TableModelListen
 		}
 		catch (SQLException e)
 		{
+			logger.error(e);
 			theResult = e.getMessage();
 			try
 			{
@@ -315,11 +329,11 @@ public class TransactiesUpdateDialog extends JDialog implements TableModelListen
 			}
 			catch (SQLException e1)
 			{
-				// e1.printStackTrace();
+				logger.error(e1);
 			}
 //			con = null;
-		//	e.printStackTrace();
 		}
+		logger.traceExit("updateTransactieTable()");
 		return theResult;
 	}
 	

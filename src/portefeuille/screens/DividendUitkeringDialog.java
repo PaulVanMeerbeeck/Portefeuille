@@ -14,6 +14,9 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ScrollPaneConstants;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import portefeuille.tables.DividendUitkeringenList;
 import portefeuille.util.ColumnsAutoSizer;
 import portefeuille.util.DataTableModel;
@@ -21,6 +24,7 @@ import portefeuille.util.DataTableModel;
 public class DividendUitkeringDialog extends JDialog
 {
 	private static final long serialVersionUID = 1L;
+	private static final Logger logger = LogManager.getLogger(EffectenFrame.class.getName());
 	
 	EffectenFrame theEFrame;
 	
@@ -31,6 +35,7 @@ public class DividendUitkeringDialog extends JDialog
 	public DividendUitkeringDialog(EffectenFrame theParent)
 	{
 		super(theParent,"Dividend Uitekeringen Vooruitzicht");
+		logger.traceEntry("DividendUitkeringDialog");
 		theEFrame = theParent;
 		ds = theParent.getDs();
 		setDefaultCloseOperation(JDialog.DISPOSE_ON_CLOSE);
@@ -69,5 +74,6 @@ public class DividendUitkeringDialog extends JDialog
 		setLocationRelativeTo(null);
 
 		setVisible(true);
+		logger.traceExit("DividendUitkeringDialog");
 	}
 }

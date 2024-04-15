@@ -16,7 +16,7 @@
       "request": "launch",
       "mainClass": "portefeuille.main.Portefeuille",
       "projectName": "Portefeuille",
-      "args": "-service"
+      "args": "secure"
     }
   ]
 }

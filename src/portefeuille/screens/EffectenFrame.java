@@ -14,8 +14,10 @@ import java.awt.desktop.AppHiddenEvent;
 import java.awt.desktop.AppHiddenListener;
 import java.awt.event.WindowEvent;
 import java.awt.event.WindowListener;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.net.URI;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
@@ -37,6 +39,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.ListSelectionModel;
 import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
@@ -44,6 +47,10 @@ import javax.swing.event.ListSelectionListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 
 import java.lang.UnsupportedOperationException;
 
@@ -63,6 +70,7 @@ import portefeuille.util.ResultSetTableModel;
 import portefeuille.util.WinstRenderer;
 
 import java.lang.System;
+import eu.pvm.swingappender.SwingAppender;
 
 public class EffectenFrame extends JFrame implements WindowListener, ListSelectionListener, AppHiddenListener
 {
@@ -79,6 +87,8 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	final int bannerThreeWidth = 250;
 	final int bannerFourWidth = 185; //175
 	
+	private static final Logger logger = LogManager.getLogger(EffectenFrame.class.getName());
+
 	boolean passwordValid = false;
 
 	EffectList eList;
@@ -104,32 +114,50 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	int selectedOverzichtRow = -1;
 	String osName = System.getProperty("os.name").toLowerCase();
 	PortefeuilleTrayIcon pti;
+	Desktop desktop;
 	boolean isService = false;
+	boolean isBrowseSupported = false;
+	JTextArea swingLogger;
+	Dimension swingLoggerSize;
 
 
 	public EffectenFrame(String argument, String configId, ImageIcon icon) throws HeadlessException 
 	{
 		super("Portefeuille - Effecten overzicht");
+		LoggerContext ctx = (LoggerContext)LogManager.getContext(false);
+		SwingAppender appender = (SwingAppender)ctx.getConfiguration().getAppender("Swing");
+		if(appender != null)
+		{
+			swingLogger = appender.getMessages();
+			logger.info("swingLogger size  = "+swingLogger.getSize());
+			swingLoggerSize = swingLogger.getSize();
+		}
+		logger.traceEntry("EffectenFrame("+argument+","+configId+")");
 		if(icon!=null)
 		{
 			setIconImage(icon.getImage());
 			pti = new PortefeuilleTrayIcon(icon,this);
 		}
 
-		System.out.println("System = "+osName);
+		logger.trace("System = "+osName);
 
 		if(Desktop.isDesktopSupported())
 		{
-			Desktop desktop =  Desktop.getDesktop();
+			desktop =  Desktop.getDesktop();
 			DesktopListeners desktopListeners = new DesktopListeners(this);
 			desktop.addAppEventListener(this);
+			if(desktop.isSupported(Desktop.Action.BROWSE))
+			{
+				logger.trace("Desktop action Browse is supported");
+				isBrowseSupported = true;
+			}
 			try
 			{
 				desktop.setAboutHandler(desktopListeners);
 			}
 			catch(UnsupportedOperationException e)
 			{
-				System.out.println("Geen AboutHandler op dit OS");
+				logger.warn("Geen AboutHandler op dit OS");
 			}
 			try
 			{
@@ -137,7 +165,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			}
 			catch(UnsupportedOperationException e)
 			{
-				System.out.println("Geen PreferenceHandler op dit OS");
+				logger.warn("Geen PreferenceHandler op dit OS");
 			}
 			try
 			{
@@ -145,7 +173,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			}
 			catch(UnsupportedOperationException e)
 			{
-				System.out.println("Geen QuitHandler op dit OS");
+				logger.warn("Geen QuitHandler op dit OS");
 			}
 		}
 		if(osName.startsWith("linux"))
@@ -157,7 +185,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		{
 			this.setPreferredSize(new Dimension(DEFAULT_WIDTH+30,DEFAULT_HEIGHT+51));
 			this.setMinimumSize(new Dimension(DEFAULT_WIDTH+30,DEFAULT_HEIGHT+51));
-			System.out.println("Window size set to: "+(DEFAULT_WIDTH+30)+", "+(DEFAULT_HEIGHT+51));
+			logger.trace("Window size set to: "+(DEFAULT_WIDTH+30)+", "+(DEFAULT_HEIGHT+51));
 		}
 		else
 		{
@@ -203,7 +231,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 //		System.out.println("After pwdDialog, passwordValid = "+passwordValid);
 		if(!passwordValid)
 		{
-//			System.out.println("Password not valid. Dispose frame");
+			logger.traceExit("Password not valid.");
 			System.exit(0);
 		}
 		
@@ -214,8 +242,9 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		}
 		catch (SQLException e)
 		{
-			e.printStackTrace();
+			logger.error(e);
 			JOptionPane.showMessageDialog(this,"DB not available","Database", JOptionPane.ERROR_MESSAGE);
+			logger.traceExit("DB not available. Exit");
 			System.exit(0);
 		}
 		if(SystemTray.isSupported())
@@ -231,6 +260,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		setLayout(gridbagLayout);
 		CreateJFrameContents();
 		pack();
+		logger.traceExit("EffectenFrame");
 	}
 
 	EffectList getEList()
@@ -280,6 +310,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	
 	public void CreateJFrameContents()
 	{
+		logger.traceEntry("CreateJFrameContents");
 		eList = new EffectList(ds);
 		tList = new TransactieList(ds);
 		eList.ApplyTransactieList(tList);
@@ -397,6 +428,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 //		gbc.gridheight=15;
 		gbc.gridheight=20;
 //		add(verkooporderPanel,gbc);
+		logger.traceExit("CreateJFrameContents - Ok");
 		return;
 	}
 
@@ -457,7 +489,8 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	
 	private JScrollPane CreateSQLPane(String sql, Dimension dim)
 	{
-
+		logger.traceEntry("CreateSQLPane");
+		logger.trace(sql);
 		try
 		{
 			Object[][] tableData;
@@ -543,11 +576,13 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			pane.setPreferredSize(dim);
 			pane.setMinimumSize(dim);
 			pane.setMaximumSize(dim);
+			logger.traceExit("CreateSQLPane - Ok");
 			return pane;
 		}
 		catch(SQLException e)
 		{
-			e.printStackTrace();
+			logger.error(e);
+			logger.traceExit("CreateSQLPane with error.");
 			return null;
 		}
 	}
@@ -607,6 +642,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 
 	JScrollPane CreateOverzichtPane()
 	{
+		logger.traceEntry("CreateOverzichtPane");
 		try
 		{
 //			String sql = "select * from toestand";
@@ -647,11 +683,13 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			scrollPane.setPreferredSize(new Dimension(bannerOneWidth, 800));
 			scrollPane.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 			overzichtTableGlobal = overzichtTable;
+			logger.traceExit("CreateOverzichtPane - ok");
 			return scrollPane;			
 		}
 		catch(SQLException e)
 		{
-			e.printStackTrace();
+			logger.error(e);
+			logger.traceExit("CreateOverzichtPane with error.");
 			return null;
 		}
 
@@ -659,9 +697,11 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 
 	JScrollPane CreateTransactiesPane(String naam)
 	{
+		logger.traceEntry("CreateTransactiesPane("+naam+")");
 		try
 		{
 			String sql = "select Date_Format(t.Datum,'%Y-%m-%d') as Datum, t.Aantal, t.Prijs, t.Makelaarsloon, t.Beurstaks from transactie t, Effect where Effect.TickerId = t.Ticker and Effect.Naam ='"+naam+"' order by Datum";
+			logger.trace(sql);
 			Statement stmtRM = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			ResultSet rsRM = stmtRM.executeQuery(sql);
 	
@@ -681,17 +721,20 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			JScrollPane scrollPane = new JScrollPane(transactiesTable);
 			scrollPane.setAutoscrolls(true);
 			scrollPane.setPreferredSize(new Dimension(bannerTwoWidth, 301)); 
+			logger.traceExit("CreateTransactiesPane("+naam+") - ok");
 			return scrollPane;			
 		}
 		catch(SQLException e)
 		{
-			e.printStackTrace();
+			logger.error(e);
+			logger.traceExit("CreateTransactiesPane("+naam+") with error");
 			return null;
 		}
 	}
 	
 	JScrollPane CreateEffectDividendenPane(String naam)
 	{
+		logger.traceEntry("CreateEffectDividendenPane("+naam+")");
 		try
 		{
 			String sql = "select YEAR(d.Datum) as Jaar, sum(d.Dividend) as Dividend, Sum(d.Bruto) as Bruto, Sum(d.Voorheffing) as Voorheffing, Sum(d.Netto) as Netto, '' as Rendement from Dividend d, Effect e where e.Naam = '"+naam+"' and e.TickerId = d.TickerId group by YEAR(Datum) order by Jaar";
@@ -759,18 +802,21 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			JScrollPane scrollPane = new JScrollPane(effectDividendenTable);
 			scrollPane.setAutoscrolls(true);
 			scrollPane.setPreferredSize(new Dimension(bannerTwoWidth, 330));
+			logger.traceExit("CreateEffectDividendenPane("+naam+") - Ok");
 			return scrollPane;			
 		}
 		catch(SQLException e)
 		{
-			e.printStackTrace();
+			logger.error(e);
+			logger.traceExit("CreateEffectDividendenPane("+naam+") with error.");
 			return null;
 		}
 	}
 
 	private JPanel CreateEffectPane(String naam)
 	{
-//		System.out.println("CreateEffectPane called for - "+naam);
+		logger.traceEntry("CreateEffectPane("+naam+")");
+		String result = "Ok";
 		JPanel pane =  new JPanel(new GridBagLayout());
 		pane.setPreferredSize(new Dimension(bannerTwoWidth, 130));
 		pane.setBackground(Color.LIGHT_GRAY);
@@ -839,13 +885,17 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			result = "error";
+			logger.error(e);
 		}
+		logger.traceExit("CreateEffectPane("+naam+") - " + result);
 		return pane;
 	}
 	
 	private JPanel CreateMeerwaardenPanel(int height)
 	{
+		logger.traceEntry("CreateMeerwaardenPanel");
+		String result = "Ok";
 		JPanel panel =  new JPanel(new BorderLayout());
 		panel.setPreferredSize(new Dimension(bannerFourWidth,height));
 //		pane.setBackground(Color.ORANGE);
@@ -879,8 +929,10 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			result = "error";
+			logger.error(e);
 		}
+		logger.traceExit("CreateMeerwaardenPanel - "+result);
 		return panel;			
 	}
 	
@@ -969,6 +1021,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 
 	void doEffectTransactieDividend(String effect, GridBagConstraints gbc)
 	{
+		logger.traceEntry("doEffectTransactieDividend");
 		if(ePane != null) remove(ePane);
 		ePane = CreateEffectPane(effect);
 		gbc.gridx = 24;
@@ -1002,13 +1055,16 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 //		gbc.gridheight = 13;
 		gbc.gridheight = 33; 
 		add(effectDividenden,gbc);
+		logger.traceExit("doEffectTransactieDividend");
 		return;
 	}
 
 	public boolean quit()
 	{
+		logger.traceEntry("quit");
 		int answer = JOptionPane.NO_OPTION;
 		setQuitPending(true);
+		setAutoRequestFocus(true);
 		toFront();
 		if(isVisible()==false || getState()==Frame.ICONIFIED)
 		{
@@ -1022,6 +1078,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		}
 		if(answer==JOptionPane.YES_OPTION)
 		{
+			logger.trace("quiting ...");
 			node.putInt("width", getWidth());
 			node.putInt("height", getHeight());	
 			if(con!=null) try
@@ -1030,14 +1087,16 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			}
 			catch (SQLException e1)
 			{
-				e1.printStackTrace();
+				logger.error(e1);
 			}
 			dispose();
+			logger.traceExit("quit");
 			System.exit(0);
 			return true;		
 		}
 		else
 		{
+			logger.trace("quit cancelled by user.");
 			setQuitPending(false);
 			if(isVisible()==true && getState()==Frame.NORMAL)
 			{
@@ -1045,6 +1104,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 				pti.enableItem("Hide",true);
 				pti.enableItem("Minimise", true);
 			}
+			logger.traceExit("quit");
 			return false;
 		}
 	}
@@ -1063,11 +1123,33 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	{
 		return isService;
 	}
+
+	public boolean isBrowseSupported()
+	{
+		return isBrowseSupported;
+	}
 	
 	public PortefeuilleTrayIcon getPortefeuilleTrayIcon()
 	{
 		return pti;
 	}
+
+	public void launchBrowser(URI uri)
+	{
+		logger.traceEntry("launchBrowser("+uri+")");
+		if(desktop==null) return;
+		try
+		{
+			desktop.browse(uri);
+		}
+		catch (IOException e)
+		{
+			logger.error("Exception in launchBrowser: "+e.getLocalizedMessage());
+		};
+		logger.traceExit("launchBrowser");
+
+	}
+
 	@Override
 	public void appHidden(AppHiddenEvent e)
 	{
@@ -1083,4 +1165,17 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		pti.enableItem("Minimise",true);
 	}
 
+	public JTextArea getSwingLogger()
+	{
+		return swingLogger;
+	}
+
+	public Dimension getSwingLoggerSize()
+	{
+		return swingLoggerSize;
+	}
+	public void setSwingLoggerSize(Dimension aDimension)
+	{
+		swingLoggerSize = aDimension;
+	}
 }

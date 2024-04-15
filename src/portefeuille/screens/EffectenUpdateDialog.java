@@ -39,6 +39,9 @@ import javax.swing.filechooser.FileFilter;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import portefeuille.tables.CategorieList;
 import portefeuille.tables.EffectList;
 import portefeuille.tables.RisicoList;
@@ -52,6 +55,7 @@ public class EffectenUpdateDialog extends JDialog implements TableModelListener,
 	 */
 	private static final long serialVersionUID = 1L;
 	final Preferences node=Preferences.userRoot().node("Portefeuille");
+	private static final Logger logger = LogManager.getLogger(EffectenFrame.class.getName());
 	
 	Object[][] tableData;
 	Object[] columnNames;
@@ -66,6 +70,7 @@ public class EffectenUpdateDialog extends JDialog implements TableModelListener,
 	public EffectenUpdateDialog(EffectenFrame theParent) throws HeadlessException
 	{
 		super(theParent,"Effecten lijstje ...");
+		logger.traceEntry("EffectenUpdateDialog");
 		theEFrame = theParent;
 		theEList = theParent.getEList();
 		ds = theParent.getDs();
@@ -110,6 +115,7 @@ public class EffectenUpdateDialog extends JDialog implements TableModelListener,
 					String newFileLocation = chooseFile.getSelectedFile().getAbsolutePath();
 					lastDirBoleroFile=new File(chooseFile.getSelectedFile().getParent());
 					node.put("lastDirBoleroFile", lastDirBoleroFile.getPath());
+					logger.trace("newFileLocation="+newFileLocation);
 					Object[][] koersen = theEList.readBoleroFile(newFileLocation);
 					int aantal = koersen.length;
 					String[] sqllistTemp = new String[aantal];
@@ -137,6 +143,7 @@ public class EffectenUpdateDialog extends JDialog implements TableModelListener,
 						if(dbUpdateResult.compareTo("OK")==0)
 						{
 							String msg = String.format("%d row(s) updated!", sqllist.length);
+							logger.trace(msg);
 							JOptionPane.showMessageDialog((Component)e.getSource(),msg,"DB Update", JOptionPane.INFORMATION_MESSAGE);
 							theEFrame.CreateJFrameContents();
 							theEList = theEFrame.getEList();
@@ -167,6 +174,7 @@ public class EffectenUpdateDialog extends JDialog implements TableModelListener,
 					if(dbUpdateResult.compareTo("OK")==0)
 					{
 						String msg = String.format("%d row(s) updated!", sqllist.length);
+						logger.trace(msg);
 						JOptionPane.showMessageDialog((Component)e.getSource(),msg,"DB Update", JOptionPane.INFORMATION_MESSAGE);
 						theEFrame.CreateJFrameContents();
 						theEList = theEFrame.getEList();
@@ -199,6 +207,7 @@ public class EffectenUpdateDialog extends JDialog implements TableModelListener,
 		setLocationRelativeTo(null);
 		
 		setVisible(true);
+		logger.traceExit("EffectenUpdateDialog");
 	}
 
 	@Override
@@ -226,6 +235,7 @@ public class EffectenUpdateDialog extends JDialog implements TableModelListener,
 	
 	JTable createEffectenTable()
 	{
+		logger.traceEntry("createEffectenTable");
 	  final Class<?>[] columnClass = new Class<?>[] 
 	  		{ String.class, String.class,String.class, String.class,
 	  			Integer.class, BigDecimal.class, BigDecimal.class, 
@@ -284,11 +294,13 @@ public class EffectenUpdateDialog extends JDialog implements TableModelListener,
     listSelectionModel.addListSelectionListener(this);
     table.setSelectionModel(listSelectionModel);
 
+		logger.traceExit("createEffectenTable");
 		return table;		
 	}
 	
 	Boolean confirmUpdates(String[] sqls)
 	{
+		logger.traceEntry("confirmUpdates");
 		boolean theResult = false;
 		JTextArea theText = new JTextArea();
 		theText.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
@@ -309,6 +321,7 @@ public class EffectenUpdateDialog extends JDialog implements TableModelListener,
 		{
 			JOptionPane.showMessageDialog(this, "Geen wijzigingen gevonden!");
 		}
+		logger.traceExit("confirmUpdates - Result: "+theResult);
 		return theResult;
 	}
 	
@@ -339,7 +352,7 @@ public class EffectenUpdateDialog extends JDialog implements TableModelListener,
 			}
 			if(!bFound) continue;
 			sb.append(" WHERE (`TickerId` = '"+tableData[i][1]+"');");
-//			System.out.println("Constructed SQL: "+sb.toString());
+			logger.trace("Constructed SQL: "+sb.toString());
 			theResult[i]=sb.toString();
 			countSQLStatements++;
 		}
@@ -362,10 +375,12 @@ public class EffectenUpdateDialog extends JDialog implements TableModelListener,
 				sb.append("\""+tableModel.getValueAt(i, 6).toString()+"\" ");
 				sb.append(");");
 				theResult[i]=sb.toString();
+				logger.trace("Constructed SQL: "+sb.toString());
 				countSQLStatements++;
 			}
 			catch(Exception e)
 			{
+				logger.error(e);
 				JOptionPane.showMessageDialog(this,"Iets niet ingevuld?","Gegevens fout", JOptionPane.ERROR_MESSAGE);
 			}
 		}
@@ -377,11 +392,13 @@ public class EffectenUpdateDialog extends JDialog implements TableModelListener,
 			finalResult[index]=s;
 			index++;
 		}
+		logger.traceExit("generateSQLStatements - "+index);
 		return finalResult;
 	}
 	
 	String updateEffectenTable(String[] sqls)
 	{
+		logger.traceEntry("updateEffectenTable");
 		String theResult="OK";
 		try
 		{
@@ -396,19 +413,21 @@ public class EffectenUpdateDialog extends JDialog implements TableModelListener,
 		}
 		catch (SQLException e)
 		{
+			logger.error(e);
 			theResult = e.getMessage();
 			try
 			{
 				if(!con.getAutoCommit()) con.rollback();
 				con.close();
+				logger.trace("DB connection closed by application.");
 			}
 			catch (SQLException e1)
 			{
-				// e1.printStackTrace();
+				logger.error(e1);
 			}
 			con = null;
-		//	e.printStackTrace();
 		}
+		logger.traceExit("updateEffectenTable - result: "+theResult);
 		return theResult;
 	}
 

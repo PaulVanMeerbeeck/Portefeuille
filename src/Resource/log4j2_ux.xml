@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<Configuration status="WARN" packages="eu.pvm.swingappender">
+
+  <Properties>
+    <Property name = "baseDir">/Users/pvm/Portefeuille/log</Property>
+    <Property name = "filename">${baseDir}/portefeuille-root.log</Property>
+  </Properties>
+  
+  <Appenders>
+    <Console name="Console" target="SYSTEM_OUT">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+    </Console>
+    <File name="rootlog" fileName="${filename}">
+      <PatternLayout pattern="%d{yyyy-mm-dd HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+    </File> 
+    <RollingFile name="RollingFile" fileName="${baseDir}/portefeuille.log"
+          		 filePattern="${baseDir}/$${date:yyyy-MM}/portefeuille-%d{yyyyMMdd}.log.gz"
+                 filePermissions="rw-------">
+      <PatternLayout pattern="%d %file(%line) %p %m%n" />
+<!--      <CronTriggeringPolicy schedule="0 0 0 * * ?"/> -->
+      <TimeBasedTriggeringPolicy />
+      <DefaultRolloverStrategy stopCustomActionsOnError="true">
+        <PosixViewAttribute basePath="${baseDir}/$${date:yyyy-MM}" filePermissions="r--r--r--">
+        	<IfFileName glob="*.gz" />
+        </PosixViewAttribute>
+      </DefaultRolloverStrategy>
+    </RollingFile>
+    <SwingAppender name="Swing" tabsize="2" push="head" maxLines="1000" wrap="false">
+      <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n" />
+      <Property name="width">1024</Property>
+      <Property name="height">512</Property>
+    </SwingAppender>  
+  </Appenders>
+  <Loggers>
+   <Logger name = "portefeuille.screens.EffectenFrame" level="trace">
+      <AppenderRef ref="Swing"/>
+    </Logger>   
+    <Logger name = "portefeuille.screens.LogViewDialog" level="trace">
+      <AppenderRef ref="Swing"/>
+    </Logger> 
+    <Root level = "trace">
+      <AppenderRef ref="RollingFile" />
+    </Root>
+  </Loggers>
+</Configuration>

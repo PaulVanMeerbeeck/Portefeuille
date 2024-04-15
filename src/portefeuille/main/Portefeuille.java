@@ -1,6 +1,7 @@
 package portefeuille.main;
 
 import java.math.BigDecimal;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -22,11 +23,20 @@ import portefeuille.tables.ToestandList;
 import portefeuille.tables.Transactie;
 import portefeuille.tables.TransactieList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.config.Configurator;
+
+import com.sun.tools.javac.Main;
+
+
 public class Portefeuille
 {
+	private static final Logger logger = LogManager.getLogger(Portefeuille.class.getName());
 
 	public Portefeuille()
 	{
+	  logger.traceEntry("Portefeuille");
 		DataSource ds = DataSourceFactory.getInputDataSource("pvm");
 		if(ds==null)
 		{
@@ -145,11 +155,52 @@ public class Portefeuille
 
 
 		System.out.println("Gedaan!");
+    logger.traceExit("Gedaan!");
 	}
 
 	public static void main(String[] args)
 	{
-/*		Client c = new Client();
+		String osName = System.getProperty("os.name").toLowerCase();
+		String resourceFileName = "log4j2_ux.xml";
+		if(osName.startsWith("windows")) resourceFileName = "log4j2_dos.xml";
+		String resourceFilePath = "Resource/"+resourceFileName;
+//		System.out.println(resourceFilePath);
+    URL configFile = Main.class.getClassLoader().getResource(resourceFilePath);
+    if(configFile==null) 
+    	System.out.println(resourceFileName+" NIET gevonden!");
+    else
+    {
+    	try
+     	{
+    		Configurator.reconfigure(configFile.toURI());
+ //       LoggerContext context = (LoggerContext)LogManager.getContext(false);
+ //       context.setConfigLocation(configFile.toURI());
+ //       context.reconfigure();     
+
+				if(logger.isTraceEnabled())
+					logger.traceEntry("Starting main ...");
+				else
+					System.out.println("Logger trace not enabled !!!");
+
+				if(logger.isInfoEnabled())
+					logger.info("Info is enabled");
+				else
+					System.out.println("Logger Info not enabled !!!");
+
+				if(logger.isErrorEnabled())
+					logger.error("Error is enabled");
+				else
+					System.out.println("Logger Error not enabled !!!");
+			}
+			catch (URISyntaxException e) 
+			{
+				System.out.println(e.getLocalizedMessage());
+				e.printStackTrace();
+			}
+		}
+    
+
+/*	Client c = new Client();
 		String tata= c.get();
 		System.out.println(tata); 
 		System.out.println("Start hier"); */
@@ -158,7 +209,7 @@ public class Portefeuille
 	//		new Portefeuille();
 			try
 			{
-				String osName = System.getProperty("os.name").toLowerCase();
+    		logger.trace("OS is: "+osName);
 				if(osName.startsWith("mac os x"))
 				{
 					System.setProperty("apple.laf.useScreenMenuBar", "true");
@@ -169,10 +220,10 @@ public class Portefeuille
 			}
 			catch(Exception evt)
 			{
-				System.out.println("Exceprion "+evt.getStackTrace());
+    		logger.error("Exception "+evt.getStackTrace());
 			}
 //					for(String s: args) { System.out.println("Argument = "+s);}
-			System.out.println("We zijn al hier");
+			logger.trace("We zijn al hier");
 			
 			SwingUtilities.invokeLater
 			(
@@ -191,7 +242,7 @@ public class Portefeuille
 							}
 							if(args.length>0)
 							{
-								System.out.println("args[0] = "+args[0]);
+								logger.info("args[0] = "+args[0]);
 								new EffectenFrame(args[0],arg1,ic);
 							}
 							else
@@ -201,7 +252,7 @@ public class Portefeuille
 						}
 						else
 						{
-							System.out.println("Portefeuille.png niet gevonden!");
+							logger.error("Portefeuille.png niet gevonden!");
 						}
 					}
 				}
@@ -209,8 +260,9 @@ public class Portefeuille
 		}
 		catch(Exception e)
 		{
+    	logger.error(e);
 			e.printStackTrace();
 		}
+	  logger.traceExit("Ending main!");
 	}
-
 }
