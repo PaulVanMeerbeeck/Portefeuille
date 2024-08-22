@@ -28,7 +28,7 @@ public class MeerwaardenList extends ArrayList<Meerwaarden>
 	public MeerwaardenList(DataSource ds)
 	{
 		super();
-		String sql = "select * from transactie order by Ticker,Datum";
+		String sql = "select * from Transactie order by Ticker,Datum";
 		TransactieList transacties = new TransactieList(ds,sql);
 		BigDecimal totalPrice = BigDecimal.ZERO;
 		int countShares = 0;

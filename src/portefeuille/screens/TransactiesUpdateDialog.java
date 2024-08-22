@@ -183,10 +183,10 @@ public class TransactiesUpdateDialog extends JDialog implements TableModelListen
 		while(newRowCount>0 && tableModel.getValueAt(newRowCount-1,0)==null) newRowCount--;
 //		System.out.println("Updated newRowCount = "+newRowCount);
 		String[] theResult = new String[newRowCount];
-		// UPDATE `transactie` SET `Koers` = '66.8201', `Div` = '1.8001' WHERE (`TickerId` = 'ABI');
+		// UPDATE `Transactie` SET `Koers` = '66.8201', `Div` = '1.8001' WHERE (`TickerId` = 'ABI');
 		for(int i=0; i <oldRowCount; i++)
 		{
-			StringBuilder sb = new StringBuilder("UPDATE `transactie` SET ");
+			StringBuilder sb = new StringBuilder("UPDATE `Transactie` SET ");
 			boolean bFound = false;
 			for(int j=0; j<columnNames.length; j++)
 			{
@@ -209,9 +209,9 @@ public class TransactiesUpdateDialog extends JDialog implements TableModelListen
 		{
 			try
 			{
-				// INSERT INTO `transactie` (`Ticker`,`Datum`,`Aantal`,`Prijs`,	`Makelaarsloon`,`Beurstaks`)
+				// INSERT INTO `Transactie` (`Ticker`,`Datum`,`Aantal`,`Prijs`,	`Makelaarsloon`,`Beurstaks`)
 				// VALUES (
-				StringBuilder sb = new StringBuilder("INSERT INTO `transactie`");
+				StringBuilder sb = new StringBuilder("INSERT INTO `Transactie`");
 				sb.append('(');
 				sb.append("`Ticker`,`Datum`,`Aantal`,`Prijs`,	`Makelaarsloon`,`Beurstaks`");
 				sb.append(')');

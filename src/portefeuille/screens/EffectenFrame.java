@@ -403,7 +403,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		add(divForecast,gbc);
 		
 		if(forecastDividenden!=null) remove(forecastDividenden);
-//		String sqlDivForecast = "select k.Maand, round(sum(t.Aantal)*k.Dividend,2) as Bruto, round(sum(t.Aantal)*k.Dividend*(1-k.Voorheffing),2) as Netto from Effect e, pvm.Kalender k, pvm.transactie t where e.TickerId = k.TickerId and e.TickerId = t.Ticker group by k.Maand order by k.Maand";
+//		String sqlDivForecast = "select k.Maand, round(sum(t.Aantal)*k.Dividend,2) as Bruto, round(sum(t.Aantal)*k.Dividend*(1-k.Voorheffing),2) as Netto from Effect e, pvm.Kalender k, pvm.Transactie t where e.TickerId = k.TickerId and e.TickerId = t.Ticker group by k.Maand order by k.Maand";
 		String sqlDivForecast = "select Maand, Sum(Bruto) as Bruto, Sum(Netto) as Netto from `dividend_uitkeringen` group by Maand order by Maand";
 		forecastDividenden = CreateSQLPane(sqlDivForecast,new Dimension(bannerFourWidth, 240));
 		gbc.gridx=48;
@@ -720,7 +720,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		logger.traceEntry("CreateTransactiesPane("+naam+")");
 		try
 		{
-			String sql = "select Date_Format(t.Datum,'%Y-%m-%d') as Datum, t.Aantal, t.Prijs, t.Makelaarsloon, t.Beurstaks from transactie t, Effect where Effect.TickerId = t.Ticker and Effect.Naam ='"+naam+"' order by Datum";
+			String sql = "select Date_Format(t.Datum,'%Y-%m-%d') as Datum, t.Aantal, t.Prijs, t.Makelaarsloon, t.Beurstaks from Transactie t, Effect where Effect.TickerId = t.Ticker and Effect.Naam ='"+naam+"' order by Datum";
 			logger.trace(sql);
 			Statement stmtRM = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
 			ResultSet rsRM = stmtRM.executeQuery(sql);

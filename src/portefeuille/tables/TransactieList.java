@@ -28,7 +28,7 @@ public class TransactieList extends ArrayList<Transactie>
 	public TransactieList(DataSource ds)
 	{
 		super();
-		String sql = "select * from transactie order by Datum";
+		String sql = "select * from Transactie order by Datum";
 		makeList(ds,sql);
 	}
 
