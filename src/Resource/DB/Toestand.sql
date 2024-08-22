@@ -21,5 +21,5 @@ VIEW `toestand` AS
         ROUND(`e`.`AantalInBezit` * (`e`.`Koers` - `e`.`GemiddeldePrijs`),2) AS `Winst`,
         `e`.`Categorie` AS `Cat`
     FROM
-        `effect` `e`
+        `Effect` `e`
     ORDER BY `e`.`Naam`

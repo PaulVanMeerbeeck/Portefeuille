@@ -55,6 +55,8 @@ import org.apache.logging.log4j.core.LoggerContext;
 import java.lang.UnsupportedOperationException;
 
 import java.awt.Desktop;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 
 import portefeuille.tables.DataSourceFactory;
 import portefeuille.tables.Effect;
@@ -70,6 +72,7 @@ import portefeuille.util.ResultSetTableModel;
 import portefeuille.util.WinstRenderer;
 
 import java.lang.System;
+
 import eu.pvm.swingappender.SwingAppender;
 
 public class EffectenFrame extends JFrame implements WindowListener, ListSelectionListener, AppHiddenListener
@@ -140,6 +143,18 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		}
 
 		logger.trace("System = "+osName);
+		String hostName="unknown";
+		try
+		{
+			String result = InetAddress.getLocalHost().getHostName();
+			hostName=result;
+			logger.trace("host name = "+hostName);
+		}
+		catch(UnknownHostException e)
+		{
+			logger.trace("server name not found." +e.getLocalizedMessage());
+		}
+		
 
 		if(Desktop.isDesktopSupported())
 		{
@@ -186,6 +201,11 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			this.setPreferredSize(new Dimension(DEFAULT_WIDTH+30,DEFAULT_HEIGHT+51));
 			this.setMinimumSize(new Dimension(DEFAULT_WIDTH+30,DEFAULT_HEIGHT+51));
 			logger.trace("Window size set to: "+(DEFAULT_WIDTH+30)+", "+(DEFAULT_HEIGHT+51));
+		}
+		else if(hostName.contains("iMac"))
+		{
+			this.setPreferredSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT+20));
+			this.setMinimumSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT+20));
 		}
 		else
 		{

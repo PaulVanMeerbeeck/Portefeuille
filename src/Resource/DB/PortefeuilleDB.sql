@@ -380,7 +380,7 @@ UNLOCK TABLES;
 /*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`PVM_SCHEMA`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `dividend_uitkeringen` AS select `e`.`Naam` AS `Naam`,`k`.`Maand` AS `Maand`,`k`.`Dag` AS `Dag`,round(`k`.`Dividend`,2) AS `Dividend`,sum(`e`.`AantalInBezit`) AS `Aantal`,round((`k`.`Dividend` * `e`.`AantalInBezit`),2) AS `Bruto`,round(((`e`.`AantalInBezit` * `k`.`Dividend`) * (1 - `k`.`Voorheffing`)),2) AS `Netto` from (`effect` `e` join `kalender` `k`) where (`e`.`TickerId` = `k`.`TickerId`) group by `e`.`TickerId`,`k`.`Maand` order by `k`.`Maand`,`k`.`Dag` */;
+/*!50001 VIEW `dividend_uitkeringen` AS select `e`.`Naam` AS `Naam`,`k`.`Maand` AS `Maand`,`k`.`Dag` AS `Dag`,round(`k`.`Dividend`,2) AS `Dividend`,sum(`e`.`AantalInBezit`) AS `Aantal`,round((`k`.`Dividend` * `e`.`AantalInBezit`),2) AS `Bruto`,round(((`e`.`AantalInBezit` * `k`.`Dividend`) * (1 - `k`.`Voorheffing`)),2) AS `Netto` from (`Effect` `e` join `Kalender` `k`) where (`e`.`TickerId` = `k`.`TickerId`) group by `e`.`TickerId`,`k`.`Maand` order by `k`.`Maand`,`k`.`Dag` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;
@@ -398,7 +398,7 @@ UNLOCK TABLES;
 /*!50001 SET collation_connection      = utf8mb4_general_ci */;
 /*!50001 CREATE ALGORITHM=UNDEFINED */
 /*!50013 DEFINER=`PVM_SCHEMA`@`localhost` SQL SECURITY DEFINER */
-/*!50001 VIEW `toestand` AS select `e`.`Naam` AS `Naam`,`e`.`AantalInBezit` AS `Aantal`,`e`.`Koers` AS `Koers`,round((`e`.`AantalInBezit` * `e`.`Koers`),2) AS `Waarde`,`e`.`AantalGekocht` AS `Aantal gekocht`,round((`e`.`AankoopWaarde` - `e`.`AankoopKost`),2) AS `Aankoop`,round(`e`.`AankoopKost`,2) AS `AankoopKosten`,round(`e`.`AankoopWaarde`,2) AS `AankoopPrijs`,`e`.`AantalVerkocht` AS `Aantal verkocht`,round(`e`.`VerkoopWaarde`,2) AS `Verkoop`,round(`e`.`VerkoopKost`,2) AS `VerkoopKosten`,round((`e`.`VerkoopWaarde` + `e`.`VerkoopKost`),2) AS `VerkoopPrijs`,round(((`e`.`Koers` - `e`.`GemiddeldePrijs`) * `e`.`AantalInBezit`),2) AS `Winst`,round((`e`.`GemiddeldePrijs` * `e`.`AantalInBezit`),2) AS `Investering`,`e`.`Categorie` AS `Cat` from `effect` `e` order by `e`.`Naam` */;
+/*!50001 VIEW `toestand` AS select `e`.`Naam` AS `Naam`,`e`.`AantalInBezit` AS `Aantal`,`e`.`Koers` AS `Koers`,round((`e`.`AantalInBezit` * `e`.`Koers`),2) AS `Waarde`,`e`.`AantalGekocht` AS `Aantal gekocht`,round((`e`.`AankoopWaarde` - `e`.`AankoopKost`),2) AS `Aankoop`,round(`e`.`AankoopKost`,2) AS `AankoopKosten`,round(`e`.`AankoopWaarde`,2) AS `AankoopPrijs`,`e`.`AantalVerkocht` AS `Aantal verkocht`,round(`e`.`VerkoopWaarde`,2) AS `Verkoop`,round(`e`.`VerkoopKost`,2) AS `VerkoopKosten`,round((`e`.`VerkoopWaarde` + `e`.`VerkoopKost`),2) AS `VerkoopPrijs`,round(((`e`.`Koers` - `e`.`GemiddeldePrijs`) * `e`.`AantalInBezit`),2) AS `Winst`,round((`e`.`GemiddeldePrijs` * `e`.`AantalInBezit`),2) AS `Investering`,`e`.`Categorie` AS `Cat` from `Effect` `e` order by `e`.`Naam` */;
 /*!50001 SET character_set_client      = @saved_cs_client */;
 /*!50001 SET character_set_results     = @saved_cs_results */;
 /*!50001 SET collation_connection      = @saved_col_connection */;

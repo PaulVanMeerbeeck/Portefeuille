@@ -140,10 +140,10 @@ public class WisselkoersUpdateDialog extends JDialog implements TableModelListen
 		int oldRowCount = theWList.size();
 		while(newRowCount>0 && tableModel.getValueAt(newRowCount-1,0)==null) newRowCount--;
 		String[] theResult = new String[newRowCount];
-		// UPDATE `wisselkoers` SET `koers` = '66.8201' WHERE (`van` = 'USD' and `naar` = 'EURO');
+		// UPDATE `Wisselkoers` SET `koers` = '66.8201' WHERE (`van` = 'USD' and `naar` = 'EURO');
 		for(int i=0; i <oldRowCount; i++)
 		{
-			StringBuilder sb = new StringBuilder("UPDATE `wisselkoers` SET ");
+			StringBuilder sb = new StringBuilder("UPDATE `Wisselkoers` SET ");
 			boolean bFound = false;
 			for(int j=0; j<columnNames.length; j++)
 			{
@@ -163,9 +163,9 @@ public class WisselkoersUpdateDialog extends JDialog implements TableModelListen
 		{
 			try
 			{
-				// INSERT INTO `wisselkoers` (`van`,`naar`,`koers`)
+				// INSERT INTO `Wisselkoers` (`van`,`naar`,`koers`)
 				// VALUES (
-				StringBuilder sb = new StringBuilder("INSERT INTO `wisselkoers`");
+				StringBuilder sb = new StringBuilder("INSERT INTO `Wisselkoers`");
 				sb.append('(');
 				sb.append("`van`,`naar`,`koers`");
 				sb.append(')');

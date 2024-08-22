@@ -123,7 +123,7 @@ public class EffectenUpdateDialog extends JDialog implements TableModelListener,
 					for(int i=0; i<aantal; i++)
 					{
 						if(koersen[i][0] == null) continue;
-						StringBuilder sb = new StringBuilder("UPDATE `portefeuille`.`effect` SET `Koers` = '"+koersen[i][1].toString()+"' ");
+						StringBuilder sb = new StringBuilder("UPDATE `portefeuille`.`Effect` SET `Koers` = '"+koersen[i][1].toString()+"' ");
 						sb.append("WHERE `ISIN` = '"+koersen[i][0].toString()+"';");
 						sqllistTemp[aantalSqlStatements]=sb.toString();
 						aantalSqlStatements++;
