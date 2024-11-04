@@ -48,6 +48,7 @@ import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
+import com.mysql.cj.jdbc.exceptions.CommunicationsException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.core.LoggerContext;
@@ -80,7 +81,6 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = 1L;
 	final Preferences node=Preferences.userRoot().node("portefeuille");
 	final int DEFAULT_WIDTH = 1385;
 	final int DEFAULT_HEIGHT = 852; //652; //622
@@ -142,17 +142,17 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			pti = new PortefeuilleTrayIcon(icon,this);
 		}
 
-		logger.trace("System = "+osName);
+		logger.trace("System = {}",osName);
 		String hostName="unknown";
 		try
 		{
 			String result = InetAddress.getLocalHost().getHostName();
 			hostName=result;
-			logger.trace("host name = "+hostName);
+			logger.trace("host name = {}",hostName);
 		}
 		catch(UnknownHostException e)
 		{
-			logger.trace("server name not found." +e.getLocalizedMessage());
+			logger.trace("server name not found. {}",e.getLocalizedMessage());
 		}
 		
 
@@ -200,7 +200,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		{
 			this.setPreferredSize(new Dimension(DEFAULT_WIDTH+30,DEFAULT_HEIGHT+51));
 			this.setMinimumSize(new Dimension(DEFAULT_WIDTH+30,DEFAULT_HEIGHT+51));
-			logger.trace("Window size set to: "+(DEFAULT_WIDTH+30)+", "+(DEFAULT_HEIGHT+51));
+			logger.trace("Window size set to: {}, {}",(DEFAULT_WIDTH+30), (DEFAULT_HEIGHT+51));
 		}
 		else if(hostName.contains("iMac"))
 		{
@@ -723,8 +723,12 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			String sql = "select Date_Format(t.Datum,'%Y-%m-%d') as Datum, t.Aantal, t.Prijs, t.Makelaarsloon, t.Beurstaks from Transactie t, Effect where Effect.TickerId = t.Ticker and Effect.Naam ='"+naam+"' order by Datum";
 			logger.trace(sql);
 			Statement stmtRM = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
-			ResultSet rsRM = stmtRM.executeQuery(sql);
-	
+			ResultSet rsRM;
+			try {
+				rsRM = stmtRM.executeQuery(sql);
+			} catch(CommunicationsException ce) {
+				rsRM = stmtRM.executeQuery(sql);
+			}
 			ResultSetTableModel model = new ResultSetTableModel(rsRM);
 			
 			transactiesTable = new JTable(model);
@@ -759,8 +763,12 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 		{
 			String sql = "select YEAR(d.Datum) as Jaar, sum(d.Dividend) as Dividend, Sum(d.Bruto) as Bruto, Sum(d.Voorheffing) as Voorheffing, Sum(d.Netto) as Netto, '' as Rendement from Dividend d, Effect e where e.Naam = '"+naam+"' and e.TickerId = d.TickerId group by YEAR(Datum) order by Jaar";
 			Statement stmtRM = con.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE,ResultSet.CONCUR_READ_ONLY);
-			ResultSet rsRM = stmtRM.executeQuery(sql);
-
+			ResultSet rsRM;
+			try {
+				rsRM = stmtRM.executeQuery(sql);
+			} catch(CommunicationsException ce) {
+				rsRM = stmtRM.executeQuery(sql);
+			}
 			ResultSetTableModel model = new ResultSetTableModel(rsRM);
 			
 			Object[][] data =  new Object[model.getRowCount()][model.getColumnCount()];

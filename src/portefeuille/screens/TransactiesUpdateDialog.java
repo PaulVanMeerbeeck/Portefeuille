@@ -33,6 +33,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
+import com.mysql.cj.jdbc.exceptions.CommunicationsException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -313,7 +314,11 @@ public class TransactiesUpdateDialog extends JDialog implements TableModelListen
 			for(String s : sqls)
 			{
 				Statement stmt = con.createStatement();
-				stmt.execute(s);
+				try {
+					stmt.execute(s);
+				} catch(CommunicationsException ce) {
+					stmt.execute(s);
+				}
 				stmt.close();
 				if(!con.getAutoCommit()) con.commit();
 			}

@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="Secure" type="JarApplication">
+    <option name="JAR_PATH" value="$PROJECT_DIR$/Portefeuille.jar" />
+    <option name="PROGRAM_PARAMETERS" value="secure" />
+    <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+    <option name="ALTERNATIVE_JRE_PATH" />
+    <module name="Portefeuille" />
+    <method v="2">
+      <option name="MakeProject" enabled="true" />
+    </method>
+  </configuration>
+</component>

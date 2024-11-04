@@ -35,6 +35,7 @@ import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.TableColumn;
 
+import com.mysql.cj.jdbc.exceptions.CommunicationsException;
 import portefeuille.tables.DividendList;
 import portefeuille.tables.EffectList;
 import portefeuille.util.ColumnsAutoSizer;
@@ -265,7 +266,11 @@ public class DividendenUpdateDialog extends JDialog implements TableModelListene
 			for(String s : sqls)
 			{
 				Statement stmt = con.createStatement();
-				stmt.execute(s);
+				try {
+					stmt.execute(s);
+				} catch(CommunicationsException ce) {
+					stmt.execute(s);
+				}
 				stmt.close();
 				if(!con.getAutoCommit()) con.commit();
 			}
