@@ -78,6 +78,7 @@ import eu.pvm.swingappender.SwingAppender;
 
 public class EffectenFrame extends JFrame implements WindowListener, ListSelectionListener, AppHiddenListener
 {
+	private static final long serialVersionUID = 1L;
 	/**
 	 * 
 	 */
@@ -202,7 +203,7 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			this.setMinimumSize(new Dimension(DEFAULT_WIDTH+30,DEFAULT_HEIGHT+51));
 			logger.trace("Window size set to: {}, {}",(DEFAULT_WIDTH+30), (DEFAULT_HEIGHT+51));
 		}
-		else if(hostName.contains("iMac"))
+		else if(hostName.contains("iMac") || hostName.contains("Mac-mini"))
 		{
 			this.setPreferredSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT+20));
 			this.setMinimumSize(new Dimension(DEFAULT_WIDTH,DEFAULT_HEIGHT+20));
@@ -1109,13 +1110,16 @@ public class EffectenFrame extends JFrame implements WindowListener, ListSelecti
 			logger.trace("quiting ...");
 			node.putInt("width", getWidth());
 			node.putInt("height", getHeight());	
-			if(con!=null) try
+			if(con!=null)
 			{
-				con.close();
-			}
-			catch (SQLException e1)
-			{
-				logger.error(e1);
+				try
+				{
+					con.close();
+				}
+				catch (SQLException e1)
+				{
+					logger.error(e1);
+				}
 			}
 			dispose();
 			logger.traceExit("quit");
